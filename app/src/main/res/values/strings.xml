@@ -1,3 +1,16 @@
 <resources>
-    <string name="app_name">Coder Lab Home</string>
+    <string name="app_name">Home</string>
+    <string name="error_on_connecting_to_meteo">Error occured on connecting to the meteo sensors</string>
+    <string name="navigation_label">Navigation</string>
+    <string name="meteo_label">Meteo</string>
+    <string name="window_label">Window</string>
+    <string name="light_label">Light</string>
+    <string name="door_label">Door</string>
+    <string name="devices_label">Devices</string>
+    <string name="meteostation">Meteostation</string>
+    <string name="refresh">Refresh</string>
+    <string name="temperature">Temperature</string>
+    <string name="pressure">Pressure</string>
+    <string name="altitude">Altitude</string>
+    <string name="history">History</string>
 </resources>

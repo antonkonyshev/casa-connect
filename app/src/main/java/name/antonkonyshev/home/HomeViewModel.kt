@@ -7,13 +7,21 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import name.antonkonyshev.home.meteo.Measurement
 import name.antonkonyshev.home.meteo.MeteoApi
+import java.util.Timer
+import kotlin.concurrent.scheduleAtFixedRate
 
 class HomeViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(HomeUIState())
     val uiState: StateFlow<HomeUIState> = _uiState
 
+    // todo: Add settings for the period of the measurement updates
+    private val periodicalMeasurementUpdate = 60L  // seconds
+
     init {
-        observeMeasurement()
+        // observeMeasurement()
+        Timer().scheduleAtFixedRate(0L, periodicalMeasurementUpdate * 1000L) {
+            observeMeasurement()
+        }
     }
 
     fun observeMeasurement() {
@@ -26,11 +34,30 @@ class HomeViewModel: ViewModel() {
             loading = true
         )
         viewModelScope.launch {
-            _uiState.value = HomeUIState(
-                measurement = MeteoApi.retrofitService.getMeasurement(),
-                history = MeteoApi.retrofitService.getHistory(),
-                loading = false
-            )
+            var error: String? = null
+            try {
+                _uiState.value = HomeUIState(
+                    measurement = MeteoApi.retrofitService.getMeasurement(),
+                    history = _uiState.value.history,
+                )
+                try {
+                    _uiState.value = HomeUIState(
+                        measurement = _uiState.value.measurement,
+                        history = MeteoApi.retrofitService.getHistory(),
+                    )
+                } catch (err: Exception) {
+                    error = "Error occured on connecting to the meteo sensors"
+                }
+            } catch (err: Exception) {
+                error = "Error occured on connecting to the meteo sensors"
+            }
+            if (error != null) {
+                _uiState.value = HomeUIState(
+                    measurement = _uiState.value.measurement,
+                    history = _uiState.value.history,
+                    error = error,
+                )
+            }
         }
     }
 }

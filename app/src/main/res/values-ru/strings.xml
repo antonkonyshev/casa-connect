@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Дом</string>
+    <string name="error_on_connecting_to_meteo">Ошибка при подключении к метеодатчикам</string>
+    <string name="navigation_label">Навигация</string>
+    <string name="meteo_label">Метео</string>
+    <string name="window_label">Окно</string>
+    <string name="light_label">Свет</string>
+    <string name="door_label">Дверь</string>
+    <string name="devices_label">Устройства</string>
+    <string name="meteostation">Метеостанция</string>
+    <string name="refresh">Обновить</string>
+    <string name="temperature">Температура</string>
+    <string name="pressure">Давление</string>
+    <string name="altitude">Высота</string>
+    <string name="history">История</string>
+</resources>

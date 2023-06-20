@@ -1,6 +1,5 @@
 package name.antonkonyshev.home
 
-import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,7 +14,6 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoTracker
-import androidx.window.layout.WindowMetricsCalculator
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -37,7 +35,9 @@ class MainActivity : ComponentActivity() {
         HiddenApiBypass.addHiddenApiExemptions("L")
         super.onCreate(savedInstanceState)
 
-        val devicePostureFlow = WindowInfoTracker.getOrCreate(this).windowLayoutInfo(this)
+        val devicePostureFlow = WindowInfoTracker
+            .getOrCreate(this)
+            .windowLayoutInfo(this)
             .flowWithLifecycle(this.lifecycle)
             .map { layoutInfo ->
                 val foldingFeature = layoutInfo
@@ -65,15 +65,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-    /*
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        val windowMetrics = WindowMetricsCalculator.getOrCreate()
-            .computeCurrentWindowMetrics(this@MainActivity)
-        val bounds = windowMetrics.bounds
-    }
-    */
 }
 
 @Preview(showBackground = true)

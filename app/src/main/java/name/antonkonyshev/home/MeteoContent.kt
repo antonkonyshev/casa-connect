@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.absolutePadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,25 +18,24 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Landscape
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.icons.filled.Thermostat
+import androidx.compose.material.icons.filled.Timeline
 import androidx.compose.material.icons.filled.TireRepair
 import androidx.compose.material.icons.filled.Watch
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import kotlinx.coroutines.launch
 import name.antonkonyshev.home.meteo.Measurement
 import name.antonkonyshev.home.meteo.SensorValue
 
@@ -58,7 +56,7 @@ fun MeteoContent (
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "Meteostation",
+                text = stringResource(R.string.meteostation),
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier
             )
@@ -71,15 +69,14 @@ fun MeteoContent (
             ) {
                 Icon(
                     imageVector = Icons.Default.Sync,
-                    contentDescription = "Refresh",
+                    contentDescription = stringResource(R.string.refresh),
                     modifier = Modifier.padding(0.dp)
                 )
             }
         }
 
-        // TODO: Replace hardcoded strings with resources and translate them
+        // TODO: Localization for sensor value units
         // TODO: Add chart representing changing of values over time
-        // TODO: Add periodical updating of measurements and updating on resume
         @Suppress("DEPRECATION")
         SwipeRefresh(
             state = rememberSwipeRefreshState(homeUIState.loading),
@@ -90,26 +87,26 @@ fun MeteoContent (
                 modifier = modifier.verticalScroll(ScrollState(0))
             ) {
                 SensorValueListItem(
-                    label = "Temperature",
+                    label = stringResource(R.string.temperature),
                     icon = Icons.Default.Thermostat,
                     sensor = homeUIState.measurement.temperature,
                     modifier = modifier
                 )
                 SensorValueListItem(
-                    label = "Pressure",
+                    label = stringResource(R.string.pressure),
                     icon = Icons.Default.TireRepair,
                     sensor = homeUIState.measurement.pressure,
                     modifier = modifier
                 )
                 SensorValueListItem(
-                    label = "Altitude",
+                    label = stringResource(R.string.altitude),
                     icon = Icons.Default.Landscape,
                     sensor = homeUIState.measurement.altitude,
                     modifier = modifier
                 )
                 SensorValueListItem(
-                    label = "History",
-                    icon = Icons.Default.Watch,
+                    label = stringResource(R.string.history),
+                    icon = Icons.Default.Timeline,
                     sensor = SensorValue(
                         if (homeUIState.history.size < 1) -300F
                         else homeUIState.history.size.toFloat(),
@@ -138,16 +135,21 @@ fun SensorValueListItem(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(imageVector = icon, contentDescription = label, modifier = modifier.weight(1f))
+            Icon(
+                imageVector = icon,
+                contentDescription = label,
+                modifier = Modifier.padding(end = 20.dp)
+            )
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelMedium,
-                modifier = Modifier.weight(3f)
+                modifier = Modifier.weight(1f),
+                textAlign = TextAlign.Start
             )
             Text(
                 text = if (sensor.value > -300) "${sensor.value} ${sensor.unit}" else "",
                 style = MaterialTheme.typography.labelMedium,
-                modifier = Modifier.weight(2f),
+                modifier = Modifier,
                 textAlign = TextAlign.End
             )
         }
