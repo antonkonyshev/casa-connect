@@ -9,18 +9,27 @@ import name.antonkonyshev.home.meteo.Measurement
 import name.antonkonyshev.home.meteo.MeteoApi
 
 class HomeViewModel: ViewModel() {
-    private val _uiState = MutableStateFlow(HomeUIState(loading = true))
+    private val _uiState = MutableStateFlow(HomeUIState())
     val uiState: StateFlow<HomeUIState> = _uiState
 
     init {
         observeMeasurement()
     }
 
-    private fun observeMeasurement() {
+    fun observeMeasurement() {
+        if (_uiState.value.loading) {
+            return
+        }
+        _uiState.value = HomeUIState(
+            measurement = _uiState.value.measurement,
+            history = _uiState.value.history,
+            loading = true
+        )
         viewModelScope.launch {
             _uiState.value = HomeUIState(
                 measurement = MeteoApi.retrofitService.getMeasurement(),
                 history = MeteoApi.retrofitService.getHistory(),
+                loading = false
             )
         }
     }
