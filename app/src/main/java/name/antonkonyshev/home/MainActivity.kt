@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import name.antonkonyshev.home.meteo.Measurement
 import name.antonkonyshev.home.meteo.SensorValue
-import name.antonkonyshev.home.ui.theme.CoderLabHomeTheme
+import name.antonkonyshev.home.ui.theme.HomeTheme
 import name.antonkonyshev.home.utils.DevicePosture
 import name.antonkonyshev.home.utils.isBookPosture
 import name.antonkonyshev.home.utils.isSeparating
@@ -27,6 +27,8 @@ import org.lsposed.hiddenapibypass.HiddenApiBypass
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
+// TODO: Discovery of the available services in the local network
+// TODO: Storing info about local services and checking availability of them on start up or resume
 class MainActivity : ComponentActivity() {
     private val viewModel: HomeViewModel by viewModels()
 
@@ -57,7 +59,7 @@ class MainActivity : ComponentActivity() {
             )
 
         setContent {
-            CoderLabHomeTheme {
+            HomeTheme {
                 val uiState = viewModel.uiState.collectAsState().value
                 val windowSize = calculateWindowSizeClass(activity = this)
                 val devicePosture = devicePostureFlow.collectAsState().value
@@ -70,7 +72,7 @@ class MainActivity : ComponentActivity() {
 @Preview(showBackground = true)
 @Composable
 fun HomeAppPreview() {
-    CoderLabHomeTheme {
+    HomeTheme {
         HomeApp(
             homeUIState = HomeUIState(
                 measurement = Measurement(
@@ -89,7 +91,7 @@ fun HomeAppPreview() {
 @Preview(showBackground = true, widthDp = 700)
 @Composable
 fun HomeAppPreviewTablet() {
-    CoderLabHomeTheme {
+    HomeTheme {
         HomeApp(
             homeUIState = HomeUIState(
                 measurement = Measurement(
@@ -108,7 +110,7 @@ fun HomeAppPreviewTablet() {
 @Preview(showBackground = true, widthDp = 1000)
 @Composable
 fun HomeAppPreviewDesktop() {
-    CoderLabHomeTheme {
+    HomeTheme {
         HomeApp(
             homeUIState = HomeUIState(
                 measurement = Measurement(

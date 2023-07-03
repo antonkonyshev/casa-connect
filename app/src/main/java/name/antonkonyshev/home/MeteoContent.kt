@@ -20,7 +20,6 @@ import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.icons.filled.Thermostat
 import androidx.compose.material.icons.filled.Timeline
 import androidx.compose.material.icons.filled.TireRepair
-import androidx.compose.material.icons.filled.Watch
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -45,10 +44,9 @@ fun MeteoContent (
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = viewModel()
 ) {
-    Column(modifier = modifier) {
+    Column(modifier = modifier.fillMaxSize()) {
         Row(
             modifier = Modifier
-                .background(color = MaterialTheme.colorScheme.inverseOnSurface)
                 .height(80.dp)
                 .padding(start = 40.dp, end = 15.dp)
                 .fillMaxWidth(),
@@ -58,6 +56,7 @@ fun MeteoContent (
             Text(
                 text = stringResource(R.string.meteostation),
                 style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier
             )
             Button(
@@ -70,7 +69,9 @@ fun MeteoContent (
                 Icon(
                     imageVector = Icons.Default.Sync,
                     contentDescription = stringResource(R.string.refresh),
-                    modifier = Modifier.padding(0.dp)
+                    modifier = Modifier
+                        .padding(0.dp)
+                        .background(color = MaterialTheme.colorScheme.primary)
                 )
             }
         }
@@ -81,10 +82,14 @@ fun MeteoContent (
         SwipeRefresh(
             state = rememberSwipeRefreshState(homeUIState.loading),
             onRefresh = { viewModel.observeMeasurement() },
-            modifier = Modifier.fillMaxSize().fillMaxHeight()
+            modifier = Modifier
+                .fillMaxSize()
         ) {
             Column(
-                modifier = modifier.verticalScroll(ScrollState(0))
+                modifier = modifier
+                    .verticalScroll(ScrollState(0))
+                    .fillMaxSize()
+                    .fillMaxHeight()
             ) {
                 SensorValueListItem(
                     label = stringResource(R.string.temperature),

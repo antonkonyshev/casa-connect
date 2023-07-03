@@ -14,8 +14,17 @@ class HomeViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(HomeUIState())
     val uiState: StateFlow<HomeUIState> = _uiState
 
-    // todo: Add settings for the period of the measurement updates
+    // TODO: Add settings for the period of the measurement updates
     private val periodicalMeasurementUpdate = 60L  // seconds
+
+    private var backgroundResources: ArrayList<Int> = arrayListOf(
+        R.raw.river,
+        R.raw.lake,
+        R.raw.mountains,
+        R.raw.praire,
+    )
+    val meteoBackgroundResource: Int = backgroundResources.shuffled().drop(0)[0]
+    val navigationDrawerBackgroundResource: Int = backgroundResources.shuffled().drop(0)[0]
 
     init {
         // observeMeasurement()
