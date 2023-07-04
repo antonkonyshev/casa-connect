@@ -28,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,6 +38,7 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import name.antonkonyshev.home.meteo.Measurement
 import name.antonkonyshev.home.meteo.SensorValue
+import name.antonkonyshev.home.utils.getLocalUnits
 
 @Composable
 fun MeteoContent (
@@ -115,7 +117,7 @@ fun MeteoContent (
                     sensor = SensorValue(
                         if (homeUIState.history.size < 1) -300F
                         else homeUIState.history.size.toFloat(),
-                        "items"
+                        "records"
                     ),
                     modifier = modifier
                 )
@@ -152,7 +154,7 @@ fun SensorValueListItem(
                 textAlign = TextAlign.Start
             )
             Text(
-                text = if (sensor.value > -300) "${sensor.value} ${sensor.unit}" else "",
+                text = if (sensor.value > -300) "${sensor.value} ${getLocalUnits(sensor.unit, LocalContext.current)}" else "",
                 style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier,
                 textAlign = TextAlign.End
