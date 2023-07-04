@@ -141,6 +141,7 @@ private fun HomeNavigationWrapperUI(
     }
 }
 
+// TODO: Visibility animation for the background image
 @Composable
 fun HomeAppContent(
     navigationType: HomeNavigationType,
