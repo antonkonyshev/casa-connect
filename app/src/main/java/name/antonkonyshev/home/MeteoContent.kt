@@ -38,6 +38,7 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import name.antonkonyshev.home.meteo.Measurement
 import name.antonkonyshev.home.meteo.SensorValue
+import name.antonkonyshev.home.utils.getLocalServiceName
 import name.antonkonyshev.home.utils.getLocalUnits
 
 @Composable
@@ -50,12 +51,13 @@ fun MeteoContent (
         Row(
             modifier = Modifier
                 .height(80.dp)
-                .padding(start = 40.dp, end = 15.dp)
+                .padding(start = 25.dp, end = 15.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
+                // TODO: get service info from the meteostation
                 text = stringResource(R.string.meteostation),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -78,7 +80,6 @@ fun MeteoContent (
             }
         }
 
-        // TODO: Localization for sensor value units
         // TODO: Add chart representing changing of values over time
         @Suppress("DEPRECATION")
         SwipeRefresh(
@@ -93,6 +94,23 @@ fun MeteoContent (
                     .fillMaxSize()
                     .fillMaxHeight()
             ) {
+                Row(
+                    modifier = Modifier
+                        .padding(start = 25.dp, end = 25.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    // TODO: Show on surface with secondary background
+                    Text(
+                        // TODO: get service info from the meteostation
+                        text = "${getLocalServiceName("room", LocalContext.current)}",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        modifier = Modifier
+                    )
+                }
+
                 SensorValueListItem(
                     label = stringResource(R.string.temperature),
                     icon = Icons.Default.Thermostat,

@@ -4,24 +4,36 @@ import android.content.Context
 import android.os.Build
 import java.util.Locale
 
-fun getCurrentLocale(context: Context): Locale {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        return context.getResources().getConfiguration().getLocales().get(0)
-    } else {
-        return context.getResources().getConfiguration().locale
-    }
-}
-
 fun getLocalUnits(units: String, context: Context): String {
-    when (getCurrentLocale(context).language) {
+    when (context.getResources().getConfiguration().getLocales().get(0).language) {
         "ru" ->
             when (units) {
                 "mmHg" -> return "мм рт. ст."
                 "m" -> return "м"
+                "mgm3" -> return "мг/м3"
                 "records" -> return "записей"
                 else -> return units
             }
         else -> return units
     }
     return units
+}
+
+fun getLocalServiceName(name: String, context: Context): String {
+    when (context.getResources().getConfiguration().getLocales().get(0).language) {
+        "ru" ->
+            when (name.lowercase()) {
+                "room" -> return "Комната"
+                "kitchen" -> return "Кухня"
+                "bathroom" -> return "Ванная"
+                "balcony" -> return "Балкон"
+                "vestibule" -> return "Прихожая"
+                "outdoors" -> return "Улица"
+                "yard" -> return "Двор"
+                "sauna" -> return "Баня"
+                else -> return name
+            }
+        else -> return name
+    }
+    return name
 }
