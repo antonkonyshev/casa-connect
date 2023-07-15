@@ -18,14 +18,22 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".devices.DevicesActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.CoderLabHome">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".meteo.MeteoActivity"
+            android:exported="false"
+            android:label="Home"
+            android:theme="@style/Theme.CoderLabHome">
+            <intent-filter>
+                <action android:name="android.intent.action.APPLICATION_PREFERENCES" />
             </intent-filter>
         </activity>
     </application>

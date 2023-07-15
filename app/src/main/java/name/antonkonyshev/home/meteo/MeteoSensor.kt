@@ -3,7 +3,6 @@ package name.antonkonyshev.home.meteo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import name.antonkonyshev.home.devices.Device
-import java.net.Inet4Address
 import java.net.InetAddress
 
 class MeteoSensor(
@@ -11,9 +10,9 @@ class MeteoSensor(
     service: String,
     name: String,
     sensors: List<String>,
-    ip: InetAddress,
-    available: Boolean = false
-) : Device(id, service, name, sensors, available) {
+    ip: InetAddress? = null,
+    available: Boolean? = false
+) : Device(id, service, name, sensors, ip, available) {
     private val _measurement = MutableStateFlow(Measurement())
     val measurement: StateFlow<Measurement> = _measurement
 

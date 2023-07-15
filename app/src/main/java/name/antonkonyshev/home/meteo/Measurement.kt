@@ -1,8 +1,5 @@
 package name.antonkonyshev.home.meteo
 
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-
 data class SensorValue(
     val value: Float = -300F,
     val unit: String = "",

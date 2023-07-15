@@ -1,4 +1,4 @@
-package name.antonkonyshev.home
+package name.antonkonyshev.home.meteo
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -15,11 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Landscape
 import androidx.compose.material.icons.filled.Sync
-import androidx.compose.material.icons.filled.Thermostat
-import androidx.compose.material.icons.filled.Timeline
-import androidx.compose.material.icons.filled.TireRepair
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -31,23 +27,23 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import name.antonkonyshev.home.meteo.Measurement
-import name.antonkonyshev.home.meteo.SensorValue
+import name.antonkonyshev.home.HomeViewModel
+import name.antonkonyshev.home.R
+import name.antonkonyshev.home.devices.Device
 import name.antonkonyshev.home.utils.getLocalServiceName
 import name.antonkonyshev.home.utils.getLocalUnits
 
 @Composable
-fun MeteoContent (
-    homeUIState: HomeUIState,
-    modifier: Modifier = Modifier,
+fun MeteoScreen(
+    loading: Boolean,
+    devices: List<Device>,
     viewModel: HomeViewModel = viewModel()
 ) {
-    Column(modifier = modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxSize()) {
         Row(
             modifier = Modifier
                 .height(80.dp)
@@ -83,13 +79,13 @@ fun MeteoContent (
         // TODO: Add chart representing changing of values over time
         @Suppress("DEPRECATION")
         SwipeRefresh(
-            state = rememberSwipeRefreshState(homeUIState.loading),
+            state = rememberSwipeRefreshState(loading),
             onRefresh = { viewModel.observeMeasurement() },
             modifier = Modifier
                 .fillMaxSize()
         ) {
             Column(
-                modifier = modifier
+                modifier = Modifier
                     .verticalScroll(ScrollState(0))
                     .fillMaxSize()
                     .fillMaxHeight()
@@ -111,6 +107,7 @@ fun MeteoContent (
                     )
                 }
 
+                /*
                 SensorValueListItem(
                     label = stringResource(R.string.temperature),
                     icon = Icons.Default.Thermostat,
@@ -139,6 +136,7 @@ fun MeteoContent (
                     ),
                     modifier = modifier
                 )
+                */
             }
         }
     }
@@ -179,49 +177,4 @@ fun SensorValueListItem(
             )
         }
     }
-}
-
-@Composable
-@Preview(showBackground = true)
-fun MeteoContentPreview() {
-    MeteoContent(
-        homeUIState = HomeUIState(
-            measurement = Measurement(
-                timestamp = 10000000,
-                temperature = SensorValue(value = 24.61F, unit = "C"),
-                pressure = SensorValue(value = 743.35F, unit = "mmHg"),
-                altitude = SensorValue(value = 146.18F, unit = "m")
-            )
-        )
-    )
-}
-
-@Composable
-@Preview(showBackground = true, widthDp = 700)
-fun MeteoContentPreviewTablet() {
-    MeteoContent(
-        homeUIState = HomeUIState(
-            measurement = Measurement(
-                timestamp = 10000000,
-                temperature = SensorValue(value = 24.61F, unit = "C"),
-                pressure = SensorValue(value = 743.35F, unit = "mmHg"),
-                altitude = SensorValue(value = 146.18F, unit = "m")
-            )
-        )
-    )
-}
-
-@Composable
-@Preview(showBackground = true, widthDp = 1000)
-fun MeteoContentPreviewDesktop() {
-    MeteoContent(
-        homeUIState = HomeUIState(
-            measurement = Measurement(
-                timestamp = 10000000,
-                temperature = SensorValue(value = 24.61F, unit = "C"),
-                pressure = SensorValue(value = 743.35F, unit = "mmHg"),
-                altitude = SensorValue(value = 146.18F, unit = "m")
-            )
-        )
-    )
 }
