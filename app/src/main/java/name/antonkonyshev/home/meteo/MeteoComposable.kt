@@ -1,5 +1,6 @@
 package name.antonkonyshev.home.meteo
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -63,20 +64,22 @@ fun MeteoScreen(
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier
             )
-            Button(
-                onClick = { viewModel.observeMeasurement() },
-                shape = CircleShape,
-                contentPadding = PaddingValues(0.dp),
-                modifier = Modifier
-                    .size(50.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Sync,
-                    contentDescription = stringResource(R.string.refresh),
+            AnimatedVisibility(!uiState.loading) {
+                Button(
+                    onClick = { viewModel.observeMeasurement() },
+                    shape = CircleShape,
+                    contentPadding = PaddingValues(0.dp),
                     modifier = Modifier
-                        .padding(0.dp)
-                        .background(color = MaterialTheme.colorScheme.primary)
-                )
+                        .size(50.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Sync,
+                        contentDescription = stringResource(R.string.refresh),
+                        modifier = Modifier
+                            .padding(0.dp)
+                            .background(color = MaterialTheme.colorScheme.primary)
+                    )
+                }
             }
         }
 

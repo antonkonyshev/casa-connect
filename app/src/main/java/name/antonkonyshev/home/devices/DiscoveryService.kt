@@ -42,9 +42,9 @@ object DiscoveryService {
             val updatedDevices = it.toMutableList()
             updatedDevices.add(
                 Device(
-                    "testing-device-1", "meteo", "Outdoors",
-                    listOf("temperature", "altitude", "pressure"),
-                    Inet4Address.getByName("192.168.0.100"), false
+                    "testing-device-1", "camera", "Entrance",
+                    emptyList<String>(), Inet4Address.getByName("192.168.0.100"),
+                    false
                 )
             )
             return@update updatedDevices.toList()
@@ -54,9 +54,21 @@ object DiscoveryService {
             val updatedDevices = it.toMutableList()
             updatedDevices.add(
                 Device(
-                    "testing-device-2", "meteo", "Kitchen",
-                    listOf("temperature", "humidity", "pressure"),
-                    Inet4Address.getByName("192.168.0.140"), true
+                    "testing-device-2", "relay", "Kitchen",
+                    emptyList<String>(), Inet4Address.getByName("192.168.0.140"),
+                    true
+                )
+            )
+            return@update updatedDevices.toList()
+        }
+        // TODO: remove testing device
+        devices.update {
+            val updatedDevices = it.toMutableList()
+            updatedDevices.add(
+                Device(
+                    "testing-device-3", "servo", "Window",
+                    emptyList<String>(), Inet4Address.getByName("192.168.0.150"),
+                    true
                 )
             )
             return@update updatedDevices.toList()
@@ -80,6 +92,7 @@ object DiscoveryService {
                                     .add(KotlinJsonAdapterFactory()).build()
                                 val device = moshi.adapter(Device::class.java)
                                     .fromJson(response.body!!.source())
+                                response.body!!.close()
                                 if (device is Device) {
                                     val existingDevice =
                                         devices.value.find { it.id == device.id }

@@ -5,9 +5,10 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Url
 
 // TODO: add local services discovery logic
-private const val BASE_URL = "http://192.168.0.160"
+private const val BASE_URL = "http://192.168.0.150"
 
 private val moshi = Moshi.Builder()
     .add(KotlinJsonAdapterFactory())
@@ -19,8 +20,8 @@ private val retrofit = Retrofit.Builder()
     .build()
 
 interface MeteoService {
-    @GET("/")
-    suspend fun getMeasurement() : Measurement
+    @GET
+    suspend fun getMeasurement(@Url url: String) : Measurement
 
     @GET("/history")
     suspend fun getHistory() : List<Measurement>

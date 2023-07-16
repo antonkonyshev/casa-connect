@@ -24,6 +24,10 @@ class MeteoActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val deviceId: String? = getIntent().getStringExtra("deviceId")
+        if (deviceId is String && deviceId.isNotEmpty()) {
+        }
+
         setContent {
             HomeTheme {
                 NavigationWrapper(
@@ -33,7 +37,7 @@ class MeteoActivity : BaseActivity() {
                     viewModel.navigationBackgroundResource,
                     viewModel.backgroundResource,
                     viewModel.uiState.collectAsState().value,
-                    viewModel.devices.collectAsState().value,
+                    viewModel.devices.collectAsState().value.filter { it.service == "meteo" },
                 )
             }
         }
