@@ -119,8 +119,8 @@ fun NavigationWrapper(
 ) {
     val systemUiController = rememberSystemUiController()
     systemUiController.setStatusBarColor(
-        color = MaterialTheme.colorScheme.secondary,
-        darkIcons = false,
+        color = Color.White,
+        darkIcons = true,
     )
 
     val navigationType: NavigationType

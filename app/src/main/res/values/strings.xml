@@ -13,4 +13,5 @@
     <string name="pressure">Pressure</string>
     <string name="altitude">Altitude</string>
     <string name="history">History</string>
+    <string name="devices">Devices</string>
 </resources>

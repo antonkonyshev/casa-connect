@@ -15,7 +15,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Landscape
 import androidx.compose.material.icons.filled.Sync
+import androidx.compose.material.icons.filled.Thermostat
+import androidx.compose.material.icons.filled.Timeline
+import androidx.compose.material.icons.filled.TireRepair
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -31,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import name.antonkonyshev.home.HomeViewModel
 import name.antonkonyshev.home.R
 import name.antonkonyshev.home.devices.Device
 import name.antonkonyshev.home.utils.getLocalServiceName
@@ -41,7 +44,7 @@ import name.antonkonyshev.home.utils.getLocalUnits
 fun MeteoScreen(
     loading: Boolean,
     devices: List<Device>,
-    viewModel: HomeViewModel = viewModel()
+    viewModel: MeteoViewModel = viewModel()
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         Row(
@@ -103,40 +106,33 @@ fun MeteoScreen(
                         text = "${getLocalServiceName("room", LocalContext.current)}",
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        modifier = Modifier
                     )
                 }
 
-                /*
                 SensorValueListItem(
                     label = stringResource(R.string.temperature),
                     icon = Icons.Default.Thermostat,
-                    sensor = homeUIState.measurement.temperature,
-                    modifier = modifier
+                    sensor = viewModel.measurement.value.temperature,
                 )
                 SensorValueListItem(
                     label = stringResource(R.string.pressure),
                     icon = Icons.Default.TireRepair,
-                    sensor = homeUIState.measurement.pressure,
-                    modifier = modifier
+                    sensor = viewModel.measurement.value.pressure,
                 )
                 SensorValueListItem(
                     label = stringResource(R.string.altitude),
                     icon = Icons.Default.Landscape,
-                    sensor = homeUIState.measurement.altitude,
-                    modifier = modifier
+                    sensor = viewModel.measurement.value.altitude,
                 )
                 SensorValueListItem(
                     label = stringResource(R.string.history),
                     icon = Icons.Default.Timeline,
                     sensor = SensorValue(
-                        if (homeUIState.history.size < 1) -300F
-                        else homeUIState.history.size.toFloat(),
+                        if (viewModel.history.value.isEmpty()) -300F
+                        else viewModel.history.value.size.toFloat(),
                         "records"
                     ),
-                    modifier = modifier
                 )
-                */
             }
         }
     }

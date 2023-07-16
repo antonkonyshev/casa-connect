@@ -1,5 +1,7 @@
 package name.antonkonyshev.home.devices
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Thermostat
 import java.net.InetAddress
 
 open class Device (
@@ -14,6 +16,8 @@ open class Device (
     @Transient
     var available: Boolean? = false,
 ) {
+    val serviceIcon = Icons.Default.Thermostat
+
     open fun copy(
         id: String = this.id, service: String = this.service, name: String = this.name,
         sensors: List<String> = this.sensors.toList(), ip: InetAddress? = this.ip,
@@ -26,4 +30,5 @@ open class Device (
         }
         this.available = available
     }
+
 }

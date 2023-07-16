@@ -19,6 +19,7 @@ fun getLocalUnits(units: String, context: Context): String {
     return units
 }
 
+// TODO: better localization for units and default device names
 fun getLocalServiceName(name: String, context: Context): String {
     when (context.getResources().getConfiguration().getLocales().get(0).language) {
         "ru" ->

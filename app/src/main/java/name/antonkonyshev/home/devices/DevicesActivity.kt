@@ -28,7 +28,7 @@ class DevicesActivity : BaseActivity() {
                     viewModel.navigationBackgroundResource,
                     viewModel.backgroundResource,
                     viewModel.loading.collectAsState().value,
-                    viewModel.devices.collectAsState().value,
+                    discoveryService.devices.collectAsState().value,
                 )
             }
         }
