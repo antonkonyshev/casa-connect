@@ -72,7 +72,7 @@ fun AppScreen(
     navigationType: NavigationType,
     backgroundResource: Int,
     navigationDestination: String,
-    loading: Boolean,
+    uiState: UiState,
     devices: List<Device>,
     onDrawerClicked: () -> Unit = {},
 ) {
@@ -93,10 +93,10 @@ fun AppScreen(
 
             Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
                 AnimatedVisibility(navigationDestination == NavigationDestinations.METEO) {
-                    MeteoScreen(loading, devices)
+                    MeteoScreen(uiState, devices)
                 }
                 AnimatedVisibility(navigationDestination == NavigationDestinations.DEVICES, modifier = Modifier.weight(1f)) {
-                    DevicesScreen(loading, devices)
+                    DevicesScreen(uiState, devices)
                 }
 
                 AnimatedVisibility(navigationType == NavigationType.BOTTOM_NAVIGATION) {
@@ -114,7 +114,7 @@ fun NavigationWrapper(
     navigationDestination: String,
     navigationBackgroundResource: Int,
     backgroundResource: Int,
-    loading: Boolean,
+    uiState: UiState,
     devices: List<Device>,
 ) {
     val systemUiController = rememberSystemUiController()
@@ -150,7 +150,7 @@ fun NavigationWrapper(
                 }
             }
         ) {
-            AppScreen(navigationType, backgroundResource, navigationDestination, loading, devices)
+            AppScreen(navigationType, backgroundResource, navigationDestination, uiState, devices)
         }
     } else {
         ModalNavigationDrawer(
@@ -167,7 +167,7 @@ fun NavigationWrapper(
             drawerState = drawerState
         ) {
             AppScreen(
-                navigationType, backgroundResource, navigationDestination, loading, devices,
+                navigationType, backgroundResource, navigationDestination, uiState, devices,
                 onDrawerClicked = { scope.launch { drawerState.open() } }
             )
         }

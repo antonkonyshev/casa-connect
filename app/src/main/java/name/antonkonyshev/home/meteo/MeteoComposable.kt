@@ -36,13 +36,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import name.antonkonyshev.home.R
+import name.antonkonyshev.home.UiState
 import name.antonkonyshev.home.devices.Device
 import name.antonkonyshev.home.utils.getLocalServiceName
 import name.antonkonyshev.home.utils.getLocalUnits
 
 @Composable
 fun MeteoScreen(
-    loading: Boolean,
+    uiState: UiState,
     devices: List<Device>,
     viewModel: MeteoViewModel = viewModel()
 ) {
@@ -82,7 +83,7 @@ fun MeteoScreen(
         // TODO: Add chart representing changing of values over time
         @Suppress("DEPRECATION")
         SwipeRefresh(
-            state = rememberSwipeRefreshState(loading),
+            state = rememberSwipeRefreshState(uiState.loading),
             onRefresh = { viewModel.observeMeasurement() },
             modifier = Modifier
                 .fillMaxSize()

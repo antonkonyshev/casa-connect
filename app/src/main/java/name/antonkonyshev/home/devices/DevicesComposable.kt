@@ -39,17 +39,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
+import androidx.lifecycle.viewmodel.compose.viewModel
 import name.antonkonyshev.home.R
-import name.antonkonyshev.home.getActivity
+import name.antonkonyshev.home.UiState
 import name.antonkonyshev.home.meteo.MeteoActivity
 import name.antonkonyshev.home.utils.getLocalServiceName
 
 @Composable
 fun DevicesScreen(
-    loading: Boolean,
-    devices: List<Device>
+    uiState: UiState,
+    devices: List<Device>,
+    viewModel: DevicesViewModel = viewModel()
 ) {
-    val context = LocalContext.current;
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -67,9 +68,9 @@ fun DevicesScreen(
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier
             )
-            AnimatedVisibility(!loading) {
+            AnimatedVisibility(!uiState.scanning) {
                 Button(
-                    onClick = { context.getActivity()?.discoveryService?.discoverDevices() },
+                    onClick = { viewModel.discoverDevices() },
                     shape = CircleShape,
                     contentPadding = PaddingValues(0.dp),
                     modifier = Modifier

@@ -32,8 +32,8 @@ class MeteoActivity : BaseActivity() {
                     NavigationDestinations.METEO,
                     viewModel.navigationBackgroundResource,
                     viewModel.backgroundResource,
-                    viewModel.loading.collectAsState().value,
-                    discoveryService.devices.collectAsState().value,
+                    viewModel.uiState.collectAsState().value,
+                    viewModel.devices.collectAsState().value,
                 )
             }
         }

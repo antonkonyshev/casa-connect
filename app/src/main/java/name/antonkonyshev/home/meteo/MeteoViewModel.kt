@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import name.antonkonyshev.home.BaseViewModel
 import name.antonkonyshev.home.devices.DiscoveryService
 import java.util.Timer
@@ -31,10 +32,8 @@ class MeteoViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun observeMeasurement() {
-        if (loading.value) {
-            return
-        }
-        _loading.value = true
+        if (uiState.value.loading) { return }
+        _uiState.update { it.copy(loading = true) }
         viewModelScope.async(Dispatchers.IO) {
             try {
                 _measurement.value = MeteoApi.retrofitService.getMeasurement()
@@ -42,7 +41,7 @@ class MeteoViewModel(application: Application) : BaseViewModel(application) {
                     _history.value = MeteoApi.retrofitService.getHistory()
                 } catch (err: Exception) {}
             } catch (err: Exception) {}
-            _loading.value = false
+            _uiState.update { it.copy(loading = false) }
         }
     }
 }
