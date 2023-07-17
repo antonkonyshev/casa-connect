@@ -11,9 +11,12 @@ import androidx.activity.viewModels
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.viewModelScope
 import name.antonkonyshev.home.BaseActivity
+import name.antonkonyshev.home.HomeApplication
 import name.antonkonyshev.home.NavigationDestinations
 import name.antonkonyshev.home.NavigationWrapper
+import name.antonkonyshev.home.devices.Device
 import name.antonkonyshev.home.devices.DiscoveryService
 import name.antonkonyshev.home.ui.theme.HomeTheme
 
@@ -26,6 +29,7 @@ class MeteoActivity : BaseActivity() {
 
         val deviceId: String? = getIntent().getStringExtra("deviceId")
         if (deviceId is String && deviceId.isNotEmpty()) {
+            // TODO: Show selected in the foreground
         }
 
         setContent {
@@ -37,7 +41,8 @@ class MeteoActivity : BaseActivity() {
                     viewModel.navigationBackgroundResource,
                     viewModel.backgroundResource,
                     viewModel.uiState.collectAsState().value,
-                    viewModel.devices.collectAsState().value.filter { it.service == "meteo" },
+                    viewModel.getApplication<HomeApplication>().deviceRepository
+                        .meteoDevices.collectAsState(initial = emptyList<Device>()).value,
                 )
             }
         }

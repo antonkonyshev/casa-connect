@@ -29,6 +29,7 @@ fun getLocalServiceName(name: String, context: Context): String {
                 "bathroom" -> return "Ванная"
                 "balcony" -> return "Балкон"
                 "vestibule" -> return "Прихожая"
+                "entrance" -> return "Вход"
                 "outdoors" -> return "Улица"
                 "yard" -> return "Двор"
                 "sauna" -> return "Баня"

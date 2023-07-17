@@ -10,6 +10,7 @@ import androidx.compose.runtime.collectAsState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import name.antonkonyshev.home.BaseActivity
+import name.antonkonyshev.home.HomeApplication
 import name.antonkonyshev.home.NavigationDestinations
 import name.antonkonyshev.home.NavigationWrapper
 import name.antonkonyshev.home.ui.theme.HomeTheme
@@ -31,7 +32,8 @@ class DevicesActivity : BaseActivity() {
                     viewModel.navigationBackgroundResource,
                     viewModel.backgroundResource,
                     viewModel.uiState.collectAsState().value,
-                    viewModel.devices.collectAsState().value,
+                    viewModel.getApplication<HomeApplication>().deviceRepository
+                        .allDevices.collectAsState(initial = emptyList<Device>()).value,
                 )
             }
         }

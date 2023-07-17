@@ -40,6 +40,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
+import name.antonkonyshev.home.HomeApplication
 import name.antonkonyshev.home.R
 import name.antonkonyshev.home.UiState
 import name.antonkonyshev.home.meteo.MeteoActivity
@@ -68,22 +69,20 @@ fun DevicesScreen(
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier
             )
-            AnimatedVisibility(!uiState.scanning) {
-                Button(
-                    onClick = { viewModel.discoverDevices() },
-                    shape = CircleShape,
-                    contentPadding = PaddingValues(0.dp),
+            Button(
+                onClick = { viewModel.getApplication<HomeApplication>().discoveryService.discoverDevices() },
+                shape = CircleShape,
+                contentPadding = PaddingValues(0.dp),
+                modifier = Modifier
+                    .size(50.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Sync,
+                    contentDescription = stringResource(R.string.refresh),
                     modifier = Modifier
-                        .size(50.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Sync,
-                        contentDescription = stringResource(R.string.refresh),
-                        modifier = Modifier
-                            .padding(0.dp)
-                            .background(color = MaterialTheme.colorScheme.primary)
-                    )
-                }
+                        .padding(0.dp)
+                        .background(color = MaterialTheme.colorScheme.primary)
+                )
             }
         }
 
