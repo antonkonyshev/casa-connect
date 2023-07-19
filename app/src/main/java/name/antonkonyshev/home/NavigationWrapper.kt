@@ -42,6 +42,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,6 +57,7 @@ import kotlinx.coroutines.launch
 import name.antonkonyshev.home.devices.Device
 import name.antonkonyshev.home.devices.DevicesActivity
 import name.antonkonyshev.home.devices.DevicesScreen
+import name.antonkonyshev.home.meteo.DeviceMeasurement
 import name.antonkonyshev.home.meteo.MeteoActivity
 import name.antonkonyshev.home.meteo.MeteoScreen
 import name.antonkonyshev.home.utils.DevicePosture
@@ -77,6 +79,7 @@ fun AppScreen(
     navigationDestination: String,
     uiState: UiState,
     devices: List<Device>,
+    measurements: Map<String, DeviceMeasurement>,
     onDrawerClicked: () -> Unit = {},
 ) {
     Box(modifier = Modifier.background(color = MaterialTheme.colorScheme.background)) {
@@ -102,7 +105,11 @@ fun AppScreen(
                     navigationDestination == NavigationDestinations.METEO,
                     modifier = Modifier.weight(1f)
                 ) {
-                    MeteoScreen(uiState, devices, onDrawerClicked)
+                    MeteoScreen(uiState, devices, measurements.mapValues {
+                        it.value.measurementFlow.collectAsState()
+                    }, measurements.mapValues {
+                        it.value.historyFlow.collectAsState()
+                    }, onDrawerClicked)
                 }
                 AnimatedVisibility(
                     navigationDestination == NavigationDestinations.DEVICES,
@@ -120,7 +127,9 @@ fun AppScreen(
             // TODO: Animated loading spinner
             // TODO: Edit wallpapers
             Row(
-                modifier = Modifier.fillMaxSize().background(color = Color.White.copy(alpha=0.8F)),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color.White.copy(alpha = 0.8F)),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
@@ -143,6 +152,7 @@ fun NavigationWrapper(
     backgroundResource: Int,
     uiState: UiState,
     devices: List<Device>,
+    measurements: Map<String, DeviceMeasurement> = HashMap(),
 ) {
     val systemUiController = rememberSystemUiController()
     systemUiController.setStatusBarColor(
@@ -177,7 +187,10 @@ fun NavigationWrapper(
                 }
             }
         ) {
-            AppScreen(navigationType, backgroundResource, navigationDestination, uiState, devices)
+            AppScreen(
+                navigationType, backgroundResource, navigationDestination, uiState, devices,
+                measurements,
+            )
         }
     } else {
         ModalNavigationDrawer(
@@ -195,7 +208,7 @@ fun NavigationWrapper(
         ) {
             AppScreen(
                 navigationType, backgroundResource, navigationDestination, uiState, devices,
-                onDrawerClicked = { scope.launch { drawerState.open() } }
+                measurements, onDrawerClicked = { scope.launch { drawerState.open() } },
             )
         }
     }

@@ -9,18 +9,22 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import name.antonkonyshev.home.BaseViewModel
 import name.antonkonyshev.home.HomeApplication
+import java.util.Date
 import java.util.Timer
 import kotlin.concurrent.scheduleAtFixedRate
+
+class DeviceMeasurement(val deviceId: String) {
+    val _measurement = MutableStateFlow(Measurement())
+    val measurementFlow = _measurement.asStateFlow()
+    var lastHistoryUpdate = 0L
+    val _history = MutableStateFlow<List<Measurement>>(emptyList())
+    val historyFlow = _history.asStateFlow()
+}
 
 class MeteoViewModel(application: Application) : BaseViewModel(application) {
     // TODO: Add settings for the period of the measurement updates
     private val periodicalMeasurementUpdate = 15L  // seconds
-
-    private val _measurement = MutableStateFlow(Measurement())
-    val measurement = _measurement.asStateFlow()
-
-    private val _history = MutableStateFlow(emptyList<Measurement>())
-    val history = _history.asStateFlow()
+    val measurements: HashMap<String, DeviceMeasurement> = HashMap()
 
     init {
         observeMeasurement()
@@ -39,20 +43,37 @@ class MeteoViewModel(application: Application) : BaseViewModel(application) {
         viewModelScope.async(Dispatchers.IO) {
             getApplication<HomeApplication>().deviceRepository.byService("meteo")
                 .forEach { device ->
+                    if (!measurements.containsKey(device.id)) {
+                        measurements[device.id] = DeviceMeasurement(device.id)
+                    }
+                    if (device.ip == null) {
+                        return@forEach
+                    }
                     viewModelScope.async(Dispatchers.IO) {
-                        var available = true
-                        try {
-                            // TODO: Load the measurement for each available device
-                            _measurement.value = MeteoAPI.retrofitService.getMeasurement(
-                                "http://" + device.ip!!.hostAddress + "/")
-                            // TODO: Load measurement history
-                        } catch (err: Exception) {
-                            available = false
+                        var available = device.available
+                        if (!device.available) {
+                            if (device.ip!!.isReachable(1000)) {
+                                device.available = true
+                            }
+                        }
+                        if (device.available) {
+                            try {
+                                measurements[device.id]!!._measurement.value = MeteoAPI
+                                    .retrofitService.getMeasurement(device.getMeasurementUrl())
+                            } catch (err: Exception) {
+                                device.available = false
+                            }
                         }
                         if (device.available != available) {
-                            device.available = available
                             getApplication<HomeApplication>().deviceRepository
                                 .updateAvailability(device)
+                        }
+                        // TODO: Add settings for the history update period
+                        if (device.available && Date().getTime() > measurements[device.id]!!.lastHistoryUpdate + 1200000L) {
+                            try {
+                                measurements[device.id]!!._history.value = MeteoAPI
+                                    .retrofitService.getHistory(device.getHistoryUrl())
+                            } catch (err: Exception) {}
                         }
                     }
             }

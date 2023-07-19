@@ -48,6 +48,9 @@ interface DeviceDao {
 
     @Query("update device set available = :available, updated = strftime('%s', 'now') where id = :id")
     fun updateAvailabilityById(id: String, available: Boolean): Int
+
+    @Query("update device set available = :available")
+    fun updateAllDevicesAvailability(available: Boolean)
 }
 
 @TypeConverters(Converters::class)

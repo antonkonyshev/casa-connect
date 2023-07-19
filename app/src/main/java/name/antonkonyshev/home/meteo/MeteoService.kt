@@ -20,8 +20,8 @@ interface MeteoService {
     @GET
     suspend fun getMeasurement(@Url url: String) : Measurement
 
-    @GET("/history")
-    suspend fun getHistory() : List<Measurement>
+    @GET
+    suspend fun getHistory(@Url url: String) : List<Measurement>
 }
 
 object MeteoAPI {

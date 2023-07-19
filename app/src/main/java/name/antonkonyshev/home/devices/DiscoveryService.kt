@@ -22,7 +22,9 @@ import java.net.Inet4Address
 class DiscoveryService(val application: HomeApplication) {
     private var scanning = false
     private val scope = CoroutineScope(Dispatchers.IO)
-
+    private val adapter by lazy {
+        Moshi.Builder().add(KotlinJsonAdapterFactory()).build().adapter(Device::class.java)
+    }
     companion object {
         @Volatile
         private var _instance: DiscoveryService? = null
@@ -46,11 +48,11 @@ class DiscoveryService(val application: HomeApplication) {
                 connectivityManager.activeNetwork
             )?.linkAddresses?.find { la -> la.address is Inet4Address }
             val deviceRepository = application.deviceRepository
+            deviceRepository.updateAllDevicesAvailability(false)
             if (linkAddress is LinkAddress) {
                 val ipRange = SubnetUtils(linkAddress.toString()).info.allAddresses.filter filter@{
                     it != linkAddress.address.hostAddress
                 }
-                // devices.value.forEach { it.available = false }
                 ipRange.forEach { ipAddress ->
                     val ip = Inet4Address.getByName(ipAddress)
                     if (ip.isMulticastAddress()) {
@@ -65,10 +67,7 @@ class DiscoveryService(val application: HomeApplication) {
                                 override fun onFailure(call: Call, e: IOException) {}
                                 override fun onResponse(call: Call, response: Response) {
                                     if (response.code == 200) {
-                                        val moshi = Moshi.Builder()
-                                            .add(KotlinJsonAdapterFactory()).build()
-                                        val device = moshi.adapter(Device::class.java)
-                                            .fromJson(response.body!!.source())
+                                        val device = adapter.fromJson(response.body!!.source())
                                         response.body!!.close()
                                         if (device is Device) {
                                             device.ip = ip

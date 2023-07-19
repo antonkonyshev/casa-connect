@@ -47,11 +47,12 @@ open class Device (
         available: Boolean? = this.available
     ) = Device(id, service, name, sensors, ip, available = true)
 
-    fun updateState(ip: InetAddress? = null, available: Boolean = true) {
-        if (ip is InetAddress && this.ip?.hostAddress != ip.hostAddress) {
-            this.ip = ip
-        }
-        this.available = available
+    fun getMeasurementUrl(): String {
+        return "http://" + ip!!.hostAddress + "/"
+    }
+
+    fun getHistoryUrl(): String {
+        return "http://" + ip!!.hostAddress + "/history"
     }
 
     companion object {

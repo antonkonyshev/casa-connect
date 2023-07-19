@@ -16,6 +16,7 @@ import androidx.compose.material.icons.outlined.Landscape
 import androidx.compose.material.icons.outlined.Masks
 import androidx.compose.material.icons.outlined.Thermostat
 import androidx.compose.material.icons.outlined.TireRepair
+import androidx.compose.material.icons.outlined.Watch
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -23,6 +24,7 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,6 +43,8 @@ import name.antonkonyshev.home.utils.localizeDefaultServiceName
 fun MeteoScreen(
     uiState: UiState,
     devices: List<Device>,
+    measurements: Map<String, State<Measurement>>,
+    histories: Map<String, State<List<Measurement>>>,
     onDrawerClicked: () -> Unit = {},
     viewModel: MeteoViewModel = viewModel()
 ) {
@@ -97,30 +101,40 @@ fun MeteoScreen(
                         }
                     },
                     supportingContent = {
-                        SensorValueListItem(
-                            label = stringResource(R.string.temperature),
-                            icon = Icons.Outlined.Thermostat,
-                            sensorValue = viewModel.measurement.value.temperature,
-                            units = stringResource(R.string.c),
-                        )
-                        SensorValueListItem(
-                            label = stringResource(R.string.pressure),
-                            icon = Icons.Outlined.TireRepair,
-                            sensorValue = viewModel.measurement.value.pressure,
-                            units = stringResource(R.string.mmhg),
-                        )
-                        SensorValueListItem(
-                            label = stringResource(R.string.altitude),
-                            icon = Icons.Outlined.Landscape,
-                            sensorValue = viewModel.measurement.value.altitude,
-                            units = stringResource(R.string.m),
-                        )
-                        SensorValueListItem(
-                            label = stringResource(R.string.pollution),
-                            icon = Icons.Outlined.Masks,
-                            sensorValue = viewModel.measurement.value.pollution,
-                            units = stringResource(R.string.mg_m3),
-                        )
+                        if (measurements[device.id] is State<Measurement>) {
+                            SensorValueListItem(
+                                label = stringResource(R.string.temperature),
+                                icon = Icons.Outlined.Thermostat,
+                                sensorValue = measurements[device.id]!!.value.temperature,
+                                units = stringResource(R.string.c),
+                            )
+                            SensorValueListItem(
+                                label = stringResource(R.string.pressure),
+                                icon = Icons.Outlined.TireRepair,
+                                sensorValue = measurements[device.id]!!.value.pressure,
+                                units = stringResource(R.string.mmhg),
+                            )
+                            SensorValueListItem(
+                                label = stringResource(R.string.altitude),
+                                icon = Icons.Outlined.Landscape,
+                                sensorValue = measurements[device.id]!!.value.altitude,
+                                units = stringResource(R.string.m),
+                            )
+                            SensorValueListItem(
+                                label = stringResource(R.string.pollution),
+                                icon = Icons.Outlined.Masks,
+                                sensorValue = measurements[device.id]!!.value.pollution,
+                                units = stringResource(R.string.mg_m3),
+                            )
+                            if (histories[device.id] is State<List<Measurement>>) {
+                                SensorValueListItem(
+                                    label = "History",
+                                    icon = Icons.Outlined.Watch,
+                                    sensorValue = histories[device.id]!!.value.size.toFloat(),
+                                    units = "records",
+                                )
+                            }
+                        }
                     },
                     colors = ListItemDefaults.colors(
                         containerColor = Color.White.copy(alpha=0.7F),

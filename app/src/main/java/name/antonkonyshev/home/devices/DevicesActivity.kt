@@ -2,13 +2,10 @@ package name.antonkonyshev.home.devices
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.activity.contextaware.withContextAvailable
 import androidx.activity.viewModels
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.collectAsState
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import name.antonkonyshev.home.BaseActivity
 import name.antonkonyshev.home.HomeApplication
 import name.antonkonyshev.home.NavigationDestinations
