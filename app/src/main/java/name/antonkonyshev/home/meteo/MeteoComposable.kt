@@ -16,11 +16,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Landscape
 import androidx.compose.material.icons.filled.Sync
-import androidx.compose.material.icons.filled.Thermostat
-import androidx.compose.material.icons.filled.Timeline
-import androidx.compose.material.icons.filled.TireRepair
+import androidx.compose.material.icons.outlined.Landscape
+import androidx.compose.material.icons.outlined.Masks
+import androidx.compose.material.icons.outlined.Thermostat
+import androidx.compose.material.icons.outlined.TireRepair
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -39,8 +39,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import name.antonkonyshev.home.R
 import name.antonkonyshev.home.UiState
 import name.antonkonyshev.home.devices.Device
-import name.antonkonyshev.home.utils.getLocalServiceName
-import name.antonkonyshev.home.utils.getLocalUnits
+import name.antonkonyshev.home.utils.localizeDefaultServiceName
 
 @Composable
 fun MeteoScreen(
@@ -107,7 +106,7 @@ fun MeteoScreen(
                     // TODO: Show on surface with secondary background
                     Text(
                         // TODO: get service info from the meteostation
-                        text = "${getLocalServiceName("room", LocalContext.current)}",
+                        text = localizeDefaultServiceName("Room", LocalContext.current),
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
@@ -115,27 +114,27 @@ fun MeteoScreen(
 
                 SensorValueListItem(
                     label = stringResource(R.string.temperature),
-                    icon = Icons.Default.Thermostat,
-                    sensor = viewModel.measurement.value.temperature,
+                    icon = Icons.Outlined.Thermostat,
+                    sensorValue = viewModel.measurement.value.temperature,
+                    units = stringResource(R.string.c),
                 )
                 SensorValueListItem(
                     label = stringResource(R.string.pressure),
-                    icon = Icons.Default.TireRepair,
-                    sensor = viewModel.measurement.value.pressure,
+                    icon = Icons.Outlined.TireRepair,
+                    sensorValue = viewModel.measurement.value.pressure,
+                    units = stringResource(R.string.mmhg),
                 )
                 SensorValueListItem(
                     label = stringResource(R.string.altitude),
-                    icon = Icons.Default.Landscape,
-                    sensor = viewModel.measurement.value.altitude,
+                    icon = Icons.Outlined.Landscape,
+                    sensorValue = viewModel.measurement.value.altitude,
+                    units = stringResource(R.string.m),
                 )
                 SensorValueListItem(
-                    label = stringResource(R.string.history),
-                    icon = Icons.Default.Timeline,
-                    sensor = SensorValue(
-                        if (viewModel.history.value.isEmpty()) -300F
-                        else viewModel.history.value.size.toFloat(),
-                        "records"
-                    ),
+                    label = stringResource(R.string.pollution),
+                    icon = Icons.Outlined.Masks,
+                    sensorValue = viewModel.measurement.value.pollution,
+                    units = stringResource(R.string.mg_m3),
                 )
             }
         }
@@ -146,7 +145,8 @@ fun MeteoScreen(
 fun SensorValueListItem(
     label: String,
     icon: ImageVector,
-    sensor: SensorValue,
+    sensorValue: Float?,
+    units: String,
     modifier: Modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
 ) {
     Column(
@@ -170,7 +170,7 @@ fun SensorValueListItem(
                 textAlign = TextAlign.Start
             )
             Text(
-                text = if (sensor.value > -300) "${sensor.value} ${getLocalUnits(sensor.unit, LocalContext.current)}" else "",
+                text = if (sensorValue != null) "${sensorValue} ${units}" else "",
                 style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier,
                 textAlign = TextAlign.End

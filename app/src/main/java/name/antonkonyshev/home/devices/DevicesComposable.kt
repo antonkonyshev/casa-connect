@@ -1,7 +1,6 @@
 package name.antonkonyshev.home.devices
 
 import android.content.Intent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -44,7 +43,7 @@ import name.antonkonyshev.home.HomeApplication
 import name.antonkonyshev.home.R
 import name.antonkonyshev.home.UiState
 import name.antonkonyshev.home.meteo.MeteoActivity
-import name.antonkonyshev.home.utils.getLocalServiceName
+import name.antonkonyshev.home.utils.localizeDefaultServiceName
 
 @Composable
 fun DevicesScreen(
@@ -94,7 +93,7 @@ fun DevicesScreen(
                 ListItem(
                     headlineContent = {
                         Text(
-                            text = getLocalServiceName(device.name, LocalContext.current),
+                            text = localizeDefaultServiceName(device.name, LocalContext.current),
                             style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.padding(top=10.dp, bottom = 10.dp)
                         )

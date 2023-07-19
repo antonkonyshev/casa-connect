@@ -1,14 +1,9 @@
 package name.antonkonyshev.home.meteo
 
-data class SensorValue(
-    val value: Float = -300F,
-    val unit: String = "",
-)
-
 data class Measurement(
     val timestamp: Long = 0L,
-    val temperature: SensorValue = SensorValue(),
-    val pressure: SensorValue = SensorValue(),
-    val altitude: SensorValue = SensorValue(),
-    val pollution: SensorValue = SensorValue(),
+    val temperature: Float? = null,
+    val pressure: Float? = null,
+    val altitude: Float? = null,
+    val pollution: Float? = null,
 )

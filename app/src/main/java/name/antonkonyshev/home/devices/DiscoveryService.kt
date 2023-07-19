@@ -86,7 +86,4 @@ class DiscoveryService(val application: HomeApplication) {
         }
 
     }
-
-    fun discoverLocalDevices(linkAddress: LinkAddress, devices: MutableStateFlow<List<Device>>) {
-    }
 }

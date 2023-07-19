@@ -14,4 +14,18 @@
     <string name="altitude">Altitude</string>
     <string name="history">History</string>
     <string name="devices">Devices</string>
+    <string name="mg_m3">mg/m3</string>
+    <string name="m">m</string>
+    <string name="mmhg">mmHg</string>
+    <string name="c" translatable="false">°C</string>
+    <string name="pollution">Pollution</string>
+    <string name="kitchen">Kitchen</string>
+    <string name="room">Room</string>
+    <string name="bathroom">Bathroom</string>
+    <string name="vestibule">Vestibule</string>
+    <string name="balcony">Balcony</string>
+    <string name="outdoors">Outdoors</string>
+    <string name="entrance">Entrance</string>
+    <string name="sauna">Sauna</string>
+    <string name="yard">Yard</string>
 </resources>

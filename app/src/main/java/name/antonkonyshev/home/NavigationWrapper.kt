@@ -1,5 +1,6 @@
 package name.antonkonyshev.home
 
+import android.content.Intent
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
@@ -47,12 +48,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 import name.antonkonyshev.home.devices.Device
+import name.antonkonyshev.home.devices.DevicesActivity
 import name.antonkonyshev.home.devices.DevicesScreen
+import name.antonkonyshev.home.meteo.MeteoActivity
 import name.antonkonyshev.home.meteo.MeteoScreen
 import name.antonkonyshev.home.utils.DevicePosture
 import name.antonkonyshev.home.utils.NavigationType
@@ -88,14 +93,20 @@ fun AppScreen(
         }
         Row(modifier = Modifier.fillMaxSize()) {
             AnimatedVisibility(navigationType == NavigationType.NAVIGATION_RAIL) {
-                AppNavigationRail(onDrawerClicked = onDrawerClicked)
+                AppNavigationRail(navigationDestination, onDrawerClicked = onDrawerClicked)
             }
 
             Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-                AnimatedVisibility(navigationDestination == NavigationDestinations.METEO) {
+                AnimatedVisibility(
+                    navigationDestination == NavigationDestinations.METEO,
+                    modifier = Modifier.weight(1f)
+                ) {
                     MeteoScreen(uiState, devices)
                 }
-                AnimatedVisibility(navigationDestination == NavigationDestinations.DEVICES, modifier = Modifier.weight(1f)) {
+                AnimatedVisibility(
+                    navigationDestination == NavigationDestinations.DEVICES,
+                    modifier = Modifier.weight(1f)
+                ) {
                     DevicesScreen(uiState, devices)
                 }
 
@@ -178,6 +189,7 @@ fun NavigationWrapper(
 fun BottomNavigationBar(
     navigationDestination: String,
 ) {
+    val context = LocalContext.current
     NavigationBar(
         modifier = Modifier
             .background(color = Color.Transparent)
@@ -187,7 +199,12 @@ fun BottomNavigationBar(
     ) {
         NavigationBarItem(
             selected = navigationDestination == NavigationDestinations.METEO,
-            onClick = {},
+            onClick = {
+                if (navigationDestination != NavigationDestinations.METEO) {
+                    startActivity(context,
+                        Intent(context, MeteoActivity::class.java), null)
+                }
+            },
             icon = {
                 Icon(imageVector = Icons.Default.Thermostat,
                     contentDescription = stringResource(R.string.meteo_label))
@@ -219,7 +236,12 @@ fun BottomNavigationBar(
         )
         NavigationBarItem(
             selected = navigationDestination == NavigationDestinations.DEVICES,
-            onClick = {},
+            onClick = {
+                if (navigationDestination != NavigationDestinations.DEVICES) {
+                    startActivity(context,
+                        Intent(context, DevicesActivity::class.java), null)
+                }
+            },
             icon = {
                 Icon(imageVector = Icons.Default.Sensors,
                     contentDescription = stringResource(R.string.devices_label))
@@ -235,6 +257,7 @@ fun NavigationDrawerContent(
     modifier: Modifier = Modifier,
     onDrawerClicked: () -> Unit = {},
 ) {
+    val context = LocalContext.current
     Box(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.background)
@@ -292,7 +315,12 @@ fun NavigationDrawerContent(
                     )
                 },
                 colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent),
-                onClick = {},
+                onClick = {
+                    if (navigationDestination != NavigationDestinations.METEO) {
+                        startActivity(context,
+                            Intent(context, MeteoActivity::class.java), null)
+                    }
+                },
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
             NavigationDrawerItem(
@@ -364,7 +392,12 @@ fun NavigationDrawerContent(
                     )
                 },
                 colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent),
-                onClick = {},
+                onClick = {
+                    if (navigationDestination != NavigationDestinations.DEVICES) {
+                        startActivity(context,
+                            Intent(context, DevicesActivity::class.java), null)
+                    }
+                },
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
         }
@@ -373,8 +406,10 @@ fun NavigationDrawerContent(
 
 @Composable
 fun AppNavigationRail(
+    navigationDestination: String,
     onDrawerClicked: () -> Unit = {},
 ) {
+    val context = LocalContext.current
     NavigationRail(
         modifier = Modifier
             .fillMaxHeight()
@@ -389,32 +424,42 @@ fun AppNavigationRail(
                 contentDescription = stringResource(R.string.navigation_label) ) },
         )
         NavigationRailItem(
-            selected = true,
-            onClick = {},
+            selected = navigationDestination == NavigationDestinations.METEO,
+            onClick = {
+                if (navigationDestination != NavigationDestinations.METEO) {
+                    startActivity(context,
+                        Intent(context, MeteoActivity::class.java), null)
+                }
+            },
             icon = { Icon(imageVector = Icons.Default.Thermostat,
                 contentDescription = stringResource(R.string.meteo_label)) },
         )
         NavigationRailItem(
-            selected = true,
+            selected = navigationDestination == NavigationDestinations.WINDOW,
             onClick = {},
             icon = { Icon(imageVector = Icons.Default.Air,
                contentDescription = stringResource(R.string.window_label)) },
         )
         NavigationRailItem(
-            selected = true,
+            selected = navigationDestination == NavigationDestinations.LIGHT,
             onClick = {},
             icon = { Icon(imageVector = Icons.Default.Light,
                 contentDescription = stringResource(R.string.light_label)) },
         )
         NavigationRailItem(
-            selected = true,
+            selected = navigationDestination == NavigationDestinations.DOOR,
            onClick = {},
             icon = { Icon(imageVector = Icons.Default.MeetingRoom,
                 contentDescription = stringResource(R.string.door_label)) },
         )
         NavigationRailItem(
-           selected = true,
-            onClick = {},
+           selected = navigationDestination == NavigationDestinations.DEVICES,
+            onClick = {
+                if (navigationDestination != NavigationDestinations.DEVICES) {
+                    startActivity(context,
+                        Intent(context, DevicesActivity::class.java), null)
+                }
+            },
             icon = { Icon(imageVector = Icons.Default.Sensors,
                 contentDescription = stringResource(R.string.devices_label)) },
         )

@@ -15,4 +15,17 @@
     <string name="altitude">Высота</string>
     <string name="history">История</string>
     <string name="devices">Устройства</string>
+    <string name="mg_m3">мг/м3</string>
+    <string name="m">м</string>
+    <string name="mmhg">мм. рт. ст.</string>
+    <string name="pollution">Загрязнение</string>
+    <string name="kitchen">Кухня</string>
+    <string name="room">Комната</string>
+    <string name="bathroom">Ванная</string>
+    <string name="vestibule">Прихожая</string>
+    <string name="balcony">Балкон</string>
+    <string name="outdoors">Улица</string>
+    <string name="entrance">Вход</string>
+    <string name="sauna">Баня</string>
+    <string name="yard">Двор</string>
 </resources>
