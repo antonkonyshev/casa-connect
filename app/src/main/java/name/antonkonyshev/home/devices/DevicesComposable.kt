@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Sensors
 import androidx.compose.material.icons.filled.SensorsOff
 import androidx.compose.material.icons.filled.Sync
@@ -26,6 +27,7 @@ import androidx.compose.material.icons.outlined.TireRepair
 import androidx.compose.material.icons.outlined.WaterDrop
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -49,38 +51,35 @@ import name.antonkonyshev.home.utils.localizeDefaultServiceName
 fun DevicesScreen(
     uiState: UiState,
     devices: List<Device>,
+    onDrawerClicked: () -> Unit = {},
     viewModel: DevicesViewModel = viewModel()
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    Column(modifier = Modifier.fillMaxSize()) {
         Row(
             modifier = Modifier
-                .height(80.dp)
-                .padding(start = 25.dp, end = 15.dp)
+                .height(60.dp)
+                .padding(start = 7.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
         ) {
+            IconButton(onClick = onDrawerClicked) {
+                Icon(
+                    imageVector = Icons.Default.Menu,
+                    contentDescription = stringResource(R.string.navigation_label)
+                )
+            }
             Text(
                 text = stringResource(R.string.devices),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
-                modifier = Modifier
+                modifier = Modifier.weight(1f)
             )
-            Button(
-                onClick = { viewModel.getApplication<HomeApplication>().discoveryService.discoverDevices() },
-                shape = CircleShape,
-                contentPadding = PaddingValues(0.dp),
-                modifier = Modifier
-                    .size(50.dp)
-            ) {
+            IconButton(onClick = {
+                viewModel.getApplication<HomeApplication>().discoveryService.discoverDevices()
+            }) {
                 Icon(
                     imageVector = Icons.Default.Sync,
-                    contentDescription = stringResource(R.string.refresh),
-                    modifier = Modifier
-                        .padding(0.dp)
-                        .background(color = MaterialTheme.colorScheme.primary)
+                    contentDescription = stringResource(R.string.refresh)
                 )
             }
         }

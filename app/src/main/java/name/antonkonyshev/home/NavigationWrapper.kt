@@ -1,7 +1,6 @@
 package name.antonkonyshev.home
 
 import android.content.Intent
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
@@ -71,7 +70,6 @@ object NavigationDestinations {
     const val DEVICES = "Devices"
 }
 
-// TODO: Visibility animation for the background image
 @Composable
 fun AppScreen(
     navigationType: NavigationType,
@@ -83,6 +81,7 @@ fun AppScreen(
 ) {
     Box(modifier = Modifier.background(color = MaterialTheme.colorScheme.background)) {
         Column(modifier = Modifier.fillMaxSize()) {
+            // TODO: Visibility animation for the background image
             Image(
                 painter = getBackgroundPainter(backgroundResource = backgroundResource),
                 contentDescription = null,
@@ -96,23 +95,40 @@ fun AppScreen(
                 AppNavigationRail(navigationDestination, onDrawerClicked = onDrawerClicked)
             }
 
-            Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+            Column(modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)) {
                 AnimatedVisibility(
                     navigationDestination == NavigationDestinations.METEO,
                     modifier = Modifier.weight(1f)
                 ) {
-                    MeteoScreen(uiState, devices)
+                    MeteoScreen(uiState, devices, onDrawerClicked)
                 }
                 AnimatedVisibility(
                     navigationDestination == NavigationDestinations.DEVICES,
                     modifier = Modifier.weight(1f)
                 ) {
-                    DevicesScreen(uiState, devices)
+                    DevicesScreen(uiState, devices, onDrawerClicked)
                 }
 
                 AnimatedVisibility(navigationType == NavigationType.BOTTOM_NAVIGATION) {
                     BottomNavigationBar(navigationDestination)
                 }
+            }
+        }
+        AnimatedVisibility(visible = uiState.loading) {
+            // TODO: Animated loading spinner
+            // TODO: Edit wallpapers
+            Row(
+                modifier = Modifier.fillMaxSize().background(color = Color.White.copy(alpha=0.8F)),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = stringResource(R.string.loading),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                )
             }
         }
     }

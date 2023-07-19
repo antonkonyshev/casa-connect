@@ -7,16 +7,13 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Url
 
-// TODO: add local services discovery logic
-private const val BASE_URL = "http://192.168.0.150"
-
 private val moshi = Moshi.Builder()
     .add(KotlinJsonAdapterFactory())
     .build()
 
 private val retrofit = Retrofit.Builder()
+    .baseUrl("http://localhost/")
     .addConverterFactory(MoshiConverterFactory.create(moshi))
-    .baseUrl(BASE_URL)
     .build()
 
 interface MeteoService {
@@ -27,6 +24,6 @@ interface MeteoService {
     suspend fun getHistory() : List<Measurement>
 }
 
-object MeteoApi {
+object MeteoAPI {
     val retrofitService: MeteoService by lazy { retrofit.create(MeteoService::class.java) }
 }

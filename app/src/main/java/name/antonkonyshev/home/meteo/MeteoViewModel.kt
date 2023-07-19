@@ -1,7 +1,6 @@
 package name.antonkonyshev.home.meteo
 
 import android.app.Application
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -10,13 +9,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import name.antonkonyshev.home.BaseViewModel
 import name.antonkonyshev.home.HomeApplication
-import name.antonkonyshev.home.devices.Device
 import java.util.Timer
 import kotlin.concurrent.scheduleAtFixedRate
 
 class MeteoViewModel(application: Application) : BaseViewModel(application) {
     // TODO: Add settings for the period of the measurement updates
-    private val periodicalMeasurementUpdate = 30L  // seconds
+    private val periodicalMeasurementUpdate = 15L  // seconds
 
     private val _measurement = MutableStateFlow(Measurement())
     val measurement = _measurement.asStateFlow()
@@ -39,19 +37,27 @@ class MeteoViewModel(application: Application) : BaseViewModel(application) {
             _uiState.update { it.copy(loading = true, scanning = true) }
         }
         viewModelScope.async(Dispatchers.IO) {
-            try {
-                _measurement.value = MeteoApi.retrofitService.getMeasurement("http://" + "192.168.0.160" + "/")
-                /*
-                try {
-                    _history.value = MeteoApi.retrofitService.getHistory()
-                } catch (err: Exception) {}
-                */
-            } catch (err: Exception) {}
-            if (silent) {
-                _uiState.update { it.copy(scanning = false) }
-            } else {
-                _uiState.update { it.copy(loading = false, scanning = false) }
+            getApplication<HomeApplication>().deviceRepository.byService("meteo")
+                .forEach { device ->
+                    viewModelScope.async(Dispatchers.IO) {
+                        var available = true
+                        try {
+                            // TODO: Load the measurement for each available device
+                            _measurement.value = MeteoAPI.retrofitService.getMeasurement(
+                                "http://" + device.ip!!.hostAddress + "/")
+                            // TODO: Load measurement history
+                        } catch (err: Exception) {
+                            available = false
+                        }
+                        if (device.available != available) {
+                            device.available = available
+                            getApplication<HomeApplication>().deviceRepository
+                                .updateAvailability(device)
+                        }
+                    }
             }
+            // TODO: Wait until selected device
+            _uiState.update { it.copy(loading = false, scanning = false) }
         }
     }
 }

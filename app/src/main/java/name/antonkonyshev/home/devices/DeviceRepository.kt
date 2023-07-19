@@ -13,8 +13,16 @@ class DeviceRepository(val deviceDao: DeviceDao) {
         }
     }
 
+    fun updateAvailability(device: Device) {
+        deviceDao.updateAvailabilityById(device.id, device.available)
+    }
+
     fun getAll(): List<Device> {
         return deviceDao.getAll()
+    }
+
+    fun byService(service: String): List<Device> {
+        return deviceDao.byService(service)
     }
 
     fun byId(id: String): Device? {

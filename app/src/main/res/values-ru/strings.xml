@@ -28,4 +28,5 @@
     <string name="entrance">Вход</string>
     <string name="sauna">Баня</string>
     <string name="yard">Двор</string>
+    <string name="loading">Загрузка...</string>
 </resources>

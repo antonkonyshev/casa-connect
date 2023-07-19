@@ -1,9 +1,7 @@
 package name.antonkonyshev.home.utils
 
 import android.content.Context
-import android.os.Build
 import name.antonkonyshev.home.R
-import java.util.Locale
 
 fun localizeDefaultServiceName(name: String, context: Context): String {
     when (name) {
