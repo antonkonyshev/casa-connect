@@ -56,7 +56,9 @@ android {
 dependencies {
     def google_accompanist_version = "0.30.1"
     def kt_coil_version = "2.4.0"
+    def material_icons_version = "1.5.0-beta02"
     def room_version = '2.5.2'
+    def preference_version = "1.2.0"
 
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation platform('org.jetbrains.kotlin:kotlin-bom:1.8.0')
@@ -71,16 +73,17 @@ dependencies {
     implementation 'com.squareup.moshi:moshi-kotlin:1.13.0'
     implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
     implementation 'org.lsposed.hiddenapibypass:hiddenapibypass:2.0'
-    implementation 'androidx.compose.material:material-icons-core-android:1.5.0-beta02'
+    implementation "androidx.compose.material:material-icons-core-android:$material_icons_version"
     implementation 'androidx.compose.material3:material3-window-size-class:1.1.0'
-    implementation 'androidx.compose.material:material-icons-extended-android:1.5.0-beta02'
+    implementation "androidx.compose.material:material-icons-extended-android:$material_icons_version"
     implementation 'androidx.window:window:1.0.0'
-    implementation "com.google.accompanist:accompanist-swiperefresh:$google_accompanist_version"
+    // implementation "com.google.accompanist:accompanist-swiperefresh:$google_accompanist_version"
     implementation "com.google.accompanist:accompanist-systemuicontroller:$google_accompanist_version"
     implementation "io.coil-kt:coil-compose:$kt_coil_version"
     implementation "io.coil-kt:coil-svg:$kt_coil_version"
     implementation "commons-net:commons-net:3.9.0"
     implementation "androidx.room:room-ktx:$room_version"
+    implementation "androidx.preference:preference-ktx:$preference_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
     testImplementation 'junit:junit:4.13.2'

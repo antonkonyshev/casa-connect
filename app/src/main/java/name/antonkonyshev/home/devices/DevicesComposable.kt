@@ -1,11 +1,8 @@
 package name.antonkonyshev.home.devices
 
 import android.content.Intent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Sensors
@@ -25,7 +21,6 @@ import androidx.compose.material.icons.outlined.Masks
 import androidx.compose.material.icons.outlined.Thermostat
 import androidx.compose.material.icons.outlined.TireRepair
 import androidx.compose.material.icons.outlined.WaterDrop
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -44,7 +39,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import name.antonkonyshev.home.HomeApplication
 import name.antonkonyshev.home.R
 import name.antonkonyshev.home.UiState
-import name.antonkonyshev.home.meteo.MeteoActivity
+import name.antonkonyshev.home.settings.DevicePreferenceActivity
 import name.antonkonyshev.home.utils.localizeDefaultServiceName
 
 @Composable
@@ -158,8 +153,14 @@ fun DevicesScreen(
                     modifier = Modifier
                         .padding(bottom = 18.dp)
                         .clickable {
+                            /*
                             startActivity(context,
                                 Intent(context, MeteoActivity::class.java)
+                                    .apply { putExtra("deviceId", device.id) },
+                                null)
+                            */
+                            startActivity(context,
+                                Intent(context, DevicePreferenceActivity::class.java)
                                     .apply { putExtra("deviceId", device.id) },
                                 null)
                         }

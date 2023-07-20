@@ -6,8 +6,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 open class BaseViewModel(application: Application) : AndroidViewModel(application) {
-    private val devicesStateUpdatePeriod = 60L  // seconds
-
     protected val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
 
@@ -19,14 +17,6 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     ).shuffled()
     val backgroundResource = backgroundResources[0]
     val navigationBackgroundResource = backgroundResources.drop(1)[0]
-
-    init {
-        /*
-        Timer().scheduleAtFixedRate(delay = 0L, period = devicesStateUpdatePeriod * 1000L) {
-            getApplication<HomeApplication>().discoveryService.discoverDevices()
-        }
-        */
-    }
 }
 
 data class UiState(

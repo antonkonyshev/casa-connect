@@ -60,16 +60,19 @@ import name.antonkonyshev.home.devices.DevicesScreen
 import name.antonkonyshev.home.meteo.DeviceMeasurement
 import name.antonkonyshev.home.meteo.MeteoActivity
 import name.antonkonyshev.home.meteo.MeteoScreen
+import name.antonkonyshev.home.settings.DevicePreferenceScreen
 import name.antonkonyshev.home.utils.DevicePosture
 import name.antonkonyshev.home.utils.NavigationType
 import name.antonkonyshev.home.utils.getBackgroundPainter
 
 object NavigationDestinations {
-    const val METEO = "Meteo"
-    const val WINDOW = "Window"
-    const val LIGHT = "Light"
-    const val DOOR = "Door"
-    const val DEVICES = "Devices"
+    const val METEO = "meteo"
+    const val WINDOW = "window"
+    const val LIGHT = "light"
+    const val DOOR = "door"
+    const val DEVICES = "devices"
+    const val DEVICE_SETTINGS = "device_settings"
+    const val PREFERENCES = "preferences"
 }
 
 @Composable
@@ -101,6 +104,7 @@ fun AppScreen(
             Column(modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)) {
+
                 AnimatedVisibility(
                     navigationDestination == NavigationDestinations.METEO,
                     modifier = Modifier.weight(1f)
@@ -111,11 +115,19 @@ fun AppScreen(
                         it.value.historyFlow.collectAsState()
                     }, onDrawerClicked)
                 }
+
                 AnimatedVisibility(
                     navigationDestination == NavigationDestinations.DEVICES,
                     modifier = Modifier.weight(1f)
                 ) {
                     DevicesScreen(uiState, devices, onDrawerClicked)
+                }
+
+                AnimatedVisibility(
+                    navigationDestination == NavigationDestinations.DEVICE_SETTINGS,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    DevicePreferenceScreen()
                 }
 
                 AnimatedVisibility(navigationType == NavigationType.BOTTOM_NAVIGATION) {

@@ -35,21 +35,16 @@
         </activity>
         <activity
             android:name=".devices.DevicesActivity"
-            android:exported="true"
+            android:exported="false"
             android:label="@string/devices"
             android:theme="@style/Theme.CoderLabHome">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <action android:name="android.intent.action.EDIT" />
-                <action android:name="android.intent.action.PICK" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
         </activity>
-        <service
-            android:name=".devices.DiscoveryService"
-            android:enabled="true"
-            android:exported="true">
-        </service>
+        <activity
+            android:name=".settings.DevicePreferenceActivity"
+            android:exported="false"
+            android:label="Device Settings"
+            android:theme="@style/Theme.CoderLabHome">
+        </activity>
     </application>
 
 </manifest>
