@@ -59,7 +59,7 @@ class MeteoViewModel(application: Application) : BaseViewModel(application) {
                         if (device.available) {
                             try {
                                 measurements[device.id]!!._measurement.value = MeteoAPI
-                                    .retrofitService.getMeasurement(device.getMeasurementUrl())
+                                    .service.getMeasurement(device.getMeasurementUrl())
                             } catch (err: Exception) {
                                 device.available = false
                             }
@@ -72,7 +72,7 @@ class MeteoViewModel(application: Application) : BaseViewModel(application) {
                         if (device.available && Date().getTime() > measurements[device.id]!!.lastHistoryUpdate + 1200000L) {
                             try {
                                 measurements[device.id]!!._history.value = MeteoAPI
-                                    .retrofitService.getHistory(device.getHistoryUrl())
+                                    .service.getHistory(device.getHistoryUrl())
                             } catch (err: Exception) {}
                         }
                     }

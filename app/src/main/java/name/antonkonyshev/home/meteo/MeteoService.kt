@@ -7,15 +7,6 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Url
 
-private val moshi = Moshi.Builder()
-    .add(KotlinJsonAdapterFactory())
-    .build()
-
-private val retrofit = Retrofit.Builder()
-    .baseUrl("http://localhost/")
-    .addConverterFactory(MoshiConverterFactory.create(moshi))
-    .build()
-
 interface MeteoService {
     @GET
     suspend fun getMeasurement(@Url url: String) : Measurement
@@ -25,5 +16,9 @@ interface MeteoService {
 }
 
 object MeteoAPI {
-    val retrofitService: MeteoService by lazy { retrofit.create(MeteoService::class.java) }
+    val moshi: Moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
+    val service: MeteoService by lazy {
+        Retrofit.Builder().addConverterFactory(MoshiConverterFactory.create(moshi))
+            .baseUrl("http://localhost").build().create(MeteoService::class.java)
+    }
 }

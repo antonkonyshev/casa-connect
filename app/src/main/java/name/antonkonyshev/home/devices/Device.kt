@@ -55,6 +55,10 @@ open class Device (
         return "http://" + ip!!.hostAddress + "/history"
     }
 
+    fun getPreferenceUrl(): String {
+        return "http://" + ip!!.hostAddress + "/settings"
+    }
+
     companion object {
         val serviceIcon = Icons.Default.Thermostat
     }
