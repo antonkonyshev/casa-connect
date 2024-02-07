@@ -20,7 +20,7 @@ interface DevicePreferenceService {
 }
 
 object DevicePreferenceAPI {
-    val moshi: Moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
+    private val moshi: Moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
     val service: DevicePreferenceService by lazy {
         Retrofit.Builder().addConverterFactory(MoshiConverterFactory.create(moshi))
             .baseUrl("http://localhost").build().create(DevicePreferenceService::class.java)

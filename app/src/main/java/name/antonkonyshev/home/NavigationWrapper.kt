@@ -123,13 +123,6 @@ fun AppScreen(
                     DevicesScreen(uiState, devices, onDrawerClicked)
                 }
 
-                AnimatedVisibility(
-                    navigationDestination == NavigationDestinations.DEVICE_SETTINGS,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    DevicePreferenceScreen()
-                }
-
                 AnimatedVisibility(navigationType == NavigationType.BOTTOM_NAVIGATION) {
                     BottomNavigationBar(navigationDestination)
                 }

@@ -24,11 +24,13 @@ class DeviceMeasurement(val deviceId: String) {
 class MeteoViewModel(application: Application) : BaseViewModel(application) {
     // TODO: Add settings for the period of the measurement updates
     private val periodicalMeasurementUpdate = 15L  // seconds
+    private val measurementTimer = Timer()
+
     val measurements: HashMap<String, DeviceMeasurement> = HashMap()
 
     init {
         observeMeasurement()
-        Timer().scheduleAtFixedRate(periodicalMeasurementUpdate, periodicalMeasurementUpdate * 1000L) {
+        measurementTimer.scheduleAtFixedRate(periodicalMeasurementUpdate, periodicalMeasurementUpdate * 1000L) {
             observeMeasurement(true)
         }
     }
@@ -70,6 +72,7 @@ class MeteoViewModel(application: Application) : BaseViewModel(application) {
                         }
                         // TODO: Add settings for the history update period
                         if (device.available && Date().getTime() > measurements[device.id]!!.lastHistoryUpdate + 1200000L) {
+                            measurements[device.id]!!.lastHistoryUpdate = Date().getTime()
                             try {
                                 measurements[device.id]!!._history.value = MeteoAPI
                                     .service.getHistory(device.getHistoryUrl())
@@ -79,6 +82,13 @@ class MeteoViewModel(application: Application) : BaseViewModel(application) {
             }
             // TODO: Wait until selected device
             _uiState.update { it.copy(loading = false, scanning = false) }
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        if (measurementTimer != null) {
+            measurementTimer.cancel()
         }
     }
 }

@@ -1,36 +1,42 @@
 package name.antonkonyshev.home.settings
 
 import com.squareup.moshi.Json
+import name.antonkonyshev.home.devices.Device
 
 data class DevicePreference (
-    @Transient
-    val deviceId: String,
-
     @Json(name="high_pollution_value")
-    val highPollution: Int,
+    var highPollution: Int,
 
     @Json(name="min_thermometer_temperature")
-    val minTemperature: Int,
+    var minTemperature: Int,
 
     @Json(name="max_thermometer_temperature")
-    val maxTemperature: Int,
+    var maxTemperature: Int,
 
     @Json(name="measurement_period")
-    val measurementPeriod: Int,
+    var measurementPeriod: Int,
 
     @Json(name="time_sync_period")
-    val timeSyncPeriod: Int,
+    var timeSyncPeriod: Int,
 
     @Json(name="history_length")
-    val historyLength: Int,
+    var historyLength: Int,
 
     @Json(name="history_record_period")
-    val historyRecordPeriod: Int,
+    var historyRecordPeriod: Int,
 
     @Json(name="wifi_ssid")
-    val wifiSsid: String,
+    var wifiSsid: String,
+) {
+    @Transient
+    var device: Device? = null
 
     @Transient
     @Json(name="wifi_password")
-    val wifiPassword: String,
-)
+    var wifiPassword: String = ""
+
+    constructor() : this(
+        0, 0, 0, 0,
+        0, 0, 0, "",
+    )
+}

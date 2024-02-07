@@ -16,7 +16,7 @@ interface MeteoService {
 }
 
 object MeteoAPI {
-    val moshi: Moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
+    private val moshi: Moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
     val service: MeteoService by lazy {
         Retrofit.Builder().addConverterFactory(MoshiConverterFactory.create(moshi))
             .baseUrl("http://localhost").build().create(MeteoService::class.java)

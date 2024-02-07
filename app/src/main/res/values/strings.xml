@@ -29,4 +29,6 @@
     <string name="sauna">Sauna</string>
     <string name="yard">Yard</string>
     <string name="loading">Loading...</string>
+    <string name="device_name">Device name</string>
+    <string name="save">Save</string>
 </resources>

@@ -26,23 +26,14 @@ class DevicePreferenceActivity : BaseActivity() {
 
         val deviceId: String? = getIntent().getStringExtra("deviceId")
         if (deviceId is String && deviceId.isNotEmpty()) {
-            viewModel.viewModelScope.async(Dispatchers.IO) {
-                val device = viewModel.getApplication<HomeApplication>()
-                    .deviceRepository.byId(deviceId)
-            }
+            viewModel.selectDevice(deviceId)
         }
 
         setContent {
             HomeTheme {
-                NavigationWrapper(
-                    calculateWindowSizeClass(activity = this).widthSizeClass,
-                    devicePostureFlow().collectAsState().value,
-                    NavigationDestinations.DEVICE_SETTINGS,
-                    viewModel.navigationBackgroundResource,
-                    viewModel.backgroundResource,
+                DevicePreferenceScreen(
                     viewModel.uiState.collectAsState().value,
-                    emptyList<Device>(),
-                    HashMap<String, DeviceMeasurement>(),
+                    viewModel.preference.collectAsState().value
                 )
             }
         }
