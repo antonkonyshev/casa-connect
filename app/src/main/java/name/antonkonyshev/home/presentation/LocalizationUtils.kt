@@ -1,4 +1,4 @@
-package name.antonkonyshev.home.utils
+package name.antonkonyshev.home.presentation
 
 import android.content.Context
 import name.antonkonyshev.home.R

@@ -1,4 +1,4 @@
-package name.antonkonyshev.home.devices
+package name.antonkonyshev.home.presentation
 
 import android.content.Intent
 import androidx.compose.foundation.clickable
@@ -36,16 +36,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
-import name.antonkonyshev.home.HomeApplication
 import name.antonkonyshev.home.R
-import name.antonkonyshev.home.UiState
-import name.antonkonyshev.home.settings.DevicePreferenceActivity
-import name.antonkonyshev.home.utils.localizeDefaultServiceName
+import name.antonkonyshev.home.data.database.DeviceModel
 
 @Composable
 fun DevicesScreen(
     uiState: UiState,
-    devices: List<Device>,
+    devices: List<DeviceModel>,
     onDrawerClicked: () -> Unit = {},
     viewModel: DevicesViewModel = viewModel()
 ) {
@@ -70,7 +67,7 @@ fun DevicesScreen(
                 modifier = Modifier.weight(1f)
             )
             IconButton(onClick = {
-                viewModel.getApplication<HomeApplication>().discoveryService.discoverDevices()
+                viewModel.discoverDevicesInLocalNetworkUseCase()
             }) {
                 Icon(
                     imageVector = Icons.Default.Sync,

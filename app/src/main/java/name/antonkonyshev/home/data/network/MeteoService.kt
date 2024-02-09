@@ -1,7 +1,8 @@
-package name.antonkonyshev.home.meteo
+package name.antonkonyshev.home.data.network
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import name.antonkonyshev.home.domain.entity.Measurement
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET

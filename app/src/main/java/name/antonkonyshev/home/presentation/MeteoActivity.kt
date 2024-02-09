@@ -1,4 +1,4 @@
-package name.antonkonyshev.home.meteo
+package name.antonkonyshev.home.presentation
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -6,11 +6,7 @@ import androidx.activity.viewModels
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.collectAsState
-import name.antonkonyshev.home.BaseActivity
-import name.antonkonyshev.home.HomeApplication
-import name.antonkonyshev.home.NavigationDestinations
-import name.antonkonyshev.home.NavigationWrapper
-import name.antonkonyshev.home.devices.Device
+import name.antonkonyshev.home.data.database.DeviceModel
 import name.antonkonyshev.home.ui.theme.HomeTheme
 
 class MeteoActivity : BaseActivity() {
@@ -34,8 +30,9 @@ class MeteoActivity : BaseActivity() {
                     viewModel.navigationBackgroundResource,
                     viewModel.backgroundResource,
                     viewModel.uiState.collectAsState().value,
-                    viewModel.getApplication<HomeApplication>().deviceRepository
-                        .meteoDevices.collectAsState(initial = emptyList<Device>()).value,
+                    viewModel.getDevicesByServiceUseCase.getMeteoDevicesFlow().collectAsState(
+                        initial = emptyList<DeviceModel>()
+                    ).value,
                     viewModel.measurements,
                 )
             }

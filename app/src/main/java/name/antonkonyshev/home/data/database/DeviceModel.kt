@@ -1,4 +1,4 @@
-package name.antonkonyshev.home.devices
+package name.antonkonyshev.home.data.database
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Thermostat
@@ -9,7 +9,7 @@ import java.net.InetAddress
 import java.util.Date
 
 @Entity(tableName = "device")
-open class Device (
+open class DeviceModel (
     @PrimaryKey
     @ColumnInfo(name = "id")
     var id: String,
@@ -45,7 +45,7 @@ open class Device (
         id: String = this.id, service: String = this.service, name: String = this.name,
         sensors: List<String> = this.sensors.toList(), ip: InetAddress? = this.ip,
         available: Boolean? = this.available
-    ) = Device(id, service, name, sensors, ip, available = true)
+    ) = DeviceModel(id, service, name, sensors, ip, available = true)
 
     fun getMeasurementUrl(): String {
         return "http://" + ip!!.hostAddress + "/"

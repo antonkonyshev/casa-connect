@@ -1,4 +1,4 @@
-package name.antonkonyshev.home.meteo
+package name.antonkonyshev.home.presentation
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,14 +35,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import name.antonkonyshev.home.R
-import name.antonkonyshev.home.UiState
-import name.antonkonyshev.home.devices.Device
-import name.antonkonyshev.home.utils.localizeDefaultServiceName
+import name.antonkonyshev.home.data.database.DeviceModel
+import name.antonkonyshev.home.domain.entity.Measurement
 
 @Composable
 fun MeteoScreen(
     uiState: UiState,
-    devices: List<Device>,
+    devices: List<DeviceModel>,
     measurements: Map<String, State<Measurement>>,
     histories: Map<String, State<List<Measurement>>>,
     onDrawerClicked: () -> Unit = {},

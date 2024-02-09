@@ -1,4 +1,4 @@
-package name.antonkonyshev.home.devices
+package name.antonkonyshev.home.data.network
 
 import android.content.Context
 import android.net.ConnectivityManager
@@ -8,8 +8,9 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.MutableStateFlow
 import name.antonkonyshev.home.HomeApplication
+import name.antonkonyshev.home.data.DeviceRepositoryImpl
+import name.antonkonyshev.home.data.database.DeviceModel
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -23,7 +24,7 @@ class DiscoveryService(val application: HomeApplication) {
     private var scanning = false
     private val scope = CoroutineScope(Dispatchers.IO)
     private val adapter by lazy {
-        Moshi.Builder().add(KotlinJsonAdapterFactory()).build().adapter(Device::class.java)
+        Moshi.Builder().add(KotlinJsonAdapterFactory()).build().adapter(DeviceModel::class.java)
     }
     companion object {
         @Volatile
@@ -47,8 +48,8 @@ class DiscoveryService(val application: HomeApplication) {
             val linkAddress: LinkAddress? = connectivityManager.getLinkProperties(
                 connectivityManager.activeNetwork
             )?.linkAddresses?.find { la -> la.address is Inet4Address }
-            val deviceRepository = application.deviceRepository
-            deviceRepository.updateAllDevicesAvailability(false)
+            val deviceRepository = DeviceRepositoryImpl
+            DeviceRepositoryImpl.updateAllDevicesAvailability(false)
             if (linkAddress is LinkAddress) {
                 val ipRange = SubnetUtils(linkAddress.toString()).info.allAddresses.filter filter@{
                     it != linkAddress.address.hostAddress
@@ -60,7 +61,7 @@ class DiscoveryService(val application: HomeApplication) {
                     }
                     CoroutineScope(Dispatchers.IO).async {
                         if (ip.isReachable(1000)) {
-                            val response = OkHttpClient().newCall(
+                            OkHttpClient().newCall(
                                 Request.Builder().url("http://" + ip.hostAddress + "/service")
                                     .build()
                             ).enqueue(object: Callback {
@@ -69,9 +70,9 @@ class DiscoveryService(val application: HomeApplication) {
                                     if (response.code == 200) {
                                         val device = adapter.fromJson(response.body!!.source())
                                         response.body!!.close()
-                                        if (device is Device) {
+                                        if (device is DeviceModel) {
                                             device.ip = ip
-                                            deviceRepository.updateStateOrCreate(device)
+                                            DeviceRepositoryImpl.updateStateOrCreate(device)
                                         }
                                     }
                                 }

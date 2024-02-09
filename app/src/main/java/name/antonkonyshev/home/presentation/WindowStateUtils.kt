@@ -1,4 +1,4 @@
-package name.antonkonyshev.home.utils
+package name.antonkonyshev.home.presentation
 
 import android.graphics.Rect
 import androidx.compose.runtime.Composable

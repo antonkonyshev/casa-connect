@@ -1,6 +1,5 @@
-package name.antonkonyshev.home.settings
+package name.antonkonyshev.home.presentation
 
-import android.graphics.drawable.Icon
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,14 +17,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import name.antonkonyshev.home.R
-import name.antonkonyshev.home.UiState
-import name.antonkonyshev.home.devices.Device
+import name.antonkonyshev.home.data.database.DeviceModel
+import name.antonkonyshev.home.settings.DevicePreference
 
 @Composable
 fun DevicePreferenceScreen(uiState: UiState, preference: DevicePreference) {
-    AnimatedVisibility(visible = preference.device is Device) {
+    AnimatedVisibility(visible = preference.device is DeviceModel) {
         Column {
             Row {
                 var name = remember { mutableStateOf(preference.device!!.name) }

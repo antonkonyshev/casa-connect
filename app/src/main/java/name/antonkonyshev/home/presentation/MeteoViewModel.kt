@@ -1,14 +1,16 @@
-package name.antonkonyshev.home.meteo
+package name.antonkonyshev.home.presentation
 
-import android.app.Application
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import name.antonkonyshev.home.BaseViewModel
-import name.antonkonyshev.home.HomeApplication
+import name.antonkonyshev.home.data.DeviceRepositoryImpl
+import name.antonkonyshev.home.data.network.MeteoAPI
+import name.antonkonyshev.home.domain.entity.Measurement
+import name.antonkonyshev.home.domain.usecase.GetDevicesByServiceUseCase
+import name.antonkonyshev.home.domain.usecase.UpdateDeviceAvailabilityUseCase
 import java.util.Date
 import java.util.Timer
 import kotlin.concurrent.scheduleAtFixedRate
@@ -21,30 +23,38 @@ class DeviceMeasurement(val deviceId: String) {
     val historyFlow = _history.asStateFlow()
 }
 
-class MeteoViewModel(application: Application) : BaseViewModel(application) {
+class MeteoViewModel() : BaseViewModel() {
     // TODO: Add settings for the period of the measurement updates
     private val periodicalMeasurementUpdate = 15L  // seconds
     private val measurementTimer = Timer()
 
     val measurements: HashMap<String, DeviceMeasurement> = HashMap()
 
+    private val deviceRepository = DeviceRepositoryImpl
+
+    val getDevicesByServiceUseCase = GetDevicesByServiceUseCase(deviceRepository)
+    val updateDeviceAvailabilityUseCase = UpdateDeviceAvailabilityUseCase(deviceRepository)
+
     init {
         observeMeasurement()
-        measurementTimer.scheduleAtFixedRate(periodicalMeasurementUpdate, periodicalMeasurementUpdate * 1000L) {
+        measurementTimer.scheduleAtFixedRate(
+            periodicalMeasurementUpdate, periodicalMeasurementUpdate * 1000L
+        ) {
             observeMeasurement(true)
         }
     }
 
     fun observeMeasurement(silent: Boolean = false) {
-        if (uiState.value.scanning) { return }
+        if (uiState.value.scanning) {
+            return
+        }
         if (silent) {
             _uiState.update { it.copy(scanning = true) }
         } else {
             _uiState.update { it.copy(loading = true, scanning = true) }
         }
         viewModelScope.async(Dispatchers.IO) {
-            getApplication<HomeApplication>().deviceRepository.byService("meteo")
-                .forEach { device ->
+            getDevicesByServiceUseCase.getMeteoDevicesList().forEach { device ->
                     if (!measurements.containsKey(device.id)) {
                         measurements[device.id] = DeviceMeasurement(device.id)
                     }
@@ -60,26 +70,26 @@ class MeteoViewModel(application: Application) : BaseViewModel(application) {
                         }
                         if (device.available) {
                             try {
-                                measurements[device.id]!!._measurement.value = MeteoAPI
-                                    .service.getMeasurement(device.getMeasurementUrl())
+                                measurements[device.id]!!._measurement.value =
+                                    MeteoAPI.service.getMeasurement(device.getMeasurementUrl())
                             } catch (err: Exception) {
                                 device.available = false
                             }
                         }
                         if (device.available != available) {
-                            getApplication<HomeApplication>().deviceRepository
-                                .updateAvailability(device)
+                            updateDeviceAvailabilityUseCase(device)
                         }
                         // TODO: Add settings for the history update period
                         if (device.available && Date().getTime() > measurements[device.id]!!.lastHistoryUpdate + 1200000L) {
                             measurements[device.id]!!.lastHistoryUpdate = Date().getTime()
                             try {
-                                measurements[device.id]!!._history.value = MeteoAPI
-                                    .service.getHistory(device.getHistoryUrl())
-                            } catch (err: Exception) {}
+                                measurements[device.id]!!._history.value =
+                                    MeteoAPI.service.getHistory(device.getHistoryUrl())
+                            } catch (err: Exception) {
+                            }
                         }
                     }
-            }
+                }
             // TODO: Wait until selected device
             _uiState.update { it.copy(loading = false, scanning = false) }
         }

@@ -1,4 +1,4 @@
-package name.antonkonyshev.home
+package name.antonkonyshev.home.presentation
 
 import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
@@ -54,16 +54,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
-import name.antonkonyshev.home.devices.Device
-import name.antonkonyshev.home.devices.DevicesActivity
-import name.antonkonyshev.home.devices.DevicesScreen
-import name.antonkonyshev.home.meteo.DeviceMeasurement
-import name.antonkonyshev.home.meteo.MeteoActivity
-import name.antonkonyshev.home.meteo.MeteoScreen
-import name.antonkonyshev.home.settings.DevicePreferenceScreen
-import name.antonkonyshev.home.utils.DevicePosture
-import name.antonkonyshev.home.utils.NavigationType
-import name.antonkonyshev.home.utils.getBackgroundPainter
+import name.antonkonyshev.home.R
+import name.antonkonyshev.home.data.database.DeviceModel
 
 object NavigationDestinations {
     const val METEO = "meteo"
@@ -81,7 +73,7 @@ fun AppScreen(
     backgroundResource: Int,
     navigationDestination: String,
     uiState: UiState,
-    devices: List<Device>,
+    devices: List<DeviceModel>,
     measurements: Map<String, DeviceMeasurement>,
     onDrawerClicked: () -> Unit = {},
 ) {
@@ -156,7 +148,7 @@ fun NavigationWrapper(
     navigationBackgroundResource: Int,
     backgroundResource: Int,
     uiState: UiState,
-    devices: List<Device>,
+    devices: List<DeviceModel>,
     measurements: Map<String, DeviceMeasurement> = HashMap(),
 ) {
     val systemUiController = rememberSystemUiController()

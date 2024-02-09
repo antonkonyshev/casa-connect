@@ -1,4 +1,4 @@
-package name.antonkonyshev.home.meteo
+package name.antonkonyshev.home.domain.entity
 
 data class Measurement(
     val timestamp: Long = 0L,

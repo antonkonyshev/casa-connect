@@ -1,4 +1,4 @@
-package name.antonkonyshev.home
+package name.antonkonyshev.home.presentation
 
 import android.content.Context
 import android.content.ContextWrapper
@@ -13,9 +13,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import name.antonkonyshev.home.utils.DevicePosture
-import name.antonkonyshev.home.utils.isBookPosture
-import name.antonkonyshev.home.utils.isSeparating
 import org.lsposed.hiddenapibypass.HiddenApiBypass
 
 open class BaseActivity : ComponentActivity() {

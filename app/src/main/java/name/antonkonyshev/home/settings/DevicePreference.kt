@@ -1,7 +1,7 @@
 package name.antonkonyshev.home.settings
 
 import com.squareup.moshi.Json
-import name.antonkonyshev.home.devices.Device
+import name.antonkonyshev.home.data.database.DeviceModel
 
 data class DevicePreference (
     @Json(name="high_pollution_value")
@@ -29,7 +29,7 @@ data class DevicePreference (
     var wifiSsid: String,
 ) {
     @Transient
-    var device: Device? = null
+    var device: DeviceModel? = null
 
     @Transient
     @Json(name="wifi_password")

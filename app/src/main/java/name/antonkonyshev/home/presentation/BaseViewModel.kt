@@ -1,11 +1,11 @@
-package name.antonkonyshev.home
+package name.antonkonyshev.home.presentation
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import name.antonkonyshev.home.R
 
-open class BaseViewModel(application: Application) : AndroidViewModel(application) {
+open class BaseViewModel() : ViewModel() {
     protected val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
 

@@ -1,16 +1,20 @@
 package name.antonkonyshev.home
 
 import android.app.Application
-import name.antonkonyshev.home.devices.DeviceRepository
-import name.antonkonyshev.home.devices.DiscoveryService
+import name.antonkonyshev.home.data.network.DiscoveryService
 
 class HomeApplication : Application() {
-    val database by lazy { AppDatabase.instance(this) }
-    val deviceRepository by lazy { DeviceRepository(database.deviceDao()) }
     val discoveryService by lazy { DiscoveryService.instance(this) }
 
     override fun onCreate() {
         super.onCreate()
+        instance = this
         discoveryService.discoverDevices()
+    }
+
+    companion object {
+        @Volatile
+        lateinit var instance: HomeApplication
+            private set
     }
 }

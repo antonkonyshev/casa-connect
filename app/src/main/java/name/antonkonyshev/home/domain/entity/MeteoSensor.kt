@@ -1,6 +1,6 @@
-package name.antonkonyshev.home.meteo
+package name.antonkonyshev.home.domain.entity
 
-import name.antonkonyshev.home.devices.Device
+import name.antonkonyshev.home.data.database.DeviceModel
 import java.net.InetAddress
 
 class MeteoSensor(
@@ -10,7 +10,7 @@ class MeteoSensor(
     sensors: List<String>,
     ip: InetAddress? = null,
     available: Boolean = false
-) : Device(id, service, name, sensors, ip, available) {
+) : DeviceModel(id, service, name, sensors, ip, available) {
 
     /*
     private val _measurement = MutableStateFlow(Measurement())
@@ -21,7 +21,7 @@ class MeteoSensor(
     */
 
     companion object {
-        fun fromDevice(device: Device, ip: InetAddress, available: Boolean = false) = MeteoSensor(
+        fun fromDevice(device: DeviceModel, ip: InetAddress, available: Boolean = false) = MeteoSensor(
             device.id, device.service, device.name, device.sensors, ip, available)
     }
 }

@@ -1,28 +1,31 @@
-package name.antonkonyshev.home.settings
+package name.antonkonyshev.home.presentation
 
-import android.app.Application
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import name.antonkonyshev.home.BaseViewModel
-import name.antonkonyshev.home.HomeApplication
-import name.antonkonyshev.home.devices.Device
+import name.antonkonyshev.home.settings.DevicePreference
+import name.antonkonyshev.home.data.network.DevicePreferenceAPI
+import name.antonkonyshev.home.data.DeviceRepositoryImpl
+import name.antonkonyshev.home.domain.usecase.GetDeviceByIdUseCase
 import java.net.InetAddress
 
-class DevicePreferenceViewModel(application: Application) : BaseViewModel(application) {
+class DevicePreferenceViewModel() : BaseViewModel() {
     private var deviceSelected = false
 
     private val _preference = MutableStateFlow(DevicePreference())
     val preference = _preference.asStateFlow()
 
+    private val deviceRepository = DeviceRepositoryImpl
+
+    val getDeviceByIdUseCase = GetDeviceByIdUseCase(deviceRepository)
+
     fun selectDevice(deviceId: String) {
         if (!deviceSelected) {
             viewModelScope.async(Dispatchers.IO) {
-                val existingDevice = getApplication<HomeApplication>().deviceRepository
-                    .byId(deviceId)
+                val existingDevice = getDeviceByIdUseCase(deviceId)
                 if (existingDevice != null && existingDevice.ip is InetAddress) {
                     try {
                         val pref = DevicePreferenceAPI.service.getPreferences(
