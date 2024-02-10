@@ -14,6 +14,7 @@
     <string name="pressure">Давление</string>
     <string name="altitude">Высота</string>
     <string name="history">История</string>
+    <string name="records">Записей</string>
     <string name="devices">Устройства</string>
     <string name="mg_m3">мг/м3</string>
     <string name="m">м</string>
@@ -31,4 +32,6 @@
     <string name="loading">Загрузка...</string>
     <string name="device_name">Название устройства</string>
     <string name="save">Сохранить</string>
+    <string name="carbon_monoxide_concentration_threshold">Порог концентрации окиси углерода</string>
+    <string name="warn_about_exceeding_the_concentration_of_co">Предупреждать о превышении указанной концентрации CO</string>
 </resources>

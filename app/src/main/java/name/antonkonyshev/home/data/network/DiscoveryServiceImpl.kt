@@ -9,8 +9,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import name.antonkonyshev.home.HomeApplication
-import name.antonkonyshev.home.data.DeviceRepositoryImpl
+import name.antonkonyshev.home.data.database.DeviceRepositoryImpl
 import name.antonkonyshev.home.data.database.DeviceModel
+import name.antonkonyshev.home.domain.repository.DiscoveryService
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -20,35 +21,25 @@ import org.apache.commons.net.util.SubnetUtils
 import java.io.IOException
 import java.net.Inet4Address
 
-class DiscoveryService(val application: HomeApplication) {
+object DiscoveryServiceImpl : DiscoveryService {
     private var scanning = false
     private val scope = CoroutineScope(Dispatchers.IO)
     private val adapter by lazy {
         Moshi.Builder().add(KotlinJsonAdapterFactory()).build().adapter(DeviceModel::class.java)
     }
-    companion object {
-        @Volatile
-        private var _instance: DiscoveryService? = null
 
-        fun instance(application: HomeApplication): DiscoveryService {
-            return (_instance ?: synchronized(this) {
-                _instance = DiscoveryService(application)
-                return@synchronized _instance
-            })!!
+    override fun discoverDevices() {
+        if (scanning) {
+            return
         }
-    }
-
-    fun discoverDevices() {
-        if (scanning) { return }
         scanning = true
         scope.async {
-            val connectivityManager = application.getSystemService(
+            val connectivityManager = HomeApplication.instance.getSystemService(
                 Context.CONNECTIVITY_SERVICE
             ) as ConnectivityManager
             val linkAddress: LinkAddress? = connectivityManager.getLinkProperties(
                 connectivityManager.activeNetwork
             )?.linkAddresses?.find { la -> la.address is Inet4Address }
-            val deviceRepository = DeviceRepositoryImpl
             DeviceRepositoryImpl.updateAllDevicesAvailability(false)
             if (linkAddress is LinkAddress) {
                 val ipRange = SubnetUtils(linkAddress.toString()).info.allAddresses.filter filter@{
@@ -56,7 +47,7 @@ class DiscoveryService(val application: HomeApplication) {
                 }
                 ipRange.forEach { ipAddress ->
                     val ip = Inet4Address.getByName(ipAddress)
-                    if (ip.isMulticastAddress()) {
+                    if (ip.isMulticastAddress) {
                         return@forEach
                     }
                     CoroutineScope(Dispatchers.IO).async {
@@ -64,7 +55,7 @@ class DiscoveryService(val application: HomeApplication) {
                             OkHttpClient().newCall(
                                 Request.Builder().url("http://" + ip.hostAddress + "/service")
                                     .build()
-                            ).enqueue(object: Callback {
+                            ).enqueue(object : Callback {
                                 override fun onFailure(call: Call, e: IOException) {}
                                 override fun onResponse(call: Call, response: Response) {
                                     if (response.code == 200) {

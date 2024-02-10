@@ -1,15 +1,14 @@
 package name.antonkonyshev.home.data.database
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Thermostat
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import name.antonkonyshev.home.domain.entity.Device
 import java.net.InetAddress
 import java.util.Date
 
 @Entity(tableName = "device")
-open class DeviceModel (
+class DeviceModel(
     @PrimaryKey
     @ColumnInfo(name = "id")
     var id: String,
@@ -41,25 +40,11 @@ open class DeviceModel (
     @ColumnInfo(name = "updated", defaultValue = "CURRENT_TIMESTAMP")
     var updated: Date = Date()
 
-    open fun copy(
-        id: String = this.id, service: String = this.service, name: String = this.name,
-        sensors: List<String> = this.sensors.toList(), ip: InetAddress? = this.ip,
-        available: Boolean? = this.available
-    ) = DeviceModel(id, service, name, sensors, ip, available = true)
-
-    fun getMeasurementUrl(): String {
-        return "http://" + ip!!.hostAddress + "/"
-    }
-
-    fun getHistoryUrl(): String {
-        return "http://" + ip!!.hostAddress + "/history"
-    }
-
-    fun getPreferenceUrl(): String {
-        return "http://" + ip!!.hostAddress + "/settings"
-    }
+    fun toDevice(): Device = Device(id, service, name, sensors, ip, available)
 
     companion object {
-        val serviceIcon = Icons.Default.Thermostat
+        fun fromDevice(device: Device): DeviceModel = DeviceModel(
+            device.id, device.service, device.name, device.sensors, device.ip, device.available
+        )
     }
 }

@@ -1,10 +1,7 @@
 package name.antonkonyshev.home.presentation
 
-import android.content.Context
-import android.content.ContextWrapper
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.window.layout.FoldingFeature
@@ -17,7 +14,6 @@ import org.lsposed.hiddenapibypass.HiddenApiBypass
 
 open class BaseActivity : ComponentActivity() {
 
-    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         HiddenApiBypass.addHiddenApiExemptions("L")
         super.onCreate(savedInstanceState)
@@ -50,10 +46,4 @@ open class BaseActivity : ComponentActivity() {
                 initialValue = DevicePosture.NormalPosture
             )
     }
-}
-
-fun Context.getActivity(): BaseActivity? = when (this) {
-    is BaseActivity -> this
-    is ContextWrapper -> baseContext.getActivity()
-    else -> null
 }

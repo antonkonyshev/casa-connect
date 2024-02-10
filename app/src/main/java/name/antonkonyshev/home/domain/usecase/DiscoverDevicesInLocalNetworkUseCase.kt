@@ -1,9 +1,9 @@
 package name.antonkonyshev.home.domain.usecase
 
-import name.antonkonyshev.home.HomeApplication
+import name.antonkonyshev.home.domain.repository.DiscoveryService
 
-class DiscoverDevicesInLocalNetworkUseCase {
+class DiscoverDevicesInLocalNetworkUseCase(val service: DiscoveryService) {
     operator fun invoke() {
-        HomeApplication.instance.discoveryService.discoverDevices()
+        service.discoverDevices()
     }
 }

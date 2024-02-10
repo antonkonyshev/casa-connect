@@ -1,4 +1,4 @@
-package name.antonkonyshev.home.presentation
+package name.antonkonyshev.home.presentation.device
 
 import android.content.Intent
 import androidx.compose.foundation.clickable
@@ -37,12 +37,13 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import name.antonkonyshev.home.R
-import name.antonkonyshev.home.data.database.DeviceModel
+import name.antonkonyshev.home.domain.entity.Device
+import name.antonkonyshev.home.presentation.devicepreference.DevicePreferenceActivity
+import name.antonkonyshev.home.presentation.localizeDefaultServiceName
 
 @Composable
 fun DevicesScreen(
-    uiState: UiState,
-    devices: List<DeviceModel>,
+    devices: List<Device>,
     onDrawerClicked: () -> Unit = {},
     viewModel: DevicesViewModel = viewModel()
 ) {
@@ -130,7 +131,7 @@ fun DevicesScreen(
                         }
                     },
                     trailingContent = {
-                        if (device.available == true) {
+                        if (device.available) {
                             Icon(
                                 imageVector = Icons.Default.Sensors,
                                 contentDescription = "Online",
@@ -150,12 +151,6 @@ fun DevicesScreen(
                     modifier = Modifier
                         .padding(bottom = 18.dp)
                         .clickable {
-                            /*
-                            startActivity(context,
-                                Intent(context, MeteoActivity::class.java)
-                                    .apply { putExtra("deviceId", device.id) },
-                                null)
-                            */
                             startActivity(context,
                                 Intent(context, DevicePreferenceActivity::class.java)
                                     .apply { putExtra("deviceId", device.id) },

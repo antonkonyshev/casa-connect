@@ -57,11 +57,7 @@ class Converters {
 
     @TypeConverter
     fun stringToInetAddress(value: String?): InetAddress? {
-        if (value != null && value.isNotEmpty()) {
-            return InetAddress.getByName(value)
-        } else {
-            return null
-        }
+        return if (!value.isNullOrEmpty()) InetAddress.getByName(value) else null
     }
 
     @TypeConverter

@@ -20,7 +20,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.MeteoActivity"
+            android:name=".presentation.meteo.MeteoActivity"
             android:exported="true"
             android:label="@string/meteostation"
             android:theme="@style/Theme.CoderLabHome">
@@ -34,13 +34,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".presentation.DevicesActivity"
+            android:name=".presentation.device.DevicesActivity"
             android:exported="false"
             android:label="@string/devices"
             android:theme="@style/Theme.CoderLabHome">
         </activity>
         <activity
-            android:name=".presentation.DevicePreferenceActivity"
+            android:name=".presentation.devicepreference.DevicePreferenceActivity"
             android:exported="false"
             android:label="Device Settings"
             android:theme="@style/Theme.CoderLabHome">

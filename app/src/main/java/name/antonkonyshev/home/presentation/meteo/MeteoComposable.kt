@@ -1,4 +1,4 @@
-package name.antonkonyshev.home.presentation
+package name.antonkonyshev.home.presentation.meteo
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,19 +33,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import name.antonkonyshev.home.R
-import name.antonkonyshev.home.data.database.DeviceModel
+import name.antonkonyshev.home.domain.entity.Device
 import name.antonkonyshev.home.domain.entity.Measurement
+import name.antonkonyshev.home.presentation.localizeDefaultServiceName
 
 @Composable
 fun MeteoScreen(
-    uiState: UiState,
-    devices: List<DeviceModel>,
+    devices: List<Device>,
     measurements: Map<String, State<Measurement>>,
     histories: Map<String, State<List<Measurement>>>,
-    onDrawerClicked: () -> Unit = {},
-    viewModel: MeteoViewModel = viewModel()
+    onDrawerClicked: () -> Unit = {}
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         Row(
@@ -65,16 +63,19 @@ fun MeteoScreen(
                 text = stringResource(R.string.meteostation),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
-                modifier = Modifier.padding(start=7.dp)
+                modifier = Modifier.padding(start = 7.dp)
             )
         }
 
         // TODO: Add chart representing changing of values over time
-        LazyColumn (modifier = Modifier.fillMaxSize()) {
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(devices) { device ->
                 ListItem(
                     headlineContent = {
-                        Row (modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             Text(
                                 text = localizeDefaultServiceName(
                                     device.name,
@@ -82,9 +83,11 @@ fun MeteoScreen(
                                 ),
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                modifier = Modifier.padding(top = 10.dp, bottom = 10.dp).weight(1f)
+                                modifier = Modifier
+                                    .padding(top = 10.dp, bottom = 10.dp)
+                                    .weight(1f)
                             )
-                            if (device.available == true) {
+                            if (device.available) {
                                 Icon(
                                     imageVector = Icons.Default.Sensors,
                                     contentDescription = "Online",
@@ -114,29 +117,29 @@ fun MeteoScreen(
                                 units = stringResource(R.string.mmhg),
                             )
                             SensorValueListItem(
-                                label = stringResource(R.string.altitude),
-                                icon = Icons.Outlined.Landscape,
-                                sensorValue = measurements[device.id]!!.value.altitude,
-                                units = stringResource(R.string.m),
-                            )
-                            SensorValueListItem(
                                 label = stringResource(R.string.pollution),
                                 icon = Icons.Outlined.Masks,
                                 sensorValue = measurements[device.id]!!.value.pollution,
                                 units = stringResource(R.string.mg_m3),
                             )
+                            SensorValueListItem(
+                                label = stringResource(R.string.altitude),
+                                icon = Icons.Outlined.Landscape,
+                                sensorValue = measurements[device.id]!!.value.altitude,
+                                units = stringResource(R.string.m),
+                            )
                             if (histories[device.id] is State<List<Measurement>>) {
                                 SensorValueListItem(
-                                    label = "History",
+                                    label = stringResource(R.string.history),
                                     icon = Icons.Outlined.Watch,
                                     sensorValue = histories[device.id]!!.value.size.toFloat(),
-                                    units = "records",
+                                    units = stringResource(R.string.records).lowercase()
                                 )
                             }
                         }
                     },
                     colors = ListItemDefaults.colors(
-                        containerColor = Color.White.copy(alpha=0.7F),
+                        containerColor = Color.White.copy(alpha = 0.7F),
                     ),
                     modifier = Modifier
                         .padding(bottom = 18.dp)
@@ -152,34 +155,28 @@ fun SensorValueListItem(
     icon: ImageVector,
     sensorValue: Float?,
     units: String,
-    modifier: Modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+    modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(20.dp)
+    Row(
+        modifier = modifier.padding(20.dp).fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = label,
-                modifier = Modifier.padding(end = 20.dp)
-            )
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelMedium,
-                modifier = Modifier.weight(1f),
-                textAlign = TextAlign.Start
-            )
-            Text(
-                text = if (sensorValue != null) "${sensorValue} ${units}" else "",
-                style = MaterialTheme.typography.labelMedium,
-                modifier = Modifier,
-                textAlign = TextAlign.End
-            )
-        }
+        Icon(
+            imageVector = icon,
+            contentDescription = label,
+            modifier = Modifier.padding(end = 20.dp)
+        )
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelMedium,
+            modifier = Modifier.weight(1f),
+            textAlign = TextAlign.Start
+        )
+        Text(
+            text = if (sensorValue != null) "$sensorValue $units" else "",
+            style = MaterialTheme.typography.labelMedium,
+            modifier = Modifier,
+            textAlign = TextAlign.End
+        )
     }
 }

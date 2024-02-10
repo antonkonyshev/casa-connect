@@ -1,15 +1,13 @@
 package name.antonkonyshev.home
 
 import android.app.Application
-import name.antonkonyshev.home.data.network.DiscoveryService
+import name.antonkonyshev.home.data.network.DiscoveryServiceImpl
 
 class HomeApplication : Application() {
-    val discoveryService by lazy { DiscoveryService.instance(this) }
-
     override fun onCreate() {
         super.onCreate()
         instance = this
-        discoveryService.discoverDevices()
+        DiscoveryServiceImpl.discoverDevices()
     }
 
     companion object {
