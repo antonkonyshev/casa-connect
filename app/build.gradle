@@ -60,6 +60,7 @@ dependencies {
     def material_icons_version = "1.5.0-beta02"
     def room_version = '2.5.2'
     def preference_version = "1.2.0"
+    def dagger2_version = "2.51"
 
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation platform('org.jetbrains.kotlin:kotlin-bom:1.8.0')
@@ -85,7 +86,8 @@ dependencies {
     implementation "commons-net:commons-net:3.9.0"
     implementation "androidx.room:room-ktx:$room_version"
     implementation "androidx.preference:preference-ktx:$preference_version"
-    annotationProcessor "androidx.room:room-compiler:$room_version"
+    implementation "com.google.dagger:dagger:$dagger2_version"
+    kapt "com.google.dagger:dagger-compiler:$dagger2_version"
     kapt "androidx.room:room-compiler:$room_version"
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
