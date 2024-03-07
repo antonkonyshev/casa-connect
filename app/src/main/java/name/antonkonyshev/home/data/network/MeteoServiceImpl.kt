@@ -1,14 +1,12 @@
 package name.antonkonyshev.home.data.network
 
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import name.antonkonyshev.home.domain.entity.Device
 import name.antonkonyshev.home.domain.entity.Measurement
 import name.antonkonyshev.home.domain.repository.MeteoService
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Url
+import javax.inject.Inject
+import javax.inject.Singleton
 
 interface MeteoServiceSchema {
     @GET
@@ -18,12 +16,10 @@ interface MeteoServiceSchema {
     suspend fun getHistory(@Url url: String): List<Measurement>
 }
 
-object MeteoAPI : MeteoService {
-    private val moshi: Moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
-    val service: MeteoServiceSchema by lazy {
-        Retrofit.Builder().addConverterFactory(MoshiConverterFactory.create(moshi))
-            .baseUrl("http://localhost").build().create(MeteoServiceSchema::class.java)
-    }
+@Singleton
+class MeteoAPI @Inject constructor(
+    private val service: MeteoServiceSchema
+) : MeteoService {
 
     override suspend fun getMeasurement(device: Device): Measurement? {
         var measurement: Measurement? = null
@@ -49,7 +45,8 @@ object MeteoAPI : MeteoService {
             return service.getHistory(
                 NetworkDevice.fromDevice(device).getHistoryUrl()
             )
-        } catch (_: Exception) {}
+        } catch (_: Exception) {
+        }
         return null
     }
 }

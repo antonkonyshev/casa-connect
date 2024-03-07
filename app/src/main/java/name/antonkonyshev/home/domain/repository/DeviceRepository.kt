@@ -1,6 +1,7 @@
 package name.antonkonyshev.home.domain.repository
 
 import kotlinx.coroutines.flow.Flow
+import name.antonkonyshev.home.data.database.DeviceModel
 import name.antonkonyshev.home.domain.entity.Device
 
 interface DeviceRepository {
@@ -11,5 +12,7 @@ interface DeviceRepository {
     fun byId(id: String): Device?
     fun byService(service: String): List<Device>
     fun updateAvailability(device: Device)
+    fun updateStateOrCreate(device: DeviceModel)
+    fun updateAllDevicesAvailability(available: Boolean)
 
 }

@@ -7,8 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import name.antonkonyshev.home.data.database.DeviceRepositoryImpl
-import name.antonkonyshev.home.data.network.MeteoAPI
+import name.antonkonyshev.home.HomeApplication
 import name.antonkonyshev.home.domain.entity.Measurement
 import name.antonkonyshev.home.domain.usecase.GetDevicesByServiceUseCase
 import name.antonkonyshev.home.domain.usecase.GetMeasurementFromMeteoSensorUseCase
@@ -16,6 +15,7 @@ import name.antonkonyshev.home.domain.usecase.UpdateDeviceAvailabilityUseCase
 import name.antonkonyshev.home.presentation.BaseViewModel
 import java.util.Date
 import java.util.Timer
+import javax.inject.Inject
 import kotlin.concurrent.scheduleAtFixedRate
 
 data class DeviceMeasurement(val deviceId: String) {
@@ -33,14 +33,17 @@ class MeteoViewModel : BaseViewModel() {
 
     val measurements: HashMap<String, DeviceMeasurement> = HashMap()
 
-    private val deviceRepository = DeviceRepositoryImpl
-    private val meteoService = MeteoAPI
+    @Inject
+    lateinit var getDevicesByServiceUseCase: GetDevicesByServiceUseCase
 
-    val getDevicesByServiceUseCase = GetDevicesByServiceUseCase(deviceRepository)
-    val updateDeviceAvailabilityUseCase = UpdateDeviceAvailabilityUseCase(deviceRepository)
-    private val getMeasurementFromMeteoSensorUseCase = GetMeasurementFromMeteoSensorUseCase(meteoService)
+    @Inject
+    lateinit var updateDeviceAvailabilityUseCase: UpdateDeviceAvailabilityUseCase
+
+    @Inject
+    lateinit var getMeasurementFromMeteoSensorUseCase: GetMeasurementFromMeteoSensorUseCase
 
     init {
+        HomeApplication.instance.component.inject(this)
         observeMeasurement()
         measurementTimer.scheduleAtFixedRate(
             periodicalMeasurementUpdate, periodicalMeasurementUpdate * 1000L

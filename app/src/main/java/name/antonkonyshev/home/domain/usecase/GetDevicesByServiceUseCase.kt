@@ -3,8 +3,11 @@ package name.antonkonyshev.home.domain.usecase
 import kotlinx.coroutines.flow.Flow
 import name.antonkonyshev.home.domain.entity.Device
 import name.antonkonyshev.home.domain.repository.DeviceRepository
+import javax.inject.Inject
 
-class GetDevicesByServiceUseCase(private val repository: DeviceRepository) {
+class GetDevicesByServiceUseCase @Inject constructor(
+    private val repository: DeviceRepository
+) {
 
     fun getAllDevicesFlow(): Flow<List<Device>> {
         return repository.allDevices

@@ -12,8 +12,10 @@ import com.squareup.moshi.Types
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import java.net.InetAddress
 import java.util.Date
+import javax.inject.Singleton
 import kotlin.math.roundToLong
 
+@Singleton
 @TypeConverters(Converters::class)
 @Database(entities = [DeviceModel::class], version = 1, exportSchema = true)
 abstract class AppDatabase : RoomDatabase() {

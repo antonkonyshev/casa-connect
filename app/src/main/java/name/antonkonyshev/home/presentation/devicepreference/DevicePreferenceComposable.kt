@@ -24,6 +24,7 @@ import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -110,19 +111,11 @@ fun DevicePreferenceScreen(
                 trailingIcon = stringResource(id = R.string.sec)
             )
 
-            val timeSyncPeriod = remember { mutableIntStateOf(preference.timeSyncPeriod) }
-            PreferenceIntInput(
-                valueState = timeSyncPeriod,
-                label = stringResource(id = R.string.time_sync_period),
-                leadingIcon = Icons.Outlined.PunchClock,
-                trailingIcon = stringResource(id = R.string.sec)
-            )
-
             Row(
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier.padding(8.dp).align(Alignment.CenterHorizontally)
             ) {
                 Button(onClick = onSave) {
-                    Text(stringResource(R.string.save))
+                    Text(stringResource(R.string.save), modifier = Modifier.padding(8.dp))
                 }
             }
         }

@@ -6,13 +6,15 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import name.antonkonyshev.home.data.database.DeviceRepositoryImpl
+import name.antonkonyshev.home.HomeApplication
 import name.antonkonyshev.home.data.network.DevicePreferenceAPI
 import name.antonkonyshev.home.domain.entity.DevicePreference
+import name.antonkonyshev.home.domain.repository.DeviceRepository
 import name.antonkonyshev.home.domain.usecase.GetDeviceByIdUseCase
 import name.antonkonyshev.home.domain.usecase.GetDevicePreferencesUseCase
 import name.antonkonyshev.home.presentation.BaseViewModel
 import java.net.InetAddress
+import javax.inject.Inject
 
 class DevicePreferenceViewModel : BaseViewModel() {
     private var deviceSelected = false
@@ -20,11 +22,15 @@ class DevicePreferenceViewModel : BaseViewModel() {
     private val _preference = MutableStateFlow(DevicePreference())
     val preference = _preference.asStateFlow()
 
-    private val deviceRepository = DeviceRepositoryImpl
-    private val devicePreferenceService = DevicePreferenceAPI
+    @Inject
+    lateinit var getDeviceByIdUseCase: GetDeviceByIdUseCase
 
-    val getDeviceByIdUseCase = GetDeviceByIdUseCase(deviceRepository)
-    val getDevicePreferenceUseCase = GetDevicePreferencesUseCase(devicePreferenceService)
+    @Inject
+    lateinit var getDevicePreferenceUseCase: GetDevicePreferencesUseCase
+
+    init {
+        HomeApplication.instance.component.inject(this)
+    }
 
     fun selectDevice(deviceId: String) {
         if (!deviceSelected) {

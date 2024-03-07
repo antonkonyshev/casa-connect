@@ -12,11 +12,12 @@ import name.antonkonyshev.home.presentation.NavigationWrapper
 import name.antonkonyshev.home.ui.theme.HomeTheme
 
 class MeteoActivity : BaseActivity() {
-    private val viewModel: MeteoViewModel by viewModels()
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val viewModel: MeteoViewModel by viewModels()
 
         setContent {
             HomeTheme {

@@ -35,7 +35,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
-import androidx.lifecycle.viewmodel.compose.viewModel
 import name.antonkonyshev.home.R
 import name.antonkonyshev.home.domain.entity.Device
 import name.antonkonyshev.home.presentation.devicepreference.DevicePreferenceActivity
@@ -44,8 +43,8 @@ import name.antonkonyshev.home.presentation.localizeDefaultServiceName
 @Composable
 fun DevicesScreen(
     devices: List<Device>,
-    onDrawerClicked: () -> Unit = {},
-    viewModel: DevicesViewModel = viewModel()
+    onDiscoverDevicesClicked: () -> Unit = {},
+    onDrawerClicked: () -> Unit = {}
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         Row(
@@ -67,9 +66,7 @@ fun DevicesScreen(
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier.weight(1f)
             )
-            IconButton(onClick = {
-                viewModel.discoverDevicesInLocalNetworkUseCase()
-            }) {
+            IconButton(onClick = onDiscoverDevicesClicked) {
                 Icon(
                     imageVector = Icons.Default.Sync,
                     contentDescription = stringResource(R.string.refresh)
@@ -87,7 +84,7 @@ fun DevicesScreen(
                         Text(
                             text = localizeDefaultServiceName(device.name, LocalContext.current),
                             style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.padding(top=10.dp, bottom = 10.dp)
+                            modifier = Modifier.padding(top = 10.dp, bottom = 10.dp)
                         )
                     },
                     leadingContent = {
@@ -98,8 +95,8 @@ fun DevicesScreen(
                         )
                     },
                     supportingContent = {
-                        Row (modifier = Modifier.padding(bottom=10.dp)) {
-                            val iconsModifier = Modifier.padding(end=18.dp)
+                        Row(modifier = Modifier.padding(bottom = 10.dp)) {
+                            val iconsModifier = Modifier.padding(end = 18.dp)
                             if ("pollution" in device.sensors) {
                                 Icon(
                                     imageVector = Icons.Outlined.Masks,
@@ -146,15 +143,17 @@ fun DevicesScreen(
                         }
                     },
                     colors = ListItemDefaults.colors(
-                        containerColor = Color.White.copy(alpha=0.7F),
+                        containerColor = Color.White.copy(alpha = 0.7F),
                     ),
                     modifier = Modifier
                         .padding(bottom = 18.dp)
                         .clickable {
-                            startActivity(context,
+                            startActivity(
+                                context,
                                 Intent(context, DevicePreferenceActivity::class.java)
                                     .apply { putExtra("deviceId", device.id) },
-                                null)
+                                null
+                            )
                         }
                 )
             }

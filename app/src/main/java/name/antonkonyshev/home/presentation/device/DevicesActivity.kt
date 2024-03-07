@@ -13,11 +13,12 @@ import name.antonkonyshev.home.ui.theme.HomeTheme
 
 // TODO: Storing info about local services and checking availability of them on start up or resume
 class DevicesActivity : BaseActivity() {
-    private val viewModel: DevicesViewModel by viewModels()
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val viewModel: DevicesViewModel by viewModels()
 
         setContent {
             HomeTheme {
@@ -32,6 +33,9 @@ class DevicesActivity : BaseActivity() {
                         DevicesScreen(
                             viewModel.getDevicesByServiceUseCase.getAllDevicesFlow()
                                 .collectAsState(initial = emptyList()).value,
+                            onDiscoverDevicesClicked = {
+                                viewModel.discoverDevicesInLocalNetworkUseCase()
+                            },
                             onDrawerClicked = onDrawerClicked
                         )
                     }

@@ -4,13 +4,12 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.LinkAddress
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import name.antonkonyshev.home.HomeApplication
-import name.antonkonyshev.home.data.database.DeviceRepositoryImpl
 import name.antonkonyshev.home.data.database.DeviceModel
+import name.antonkonyshev.home.domain.repository.DeviceRepository
 import name.antonkonyshev.home.domain.repository.DiscoveryService
 import okhttp3.Call
 import okhttp3.Callback
@@ -20,27 +19,30 @@ import okhttp3.Response
 import org.apache.commons.net.util.SubnetUtils
 import java.io.IOException
 import java.net.Inet4Address
+import javax.inject.Inject
+import javax.inject.Singleton
 
-object DiscoveryServiceImpl : DiscoveryService {
+@Singleton
+class DiscoveryServiceImpl @Inject constructor(
+    private val deviceRepository: DeviceRepository,
+    private val moshi: Moshi
+) : DiscoveryService {
     private var scanning = false
-    private val scope = CoroutineScope(Dispatchers.IO)
-    private val adapter by lazy {
-        Moshi.Builder().add(KotlinJsonAdapterFactory()).build().adapter(DeviceModel::class.java)
-    }
+    private val adapter by lazy { moshi.adapter(DeviceModel::class.java) }
 
     override fun discoverDevices() {
         if (scanning) {
             return
         }
         scanning = true
-        scope.async {
+        CoroutineScope(Dispatchers.IO).async {
             val connectivityManager = HomeApplication.instance.getSystemService(
                 Context.CONNECTIVITY_SERVICE
             ) as ConnectivityManager
             val linkAddress: LinkAddress? = connectivityManager.getLinkProperties(
                 connectivityManager.activeNetwork
             )?.linkAddresses?.find { la -> la.address is Inet4Address }
-            DeviceRepositoryImpl.updateAllDevicesAvailability(false)
+            deviceRepository.updateAllDevicesAvailability(false)
             if (linkAddress is LinkAddress) {
                 val ipRange = SubnetUtils(linkAddress.toString()).info.allAddresses.filter filter@{
                     it != linkAddress.address.hostAddress
@@ -63,7 +65,7 @@ object DiscoveryServiceImpl : DiscoveryService {
                                         response.body!!.close()
                                         if (device is DeviceModel) {
                                             device.ip = ip
-                                            DeviceRepositoryImpl.updateStateOrCreate(device)
+                                            deviceRepository.updateStateOrCreate(device)
                                         }
                                     }
                                 }

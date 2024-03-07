@@ -13,11 +13,12 @@ import name.antonkonyshev.home.presentation.NavigationWrapper
 import name.antonkonyshev.home.ui.theme.HomeTheme
 
 class DevicePreferenceActivity : BaseActivity() {
-    private val viewModel: DevicePreferenceViewModel by viewModels()
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val viewModel: DevicePreferenceViewModel by viewModels()
 
         val deviceId: String? = intent.getStringExtra("deviceId")
         if (deviceId is String && deviceId.isNotEmpty()) {
@@ -48,6 +49,7 @@ class DevicePreferenceActivity : BaseActivity() {
     }
 
     fun onSave() {
+        val viewModel: DevicePreferenceViewModel by viewModels()
         Log.d("DevicePreferenceActivity.onSave", viewModel.preference.value.toString())
     }
 }
