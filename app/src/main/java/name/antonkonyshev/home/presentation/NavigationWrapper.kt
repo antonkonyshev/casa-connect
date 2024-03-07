@@ -42,7 +42,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,12 +54,8 @@ import androidx.core.content.ContextCompat.startActivity
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 import name.antonkonyshev.home.R
-import name.antonkonyshev.home.domain.entity.Device
 import name.antonkonyshev.home.presentation.device.DevicesActivity
-import name.antonkonyshev.home.presentation.device.DevicesScreen
-import name.antonkonyshev.home.presentation.meteo.DeviceMeasurement
 import name.antonkonyshev.home.presentation.meteo.MeteoActivity
-import name.antonkonyshev.home.presentation.meteo.MeteoScreen
 
 object NavigationDestinations {
     const val METEO = "meteo"
@@ -68,6 +63,7 @@ object NavigationDestinations {
     const val LIGHT = "light"
     const val DOOR = "door"
     const val DEVICES = "devices"
+    const val DEVICE_PREFERENCES = "preferences"
 }
 
 @Composable
@@ -76,8 +72,7 @@ fun AppScreen(
     backgroundResource: Int,
     navigationDestination: String,
     uiState: UiState,
-    devices: List<Device>,
-    measurements: Map<String, DeviceMeasurement>,
+    sectionScreenComposable: @Composable (() -> Unit) -> Unit = {},
     onDrawerClicked: () -> Unit = {},
 ) {
     Box(modifier = Modifier.background(color = MaterialTheme.colorScheme.background)) {
@@ -102,22 +97,14 @@ fun AppScreen(
                     .background(MaterialTheme.colorScheme.background)
             ) {
 
-                AnimatedVisibility(
-                    navigationDestination == NavigationDestinations.METEO,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    MeteoScreen(devices, measurements.mapValues {
-                        it.value.measurementFlow.collectAsState()
-                    }, measurements.mapValues {
-                        it.value.historyFlow.collectAsState()
-                    }, onDrawerClicked)
-                }
-
-                AnimatedVisibility(
-                    navigationDestination == NavigationDestinations.DEVICES,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    DevicesScreen(devices, onDrawerClicked)
+                AnimatedVisibility(visible = !uiState.loading, modifier = Modifier.weight(1f)) {
+                    sectionScreenComposable(onDrawerClicked)
+//                    MeteoScreen(devices, measurements.mapValues {
+//                        it.value.measurementFlow.collectAsState()
+//                    }, measurements.mapValues {
+//                        it.value.historyFlow.collectAsState()
+//                    }, onDrawerClicked)
+//                    DevicesScreen(devices, onDrawerClicked)
                 }
 
                 AnimatedVisibility(navigationType == NavigationType.BOTTOM_NAVIGATION) {
@@ -153,8 +140,7 @@ fun NavigationWrapper(
     navigationBackgroundResource: Int,
     backgroundResource: Int,
     uiState: UiState,
-    devices: List<Device>,
-    measurements: Map<String, DeviceMeasurement> = HashMap(),
+    sectionScreenComposable: @Composable (() -> Unit) -> Unit = {},
 ) {
     val systemUiController = rememberSystemUiController()
     systemUiController.setStatusBarColor(
@@ -197,8 +183,8 @@ fun NavigationWrapper(
             }
         ) {
             AppScreen(
-                navigationType, backgroundResource, navigationDestination, uiState, devices,
-                measurements,
+                navigationType, backgroundResource, navigationDestination, uiState,
+                sectionScreenComposable = sectionScreenComposable
             )
         }
     } else {
@@ -216,8 +202,9 @@ fun NavigationWrapper(
             drawerState = drawerState
         ) {
             AppScreen(
-                navigationType, backgroundResource, navigationDestination, uiState, devices,
-                measurements, onDrawerClicked = { scope.launch { drawerState.open() } },
+                navigationType, backgroundResource, navigationDestination, uiState,
+                onDrawerClicked = { scope.launch { drawerState.open() } },
+                sectionScreenComposable = sectionScreenComposable
             )
         }
     }

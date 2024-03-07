@@ -28,8 +28,13 @@ class DevicesActivity : BaseActivity() {
                     viewModel.navigationBackgroundResource,
                     viewModel.backgroundResource,
                     viewModel.uiState.collectAsState().value,
-                    viewModel.getDevicesByServiceUseCase.getAllDevicesFlow()
-                        .collectAsState(initial = emptyList()).value,
+                    sectionScreenComposable = { onDrawerClicked: () -> Unit ->
+                        DevicesScreen(
+                            viewModel.getDevicesByServiceUseCase.getAllDevicesFlow()
+                                .collectAsState(initial = emptyList()).value,
+                            onDrawerClicked = onDrawerClicked
+                        )
+                    }
                 )
             }
         }

@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Home</string>
-    <string name="error_on_connecting_to_meteo">Error occured on connecting to the meteo sensors</string>
+    <string name="error_on_connecting_to_meteo">Error occurred on connecting to the meteo sensors</string>
     <string name="navigation_label">Navigation</string>
     <string name="meteo_label">Meteo</string>
     <string name="window_label">Window</string>
@@ -20,6 +20,14 @@
     <string name="mmhg">mmHg</string>
     <string name="c" translatable="false">°C</string>
     <string name="pollution">Pollution</string>
+    <string name="minimal_temperature">Minimal temperature</string>
+    <string name="maximal_temperature">Maximal temperature</string>
+    <string name="measurement_period">Measurement period</string>
+    <string name="history_length">Records in history</string>
+    <string name="history_record_period">History recording period</string>
+    <string name="time_sync_period">Time synchronization period</string>
+    <string name="seconds">Seconds</string>
+    <string name="sec">sec.</string>
     <string name="kitchen">Kitchen</string>
     <string name="room">Room</string>
     <string name="bathroom">Bathroom</string>

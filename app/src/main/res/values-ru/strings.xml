@@ -20,6 +20,14 @@
     <string name="m">м</string>
     <string name="mmhg">мм. рт. ст.</string>
     <string name="pollution">Загрязнение</string>
+    <string name="minimal_temperature">Минимальная температура</string>
+    <string name="maximal_temperature">Максимальная температура</string>
+    <string name="measurement_period">Периодичность измерений</string>
+    <string name="history_length">Записей в истории</string>
+    <string name="history_record_period">Периодичность записи истории</string>
+    <string name="time_sync_period">Периодичность синхронизации времени</string>
+    <string name="seconds">Секунды</string>
+    <string name="sec">сек.</string>
     <string name="kitchen">Кухня</string>
     <string name="room">Комната</string>
     <string name="bathroom">Ванная</string>

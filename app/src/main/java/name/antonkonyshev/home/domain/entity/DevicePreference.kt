@@ -1,6 +1,6 @@
 package name.antonkonyshev.home.domain.entity
 
-open class DevicePreference (
+open class DevicePreference(
     open var highPollution: Int = 0,
     open var minTemperature: Int = 0,
     open var maxTemperature: Int = 0,
