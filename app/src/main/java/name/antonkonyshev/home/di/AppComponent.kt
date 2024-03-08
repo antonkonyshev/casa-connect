@@ -11,6 +11,7 @@ import javax.inject.Singleton
 @Singleton
 @Component(modules = [DatabaseModule::class, NetworkModule::class, ImplBindingModule::class])
 interface AppComponent {
+    // TODO: Check singletons
     fun inject(application: HomeApplication)
     fun inject(viewModel: DevicesViewModel)
     fun inject(viewModel: MeteoViewModel)

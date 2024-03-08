@@ -31,14 +31,40 @@ data class DevicePreferenceModel(
 
     @Transient
     override var device: Device? = null
-): DevicePreference(highPollution, minTemperature, maxTemperature, measurementPeriod, timeSyncPeriod, historyLength, historyRecordPeriod, wifiSsid, device) {
+) : DevicePreference(
+    highPollution,
+    minTemperature,
+    maxTemperature,
+    measurementPeriod,
+    timeSyncPeriod,
+    historyLength,
+    historyRecordPeriod,
+    wifiSsid,
+    device
+) {
     fun toDevicePreference(): DevicePreference {
         return this
     }
 
+    fun toHashMap(): HashMap<String, String> {
+        return hashMapOf(
+            "highPollution" to highPollution.toString(),
+            "minTemperature" to minTemperature.toString(),
+            "maxTemperature" to maxTemperature.toString(),
+            "measurementPeriod" to measurementPeriod.toString(),
+            "timeSyncPeriod" to timeSyncPeriod.toString(),
+            "historyLength" to historyLength.toString(),
+            "historyRecordPeriod" to historyRecordPeriod.toString(),
+        )
+    }
+
     companion object {
         fun fromDevicePreference(preference: DevicePreference): DevicePreferenceModel {
-            return preference as DevicePreferenceModel
+            return DevicePreferenceModel(
+                preference.highPollution, preference.minTemperature, preference.maxTemperature,
+                preference.measurementPeriod, preference.timeSyncPeriod, preference.historyLength,
+                preference.historyRecordPeriod, preference.wifiSsid, preference.device
+            )
         }
     }
 }

@@ -42,4 +42,5 @@
     <string name="save">Сохранить</string>
     <string name="carbon_monoxide_concentration_threshold">Порог концентрации окиси углерода</string>
     <string name="warn_about_exceeding_the_concentration_of_co">Предупреждать о превышении указанной концентрации CO</string>
+    <string name="device_preferences">Настройки устройства</string>
 </resources>

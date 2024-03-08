@@ -25,8 +25,6 @@ class DevicePreferenceActivity : BaseActivity() {
             viewModel.selectDevice(deviceId)
         }
 
-        Log.d("DevicePreferenceActivity.onCreated", viewModel.preference.value.toString())
-
         setContent {
             HomeTheme {
                 NavigationWrapper(
@@ -38,18 +36,13 @@ class DevicePreferenceActivity : BaseActivity() {
                     viewModel.uiState.collectAsState().value,
                     sectionScreenComposable = { onDrawerClicked: () -> Unit ->
                         DevicePreferenceScreen(
-                            viewModel.preference.collectAsState().value,
+                            viewModel,
                             onDrawerClicked = onDrawerClicked,
-                            onSave = { onSave() }
+                            onSave = { viewModel.saveDevicePreference(this) }
                         )
                     }
                 )
             }
         }
-    }
-
-    fun onSave() {
-        val viewModel: DevicePreferenceViewModel by viewModels()
-        Log.d("DevicePreferenceActivity.onSave", viewModel.preference.value.toString())
     }
 }

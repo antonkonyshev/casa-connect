@@ -5,5 +5,5 @@ import name.antonkonyshev.home.domain.entity.DevicePreference
 
 interface DevicePreferenceService {
     suspend fun getPreferences(device: Device): DevicePreference
-    suspend fun setPreferences(device: Device)
+    suspend fun setPreferences(preference: DevicePreference): Boolean
 }

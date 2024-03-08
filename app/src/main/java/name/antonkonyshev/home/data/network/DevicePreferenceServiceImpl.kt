@@ -1,9 +1,11 @@
 package name.antonkonyshev.home.data.network
 
+import android.util.Log
 import name.antonkonyshev.home.domain.entity.Device
 import name.antonkonyshev.home.domain.entity.DevicePreference
 import name.antonkonyshev.home.domain.repository.DevicePreferenceService
 import retrofit2.http.Body
+import retrofit2.http.FieldMap
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -17,7 +19,7 @@ interface DevicePreferenceSchema {
 
     @FormUrlEncoded
     @POST
-    suspend fun setPreferences(@Url url: String, @Body preferences: DevicePreferenceModel)
+    suspend fun setPreferences(@Url url: String, @FieldMap params: HashMap<String, String>)
 }
 
 @Singleton
@@ -37,7 +39,15 @@ class DevicePreferenceAPI @Inject constructor(
         }
     }
 
-    override suspend fun setPreferences(device: Device) {
-        TODO("Not yet implemented")
+    override suspend fun setPreferences(preference: DevicePreference): Boolean {
+        try {
+            // TODO: Return result
+            service.setPreferences(
+                NetworkDevice.fromDevice(preference.device!!).getPreferenceUrl(),
+                DevicePreferenceModel.fromDevicePreference(preference).toHashMap()
+            )
+            return true
+        } catch (err: Exception) {}
+        return false
     }
 }

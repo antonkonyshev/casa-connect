@@ -42,4 +42,5 @@
     <string name="save">Save</string>
     <string name="carbon_monoxide_concentration_threshold">Carbon monoxide concentration threshold</string>
     <string name="warn_about_exceeding_the_concentration_of_co">Warn about exceeding the concentration of CO</string>
+    <string name="device_preferences">Device preferences</string>
 </resources>
