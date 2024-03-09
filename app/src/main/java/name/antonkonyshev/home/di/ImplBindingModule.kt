@@ -3,10 +3,10 @@ package name.antonkonyshev.home.di
 import dagger.Binds
 import dagger.Module
 import name.antonkonyshev.home.data.database.DeviceRepositoryImpl
-import name.antonkonyshev.home.data.network.DevicePreferenceAPI
+import name.antonkonyshev.home.data.network.DevicePreferenceApiClientImpl
 import name.antonkonyshev.home.data.network.DiscoveryServiceImpl
 import name.antonkonyshev.home.data.network.MeteoAPI
-import name.antonkonyshev.home.domain.repository.DevicePreferenceService
+import name.antonkonyshev.home.domain.repository.DevicePreferenceApiClient
 import name.antonkonyshev.home.domain.repository.DeviceRepository
 import name.antonkonyshev.home.domain.repository.DiscoveryService
 import name.antonkonyshev.home.domain.repository.MeteoService
@@ -24,5 +24,5 @@ interface ImplBindingModule {
     fun bindMeteoService(service: MeteoAPI): MeteoService
 
     @Binds
-    fun bindDevicePreferenceService(service: DevicePreferenceAPI): DevicePreferenceService
+    fun bindDevicePreferenceService(service: DevicePreferenceApiClientImpl): DevicePreferenceApiClient
 }

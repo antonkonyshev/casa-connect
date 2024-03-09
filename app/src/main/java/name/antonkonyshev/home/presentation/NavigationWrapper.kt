@@ -107,7 +107,9 @@ fun AppScreen(
 //                    DevicesScreen(devices, onDrawerClicked)
                 }
 
-                AnimatedVisibility(navigationType == NavigationType.BOTTOM_NAVIGATION) {
+                AnimatedVisibility(
+                    visible = !uiState.loading && navigationType == NavigationType.BOTTOM_NAVIGATION
+                ) {
                     BottomNavigationBar(navigationDestination)
                 }
             }

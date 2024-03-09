@@ -1,28 +1,31 @@
 package name.antonkonyshev.home.presentation.devicepreference
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import name.antonkonyshev.home.domain.entity.DevicePreference
 import name.antonkonyshev.home.presentation.BaseActivity
 import name.antonkonyshev.home.presentation.NavigationDestinations
 import name.antonkonyshev.home.presentation.NavigationWrapper
 import name.antonkonyshev.home.ui.theme.HomeTheme
+import java.net.InetAddress
 
 class DevicePreferenceActivity : BaseActivity() {
+    private val viewModel: DevicePreferenceViewModel by viewModels()
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val viewModel: DevicePreferenceViewModel by viewModels()
-
         val deviceId: String? = intent.getStringExtra("deviceId")
         if (deviceId is String && deviceId.isNotEmpty()) {
-            viewModel.selectDevice(deviceId)
+            selectDevice(deviceId)
         }
 
         setContent {
@@ -38,10 +41,55 @@ class DevicePreferenceActivity : BaseActivity() {
                         DevicePreferenceScreen(
                             viewModel,
                             onDrawerClicked = onDrawerClicked,
-                            onSave = { viewModel.saveDevicePreference(this) }
+                            onSave = { saveDevicePreference() }
                         )
                     }
                 )
+            }
+        }
+    }
+
+    fun selectDevice(deviceId: String) {
+        if (viewModel.selectedDevice == null) {
+            viewModel.viewModelScope.async(Dispatchers.IO) {
+                viewModel.selectedDevice = viewModel.getDeviceByIdUseCase(deviceId)
+                if (
+                    viewModel.selectedDevice != null && viewModel.selectedDevice?.ip is InetAddress
+                ) {
+                    val preference =
+                        viewModel.getDevicePreferenceUseCase(viewModel.selectedDevice!!)
+                    if (preference != null) {
+                        viewModel.deviceName = viewModel.selectedDevice?.name ?: ""
+                        viewModel.highPollution = preference.highPollution
+                        viewModel.minTemperature = preference.minTemperature
+                        viewModel.maxTemperature = preference.maxTemperature
+                        viewModel.measurementPeriod = preference.measurementPeriod
+                        viewModel.timeSyncPeriod = preference.timeSyncPeriod
+                        viewModel.historyLength = preference.historyLength
+                        viewModel.historyRecordPeriod = preference.historyRecordPeriod
+                        viewModel.wifiSsid = preference.wifiSsid
+                    } else {
+                        finish()
+                    }
+                }
+            }
+        }
+    }
+
+    fun saveDevicePreference() {
+        if (viewModel.selectedDevice != null) {
+            viewModel.viewModelScope.async(Dispatchers.IO) {
+                val result = viewModel.setDevicePreferenceUseCase(
+                    DevicePreference(
+                        viewModel.highPollution, viewModel.minTemperature, viewModel.maxTemperature,
+                        viewModel.measurementPeriod, viewModel.timeSyncPeriod,
+                        viewModel.historyLength, viewModel.historyRecordPeriod, "",
+                        viewModel.selectedDevice
+                    )
+                )
+                if (result) {
+                    finish()
+                }
             }
         }
     }

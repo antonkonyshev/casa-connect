@@ -1,10 +1,8 @@
 package name.antonkonyshev.home.data.network
 
-import android.util.Log
 import name.antonkonyshev.home.domain.entity.Device
 import name.antonkonyshev.home.domain.entity.DevicePreference
-import name.antonkonyshev.home.domain.repository.DevicePreferenceService
-import retrofit2.http.Body
+import name.antonkonyshev.home.domain.repository.DevicePreferenceApiClient
 import retrofit2.http.FieldMap
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
@@ -23,11 +21,11 @@ interface DevicePreferenceSchema {
 }
 
 @Singleton
-class DevicePreferenceAPI @Inject constructor(
+class DevicePreferenceApiClientImpl @Inject constructor(
     private val service: DevicePreferenceSchema
-) : DevicePreferenceService {
+) : DevicePreferenceApiClient {
 
-    override suspend fun getPreferences(device: Device): DevicePreference {
+    override suspend fun getPreferences(device: Device): DevicePreference? {
         try {
             val preference = service.getPreferences(
                 NetworkDevice.fromDevice(device).getPreferenceUrl()
@@ -35,7 +33,7 @@ class DevicePreferenceAPI @Inject constructor(
             preference.device = device
             return preference.toDevicePreference()
         } catch (_: Exception) {
-            return DevicePreference()
+            return null
         }
     }
 

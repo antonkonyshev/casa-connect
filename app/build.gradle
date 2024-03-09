@@ -3,16 +3,17 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
+    id 'com.google.devtools.ksp'
 }
 
 android {
     namespace 'name.antonkonyshev.home'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "name.antonkonyshev.home"
         minSdk 30
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -63,7 +64,7 @@ dependencies {
     def google_accompanist_version = "0.30.1"
     def kt_coil_version = "2.4.0"
     def material_icons_version = "1.5.0-beta02"
-    def room_version = '2.5.2'
+    def room_version = '2.6.1'
     def preference_version = "1.2.0"
     def dagger2_version = "2.51"
     def okhttp_version = "4.12.0"
@@ -95,13 +96,14 @@ dependencies {
     implementation "com.google.dagger:dagger:$dagger2_version"
     implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
-    kapt "com.google.dagger:dagger-compiler:$dagger2_version"
-    kapt "androidx.room:room-compiler:$room_version"
+    ksp "androidx.room:room-compiler:$room_version"
+    ksp "com.google.dagger:dagger-compiler:$dagger2_version"
     testImplementation 'junit:junit:4.13.2'
     testImplementation "org.robolectric:robolectric:4.11.1"
     testImplementation "androidx.test:core:1.5.0"
     testImplementation "org.mockito:mockito-core:5.11.0"
 //    testImplementation "org.mockito.kotlin:mockito-kotlin:5.3.0"
+    testImplementation "com.squareup.okhttp3:mockwebserver:$okhttp_version"
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     androidTestImplementation platform('androidx.compose:compose-bom:2022.10.00')
