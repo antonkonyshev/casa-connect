@@ -5,9 +5,9 @@ import name.antonkonyshev.home.domain.repository.DevicePreferenceApiClient
 import javax.inject.Inject
 
 class SetDevicePreferencesUseCase @Inject constructor(
-    private val service: DevicePreferenceApiClient
+    private val client: DevicePreferenceApiClient
 ) {
     suspend operator fun invoke(preference: DevicePreference): Boolean {
-        return service.setPreferences(preference)
+        return client.setPreferences(preference)
     }
 }

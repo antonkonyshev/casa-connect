@@ -52,7 +52,7 @@ class MeteoViewModel : BaseViewModel() {
         }
     }
 
-    private fun observeMeasurement(silent: Boolean = false) {
+    fun observeMeasurement(silent: Boolean = false) {
         if (uiState.value.scanning) {
             return
         }

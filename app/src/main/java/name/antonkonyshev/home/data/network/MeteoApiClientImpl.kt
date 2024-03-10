@@ -2,7 +2,7 @@ package name.antonkonyshev.home.data.network
 
 import name.antonkonyshev.home.domain.entity.Device
 import name.antonkonyshev.home.domain.entity.Measurement
-import name.antonkonyshev.home.domain.repository.MeteoService
+import name.antonkonyshev.home.domain.repository.MeteoApiClient
 import retrofit2.http.GET
 import retrofit2.http.Url
 import javax.inject.Inject
@@ -17,9 +17,9 @@ interface MeteoServiceSchema {
 }
 
 @Singleton
-class MeteoAPI @Inject constructor(
+class MeteoApiClientImpl @Inject constructor(
     private val service: MeteoServiceSchema
-) : MeteoService {
+) : MeteoApiClient {
 
     override suspend fun getMeasurement(device: Device): Measurement? {
         var measurement: Measurement? = null

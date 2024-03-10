@@ -33,7 +33,8 @@ class MeteoActivity : BaseActivity() {
                             viewModel.getDevicesByServiceUseCase.getMeteoDevicesFlow().collectAsState(initial = emptyList()).value,
                             viewModel.measurements.mapValues { it.value.measurementFlow.collectAsState() },
                             viewModel.measurements.mapValues { it.value.historyFlow.collectAsState() },
-                            onDrawerClicked = onDrawerClicked
+                            onDrawerClicked = onDrawerClicked,
+                            onRefresh = { viewModel.observeMeasurement(true) }
                         )
                     }
                 )

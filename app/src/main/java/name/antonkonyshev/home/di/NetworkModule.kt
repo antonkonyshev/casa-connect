@@ -24,10 +24,21 @@ class NetworkModule {
     @Singleton
     @Provides
     fun provideMeteoServiceSchema(moshi: Moshi): MeteoServiceSchema {
+//        return Retrofit.Builder()
+//            .addConverterFactory(MoshiConverterFactory.create(moshi))
+//            .baseUrl("http://localhost").build()
+//            .create(MeteoServiceSchema::class.java)
+        // TODO: remove logging
         return Retrofit.Builder()
             .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .baseUrl("http://localhost").build()
-            .create(MeteoServiceSchema::class.java)
+            .baseUrl("http://localhost")
+            .client(
+                OkHttpClient.Builder().apply {
+                    addInterceptor(HttpLoggingInterceptor().apply {
+                        setLevel(HttpLoggingInterceptor.Level.BODY)
+                    })
+                }.build()
+            ).build().create(MeteoServiceSchema::class.java)
     }
 
     @Singleton
