@@ -11,6 +11,10 @@ class NetworkDevice(
         return "http://${ip!!.hostAddress}/"
     }
 
+    fun getServiceUrl(): String {
+        return "http://${ip!!.hostAddress}/service"
+    }
+
     fun getHistoryUrl(): String {
         return "http://${ip!!.hostAddress}/history"
     }

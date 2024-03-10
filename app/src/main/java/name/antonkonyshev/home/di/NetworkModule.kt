@@ -4,6 +4,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
+import name.antonkonyshev.home.data.network.DeviceModelSchema
 import name.antonkonyshev.home.data.network.DevicePreferenceSchema
 import name.antonkonyshev.home.data.network.MeteoServiceSchema
 import okhttp3.OkHttpClient
@@ -55,5 +56,21 @@ class NetworkModule {
                     })
                 }.build()
             ).build().create(DevicePreferenceSchema::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideDeviceModelSchema(moshi: Moshi): DeviceModelSchema {
+        // TODO: remove logging
+        return Retrofit.Builder()
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .baseUrl("http://localhost")
+            .client(
+                OkHttpClient.Builder().apply {
+                    addInterceptor(HttpLoggingInterceptor().apply {
+                        setLevel(HttpLoggingInterceptor.Level.BODY)
+                    })
+                }.build()
+            ).build().create(DeviceModelSchema::class.java)
     }
 }

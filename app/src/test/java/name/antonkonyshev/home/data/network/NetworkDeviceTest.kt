@@ -45,6 +45,11 @@ class NetworkDeviceTest {
     }
 
     @Test
+    fun getServiceUrl() {
+        assertEquals(networkDevice!!.getServiceUrl(), "http://192.168.0.101/service")
+    }
+
+    @Test
     fun getIp() {
         assertEquals(networkDevice!!.ip!!.hostAddress, "192.168.0.101")
     }

@@ -6,7 +6,7 @@ import javax.inject.Inject
 class DiscoverDevicesInLocalNetworkUseCase @Inject constructor(
     private val service: DiscoveryService
 ) {
-    operator fun invoke() {
+    operator suspend fun invoke() {
         service.discoverDevices()
     }
 }

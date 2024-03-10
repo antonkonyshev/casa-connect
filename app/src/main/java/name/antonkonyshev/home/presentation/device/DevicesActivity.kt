@@ -6,6 +6,9 @@ import androidx.activity.viewModels
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import name.antonkonyshev.home.presentation.BaseActivity
 import name.antonkonyshev.home.presentation.NavigationDestinations
 import name.antonkonyshev.home.presentation.NavigationWrapper
@@ -34,7 +37,9 @@ class DevicesActivity : BaseActivity() {
                             viewModel.getDevicesByServiceUseCase.getAllDevicesFlow()
                                 .collectAsState(initial = emptyList()).value,
                             onDiscoverDevicesClicked = {
-                                viewModel.discoverDevicesInLocalNetworkUseCase()
+                                viewModel.viewModelScope.async(Dispatchers.IO) {
+                                    viewModel.discoverDevicesInLocalNetworkUseCase()
+                                }
                             },
                             onDrawerClicked = onDrawerClicked
                         )

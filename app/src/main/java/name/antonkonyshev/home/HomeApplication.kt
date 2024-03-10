@@ -1,6 +1,9 @@
 package name.antonkonyshev.home
 
 import android.app.Application
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import name.antonkonyshev.home.di.DaggerAppComponent
 import name.antonkonyshev.home.domain.repository.DiscoveryService
 import javax.inject.Inject
@@ -15,7 +18,9 @@ class HomeApplication : Application() {
         instance = this
         component.inject(this)
         super.onCreate()
-        discoveryService.discoverDevices()
+        CoroutineScope(Dispatchers.IO).async {
+            discoveryService.discoverDevices()
+        }
     }
 
     companion object {
