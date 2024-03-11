@@ -3,6 +3,7 @@ package name.antonkonyshev.home.presentation
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import name.antonkonyshev.home.R
 
 open class BaseViewModel : ViewModel() {
@@ -17,6 +18,14 @@ open class BaseViewModel : ViewModel() {
     ).shuffled()
     val backgroundResource = backgroundResources[0]
     val navigationBackgroundResource = backgroundResources.drop(1)[0]
+
+    fun onLoading() {
+        _uiState.update { it.copy(loading = true) }
+    }
+
+    fun onLoaded() {
+        _uiState.update { it.copy(loading = false) }
+    }
 }
 
 data class UiState(

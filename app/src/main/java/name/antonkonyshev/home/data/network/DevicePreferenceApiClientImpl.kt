@@ -39,13 +39,12 @@ class DevicePreferenceApiClientImpl @Inject constructor(
 
     override suspend fun setPreferences(preference: DevicePreference): Boolean {
         try {
-            // TODO: Return result
             service.setPreferences(
                 NetworkDevice.fromDevice(preference.device!!).getPreferenceUrl(),
                 DevicePreferenceModel.fromDevicePreference(preference).toHashMap()
             )
             return true
-        } catch (err: Exception) {}
+        } catch (_: Exception) {}
         return false
     }
 }

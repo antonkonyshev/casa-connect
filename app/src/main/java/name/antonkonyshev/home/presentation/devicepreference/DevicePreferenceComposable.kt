@@ -1,6 +1,6 @@
 package name.antonkonyshev.home.presentation.devicepreference
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -11,12 +11,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.outlined.Masks
 import androidx.compose.material.icons.outlined.Thermostat
 import androidx.compose.material.icons.outlined.WatchLater
 import androidx.compose.material.icons.outlined.WaterfallChart
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,13 +34,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import name.antonkonyshev.home.R
-import name.antonkonyshev.home.domain.entity.Device
+import name.antonkonyshev.home.presentation.UiState
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun DevicePreferenceScreen(
     viewModel: DevicePreferenceViewModel,
     onDrawerClicked: () -> Unit = {},
-    onSave: () -> Unit = {}
+    onSave: () -> Unit = {},
+    uiState: UiState
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         Row(
@@ -64,7 +69,8 @@ fun DevicePreferenceScreen(
         Row(
             modifier = Modifier.fillMaxHeight()
         ) {
-            AnimatedVisibility(visible = viewModel.selectedDevice is Device) {
+            Box {
+                val refreshingState = rememberPullRefreshState(uiState.loading, onSave)
                 Column(
                     modifier = Modifier
                         .verticalScroll(rememberScrollState())
@@ -139,6 +145,9 @@ fun DevicePreferenceScreen(
                         }
                     }
                 }
+                PullRefreshIndicator(
+                    uiState.loading, refreshingState, Modifier.align(Alignment.TopCenter)
+                )
             }
         }
     }

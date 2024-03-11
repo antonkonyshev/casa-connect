@@ -27,14 +27,14 @@ class MeteoActivity : BaseActivity() {
                     NavigationDestinations.METEO,
                     viewModel.navigationBackgroundResource,
                     viewModel.backgroundResource,
-                    viewModel.uiState.collectAsState().value,
                     sectionScreenComposable = { onDrawerClicked: () -> Unit ->
                         MeteoScreen(
                             viewModel.getDevicesByServiceUseCase.getMeteoDevicesFlow().collectAsState(initial = emptyList()).value,
                             viewModel.measurements.mapValues { it.value.measurementFlow.collectAsState() },
                             viewModel.measurements.mapValues { it.value.historyFlow.collectAsState() },
                             onDrawerClicked = onDrawerClicked,
-                            onRefresh = { viewModel.observeMeasurement(true) }
+                            onRefresh = { viewModel.observeMeasurement(true) },
+                            uiState = viewModel.uiState.collectAsState().value
                         )
                     }
                 )

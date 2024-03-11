@@ -2,11 +2,11 @@ package name.antonkonyshev.home.presentation.meteo
 
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import name.antonkonyshev.home.HomeApplication
 import name.antonkonyshev.home.domain.entity.Device
 import name.antonkonyshev.home.domain.entity.Measurement
@@ -48,9 +48,9 @@ class MeteoViewModel : BaseViewModel() {
     lateinit var discoveryService: DiscoveryService
 
     init {
-        _uiState.update { it.copy(loading = true) }
+        onLoading()
         HomeApplication.instance.component.inject(this)
-        viewModelScope.async(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             discoveryService.discoverDevices()
             observeMeasurement()
         }
@@ -71,7 +71,7 @@ class MeteoViewModel : BaseViewModel() {
             _uiState.update { it.copy(loading = true, scanning = true) }
         }
         // TODO: Move to data layer
-        viewModelScope.async(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             getDevicesByServiceUseCase.getMeteoDevicesList().forEach { device ->
                 if (!measurements.containsKey(device.id)) {
                     measurements[device.id] = DeviceMeasurement(device.id)
@@ -79,7 +79,7 @@ class MeteoViewModel : BaseViewModel() {
                 if (device.ip == null) {
                     return@forEach
                 }
-                viewModelScope.async(Dispatchers.IO) {
+                viewModelScope.launch(Dispatchers.IO) {
                     retrieveDeviceMeasurement(device)
                 }
             }

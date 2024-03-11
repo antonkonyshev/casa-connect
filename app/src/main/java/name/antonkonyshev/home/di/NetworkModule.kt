@@ -7,8 +7,6 @@ import dagger.Provides
 import name.antonkonyshev.home.data.network.DeviceModelSchema
 import name.antonkonyshev.home.data.network.DevicePreferenceSchema
 import name.antonkonyshev.home.data.network.MeteoServiceSchema
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
@@ -25,52 +23,27 @@ class NetworkModule {
     @Singleton
     @Provides
     fun provideMeteoServiceSchema(moshi: Moshi): MeteoServiceSchema {
-//        return Retrofit.Builder()
-//            .addConverterFactory(MoshiConverterFactory.create(moshi))
-//            .baseUrl("http://localhost").build()
-//            .create(MeteoServiceSchema::class.java)
-        // TODO: remove logging
         return Retrofit.Builder()
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .baseUrl("http://localhost")
-            .client(
-                OkHttpClient.Builder().apply {
-                    addInterceptor(HttpLoggingInterceptor().apply {
-                        setLevel(HttpLoggingInterceptor.Level.BODY)
-                    })
-                }.build()
-            ).build().create(MeteoServiceSchema::class.java)
+            .build().create(MeteoServiceSchema::class.java)
     }
 
     @Singleton
     @Provides
     fun provideDevicePreferenceSchema(moshi: Moshi): DevicePreferenceSchema {
-        // TODO: remove logging
         return Retrofit.Builder()
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .baseUrl("http://localhost")
-            .client(
-                OkHttpClient.Builder().apply {
-                    addInterceptor(HttpLoggingInterceptor().apply {
-                        setLevel(HttpLoggingInterceptor.Level.BODY)
-                    })
-                }.build()
-            ).build().create(DevicePreferenceSchema::class.java)
+            .build().create(DevicePreferenceSchema::class.java)
     }
 
     @Singleton
     @Provides
     fun provideDeviceModelSchema(moshi: Moshi): DeviceModelSchema {
-        // TODO: remove logging
         return Retrofit.Builder()
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .baseUrl("http://localhost")
-            .client(
-                OkHttpClient.Builder().apply {
-                    addInterceptor(HttpLoggingInterceptor().apply {
-                        setLevel(HttpLoggingInterceptor.Level.BODY)
-                    })
-                }.build()
-            ).build().create(DeviceModelSchema::class.java)
+            .build().create(DeviceModelSchema::class.java)
     }
 }

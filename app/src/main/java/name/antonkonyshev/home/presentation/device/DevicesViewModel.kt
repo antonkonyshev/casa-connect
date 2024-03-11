@@ -1,5 +1,8 @@
 package name.antonkonyshev.home.presentation.device
 
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import name.antonkonyshev.home.HomeApplication
 import name.antonkonyshev.home.domain.usecase.DiscoverDevicesInLocalNetworkUseCase
 import name.antonkonyshev.home.domain.usecase.GetDevicesByServiceUseCase
@@ -16,5 +19,13 @@ class DevicesViewModel : BaseViewModel() {
 
     init {
         HomeApplication.instance.component.inject(this)
+    }
+
+    fun discoverDevices() {
+        onLoading()
+        viewModelScope.launch(Dispatchers.IO) {
+            discoverDevicesInLocalNetworkUseCase()
+            onLoaded()
+        }
     }
 }

@@ -1,6 +1,7 @@
 package name.antonkonyshev.home.presentation.device
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Sensors
@@ -20,6 +22,9 @@ import androidx.compose.material.icons.outlined.Masks
 import androidx.compose.material.icons.outlined.Thermostat
 import androidx.compose.material.icons.outlined.TireRepair
 import androidx.compose.material.icons.outlined.WaterDrop
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -36,13 +41,16 @@ import androidx.compose.ui.unit.dp
 import name.antonkonyshev.home.R
 import name.antonkonyshev.home.domain.entity.Device
 import name.antonkonyshev.home.presentation.LocalizationUtils
+import name.antonkonyshev.home.presentation.UiState
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun DevicesScreen(
     devices: List<Device>,
     onDiscoverDevicesClicked: () -> Unit = {},
     onDeviceClicked: (Device) -> Unit = {},
-    onDrawerClicked: () -> Unit = {}
+    onDrawerClicked: () -> Unit = {},
+    uiState: UiState
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         Row(
@@ -72,83 +80,89 @@ fun DevicesScreen(
             }
         }
 
-        LazyColumn(
-            modifier = Modifier
-        ) {
-            items(devices) { device ->
-                ListItem(
-                    headlineContent = {
-                        Text(
-                            text = LocalizationUtils.localizeDefaultServiceName(
-                                device.name, LocalContext.current
-                            ),
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.padding(top = 10.dp, bottom = 10.dp)
-                        )
-                    },
-                    leadingContent = {
-                        Icon(
-                            imageVector = Icons.Outlined.Thermostat,
-                            contentDescription = null,
-                            modifier = Modifier.size(size = 40.dp)
-                        )
-                    },
-                    supportingContent = {
-                        Row(modifier = Modifier.padding(bottom = 10.dp)) {
-                            val iconsModifier = Modifier.padding(end = 18.dp)
-                            if ("pollution" in device.sensors) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Masks,
-                                    contentDescription = null,
-                                    modifier = iconsModifier,
-                                )
-                            }
-                            if ("pressure" in device.sensors) {
-                                Icon(
-                                    imageVector = Icons.Outlined.TireRepair,
-                                    contentDescription = null,
-                                    modifier = iconsModifier,
-                                )
-                            }
-                            if ("altitude" in device.sensors) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Landscape,
-                                    contentDescription = null,
-                                    modifier = iconsModifier,
-                                )
-                            }
-                            if ("humidity" in device.sensors) {
-                                Icon(
-                                    imageVector = Icons.Outlined.WaterDrop,
-                                    contentDescription = null,
-                                    modifier = iconsModifier,
-                                )
-                            }
-                        }
-                    },
-                    trailingContent = {
-                        if (device.available) {
-                            Icon(
-                                imageVector = Icons.Default.Sensors,
-                                contentDescription = "Online",
-                                tint = MaterialTheme.colorScheme.primary,
+        val refreshingState = rememberPullRefreshState(uiState.loading, onDiscoverDevicesClicked)
+        Box(modifier = Modifier.pullRefresh(refreshingState)) {
+            LazyColumn(
+                modifier = Modifier
+            ) {
+                items(devices) { device ->
+                    ListItem(
+                        headlineContent = {
+                            Text(
+                                text = LocalizationUtils.localizeDefaultServiceName(
+                                    device.name, LocalContext.current
+                                ),
+                                style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier.padding(top = 10.dp, bottom = 10.dp)
                             )
-                        } else {
+                        },
+                        leadingContent = {
                             Icon(
-                                imageVector = Icons.Default.SensorsOff,
-                                contentDescription = "Offline",
-                                tint = MaterialTheme.colorScheme.secondary,
+                                imageVector = Icons.Outlined.Thermostat,
+                                contentDescription = null,
+                                modifier = Modifier.size(size = 40.dp)
                             )
-                        }
-                    },
-                    colors = ListItemDefaults.colors(
-                        containerColor = Color.White.copy(alpha = 0.7F),
-                    ),
-                    modifier = Modifier
-                        .padding(bottom = 18.dp)
-                        .clickable { onDeviceClicked(device) }
-                )
+                        },
+                        supportingContent = {
+                            Row(modifier = Modifier.padding(bottom = 10.dp)) {
+                                val iconsModifier = Modifier.padding(end = 18.dp)
+                                if ("pollution" in device.sensors) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Masks,
+                                        contentDescription = null,
+                                        modifier = iconsModifier,
+                                    )
+                                }
+                                if ("pressure" in device.sensors) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.TireRepair,
+                                        contentDescription = null,
+                                        modifier = iconsModifier,
+                                    )
+                                }
+                                if ("altitude" in device.sensors) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Landscape,
+                                        contentDescription = null,
+                                        modifier = iconsModifier,
+                                    )
+                                }
+                                if ("humidity" in device.sensors) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.WaterDrop,
+                                        contentDescription = null,
+                                        modifier = iconsModifier,
+                                    )
+                                }
+                            }
+                        },
+                        trailingContent = {
+                            if (device.available) {
+                                Icon(
+                                    imageVector = Icons.Default.Sensors,
+                                    contentDescription = "Online",
+                                    tint = MaterialTheme.colorScheme.primary,
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = Icons.Default.SensorsOff,
+                                    contentDescription = "Offline",
+                                    tint = MaterialTheme.colorScheme.secondary,
+                                )
+                            }
+                        },
+                        colors = ListItemDefaults.colors(
+                            containerColor = Color.White.copy(alpha = 0.7F),
+                        ),
+                        modifier = Modifier
+                            .padding(bottom = 18.dp)
+                            .clickable { onDeviceClicked(device) }
+                    )
+                }
             }
+            PullRefreshIndicator(
+                uiState.loading, refreshingState, Modifier.align(Alignment.TopCenter)
+            )
         }
     }
 }

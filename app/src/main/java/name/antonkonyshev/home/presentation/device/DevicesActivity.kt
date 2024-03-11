@@ -7,9 +7,6 @@ import androidx.activity.viewModels
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.collectAsState
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import name.antonkonyshev.home.domain.entity.Device
 import name.antonkonyshev.home.presentation.BaseActivity
 import name.antonkonyshev.home.presentation.NavigationDestinations
@@ -34,18 +31,14 @@ class DevicesActivity : BaseActivity() {
                     NavigationDestinations.DEVICES,
                     viewModel.navigationBackgroundResource,
                     viewModel.backgroundResource,
-                    viewModel.uiState.collectAsState().value,
                     sectionScreenComposable = { onDrawerClicked: () -> Unit ->
                         DevicesScreen(
                             viewModel.getDevicesByServiceUseCase.getAllDevicesFlow()
                                 .collectAsState(initial = emptyList()).value,
-                            onDiscoverDevicesClicked = {
-                                viewModel.viewModelScope.async(Dispatchers.IO) {
-                                    viewModel.discoverDevicesInLocalNetworkUseCase()
-                                }
-                            },
+                            onDiscoverDevicesClicked = viewModel::discoverDevices,
                             onDeviceClicked = ::onDeviceClicked,
-                            onDrawerClicked = onDrawerClicked
+                            onDrawerClicked = onDrawerClicked,
+                            uiState = viewModel.uiState.collectAsState().value
                         )
                     }
                 )

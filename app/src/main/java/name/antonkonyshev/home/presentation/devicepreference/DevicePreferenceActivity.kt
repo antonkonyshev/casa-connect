@@ -8,7 +8,7 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import name.antonkonyshev.home.domain.entity.DevicePreference
 import name.antonkonyshev.home.presentation.BaseActivity
 import name.antonkonyshev.home.presentation.NavigationDestinations
@@ -23,11 +23,6 @@ class DevicePreferenceActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val deviceId: String? = intent.getStringExtra("deviceId")
-        if (deviceId is String && deviceId.isNotEmpty()) {
-            selectDevice(deviceId)
-        }
-
         setContent {
             HomeTheme {
                 NavigationWrapper(
@@ -36,22 +31,28 @@ class DevicePreferenceActivity : BaseActivity() {
                     NavigationDestinations.DEVICE_PREFERENCES,
                     viewModel.navigationBackgroundResource,
                     viewModel.backgroundResource,
-                    viewModel.uiState.collectAsState().value,
                     sectionScreenComposable = { onDrawerClicked: () -> Unit ->
                         DevicePreferenceScreen(
                             viewModel,
                             onDrawerClicked = { finish() },
-                            onSave = ::saveDevicePreference
+                            onSave = ::saveDevicePreference,
+                            viewModel.uiState.collectAsState().value
                         )
                     }
                 )
             }
         }
+
+        val deviceId: String? = intent.getStringExtra("deviceId")
+        if (deviceId is String && deviceId.isNotEmpty()) {
+            selectDevice(deviceId)
+        }
     }
 
     fun selectDevice(deviceId: String) {
         if (viewModel.selectedDevice == null) {
-            viewModel.viewModelScope.async(Dispatchers.IO) {
+            viewModel.onLoading()
+            viewModel.viewModelScope.launch(Dispatchers.IO) {
                 viewModel.selectedDevice = viewModel.getDeviceByIdUseCase(deviceId)
                 if (
                     viewModel.selectedDevice != null && viewModel.selectedDevice?.ip is InetAddress
@@ -68,7 +69,9 @@ class DevicePreferenceActivity : BaseActivity() {
                         viewModel.historyLength = preference.historyLength
                         viewModel.historyRecordPeriod = preference.historyRecordPeriod
                         viewModel.wifiSsid = preference.wifiSsid
+                        viewModel.onLoaded()
                     } else {
+                        viewModel.onLoaded()
                         finish()
                     }
                 }
@@ -78,7 +81,8 @@ class DevicePreferenceActivity : BaseActivity() {
 
     fun saveDevicePreference() {
         if (viewModel.selectedDevice != null) {
-            viewModel.viewModelScope.async(Dispatchers.IO) {
+            viewModel.onLoading()
+            viewModel.viewModelScope.launch(Dispatchers.IO) {
                 val result = viewModel.setDevicePreferenceUseCase(
                     DevicePreference(
                         viewModel.highPollution, viewModel.minTemperature, viewModel.maxTemperature,
@@ -87,6 +91,7 @@ class DevicePreferenceActivity : BaseActivity() {
                         viewModel.selectedDevice
                     )
                 )
+                viewModel.onLoaded()
                 if (result) {
                     finish()
                 }

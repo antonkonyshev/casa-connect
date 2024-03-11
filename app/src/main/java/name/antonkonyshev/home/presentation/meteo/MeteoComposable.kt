@@ -1,5 +1,6 @@
 package name.antonkonyshev.home.presentation.meteo
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,10 +31,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,6 +43,7 @@ import name.antonkonyshev.home.R
 import name.antonkonyshev.home.domain.entity.Device
 import name.antonkonyshev.home.domain.entity.Measurement
 import name.antonkonyshev.home.presentation.LocalizationUtils
+import name.antonkonyshev.home.presentation.UiState
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -54,7 +52,8 @@ fun MeteoScreen(
     measurements: Map<String, State<Measurement>>,
     histories: Map<String, State<List<Measurement>>>,
     onDrawerClicked: () -> Unit = {},
-    onRefresh: () -> Unit = {}
+    onRefresh: () -> Unit = {},
+    uiState: UiState
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         Row(
@@ -78,8 +77,7 @@ fun MeteoScreen(
             )
         }
 
-        var refreshing by remember { mutableStateOf(false) }
-        val refreshingState = rememberPullRefreshState(refreshing, onRefresh)
+        val refreshingState = rememberPullRefreshState(uiState.loading, onRefresh)
         Box(modifier = Modifier.pullRefresh(refreshingState)) {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(devices) { device ->
@@ -116,49 +114,68 @@ fun MeteoScreen(
                             }
                         },
                         supportingContent = {
-                            if (measurements[device.id] is State<Measurement>) {
+                            if (uiState.loading) {
                                 Column {
-                                    Row {
-                                        SensorValueListItem(
-                                            label = stringResource(R.string.temperature),
-                                            icon = Icons.Outlined.Thermostat,
-                                            sensorValue = measurements[device.id]!!.value.temperature,
-                                            units = stringResource(R.string.c),
+                                    Row(
+                                        modifier = Modifier
+                                            .padding(20.dp)
+                                            .fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+                                        Text(
+                                            text = stringResource(R.string.loading),
+                                            style = MaterialTheme.typography.labelMedium,
+                                            modifier = Modifier.weight(1f),
+                                            textAlign = TextAlign.Center
                                         )
                                     }
-                                    Row {
-                                        SensorValueListItem(
-                                            label = stringResource(R.string.pressure),
-                                            icon = Icons.Outlined.TireRepair,
-                                            sensorValue = measurements[device.id]!!.value.pressure,
-                                            units = stringResource(R.string.mmhg),
-                                        )
-                                    }
-                                    Row {
-                                        SensorValueListItem(
-                                            label = stringResource(R.string.pollution),
-                                            icon = Icons.Outlined.Masks,
-                                            sensorValue = measurements[device.id]!!.value.pollution,
-                                            units = stringResource(R.string.mg_m3),
-                                        )
-                                    }
-                                    Row {
-                                        SensorValueListItem(
-                                            label = stringResource(R.string.altitude),
-                                            icon = Icons.Outlined.Landscape,
-                                            sensorValue = measurements[device.id]!!.value.altitude,
-                                            units = stringResource(R.string.m),
-                                        )
-                                    }
-                                    if (histories[device.id] is State<List<Measurement>>) {
-                                        // TODO: Add chart representing changing of values over time
+                                }
+                            } else {
+                                if (measurements[device.id] is State<Measurement>) {
+                                    Column {
                                         Row {
                                             SensorValueListItem(
-                                                label = stringResource(R.string.history),
-                                                icon = Icons.Outlined.Watch,
-                                                sensorValue = histories[device.id]!!.value.size.toFloat(),
-                                                units = stringResource(R.string.records).lowercase()
+                                                label = stringResource(R.string.temperature),
+                                                icon = Icons.Outlined.Thermostat,
+                                                sensorValue = measurements[device.id]!!.value.temperature,
+                                                units = stringResource(R.string.c),
                                             )
+                                        }
+                                        Row {
+                                            SensorValueListItem(
+                                                label = stringResource(R.string.pressure),
+                                                icon = Icons.Outlined.TireRepair,
+                                                sensorValue = measurements[device.id]!!.value.pressure,
+                                                units = stringResource(R.string.mmhg),
+                                            )
+                                        }
+                                        Row {
+                                            SensorValueListItem(
+                                                label = stringResource(R.string.pollution),
+                                                icon = Icons.Outlined.Masks,
+                                                sensorValue = measurements[device.id]!!.value.pollution,
+                                                units = stringResource(R.string.mg_m3),
+                                            )
+                                        }
+                                        Row {
+                                            SensorValueListItem(
+                                                label = stringResource(R.string.altitude),
+                                                icon = Icons.Outlined.Landscape,
+                                                sensorValue = measurements[device.id]!!.value.altitude,
+                                                units = stringResource(R.string.m),
+                                            )
+                                        }
+                                        if (histories[device.id] is State<List<Measurement>>) {
+                                            // TODO: Add chart representing changing of values over time
+                                            Row {
+                                                SensorValueListItem(
+                                                    label = stringResource(R.string.history),
+                                                    icon = Icons.Outlined.Watch,
+                                                    sensorValue = histories[device.id]!!.value.size.toFloat(),
+                                                    units = stringResource(R.string.records).lowercase()
+                                                )
+                                            }
                                         }
                                     }
                                 }
@@ -173,7 +190,7 @@ fun MeteoScreen(
                 }
             }
             PullRefreshIndicator(
-                refreshing, refreshingState, Modifier.align(Alignment.TopCenter)
+                uiState.loading, refreshingState, Modifier.align(Alignment.TopCenter)
             )
         }
     }

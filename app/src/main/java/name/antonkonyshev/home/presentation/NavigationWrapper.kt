@@ -17,11 +17,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.MenuOpen
 import androidx.compose.material.icons.filled.Air
 import androidx.compose.material.icons.filled.Light
 import androidx.compose.material.icons.filled.MeetingRoom
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.MenuOpen
 import androidx.compose.material.icons.filled.Sensors
 import androidx.compose.material.icons.filled.Thermostat
 import androidx.compose.material3.DrawerValue
@@ -71,7 +71,6 @@ fun AppScreen(
     navigationType: NavigationType,
     backgroundResource: Int,
     navigationDestination: String,
-    uiState: UiState,
     sectionScreenComposable: @Composable (() -> Unit) -> Unit = {},
     onDrawerClicked: () -> Unit = {},
 ) {
@@ -97,38 +96,13 @@ fun AppScreen(
                     .background(MaterialTheme.colorScheme.background)
             ) {
 
-                AnimatedVisibility(visible = !uiState.loading, modifier = Modifier.weight(1f)) {
+                Row(modifier = Modifier.weight(1f)) {
                     sectionScreenComposable(onDrawerClicked)
-//                    MeteoScreen(devices, measurements.mapValues {
-//                        it.value.measurementFlow.collectAsState()
-//                    }, measurements.mapValues {
-//                        it.value.historyFlow.collectAsState()
-//                    }, onDrawerClicked)
-//                    DevicesScreen(devices, onDrawerClicked)
                 }
 
-                AnimatedVisibility(
-                    visible = !uiState.loading && navigationType == NavigationType.BOTTOM_NAVIGATION
-                ) {
+                AnimatedVisibility(navigationType == NavigationType.BOTTOM_NAVIGATION) {
                     BottomNavigationBar(navigationDestination)
                 }
-            }
-        }
-        AnimatedVisibility(visible = uiState.loading) {
-            // TODO: Animated loading spinner
-            // TODO: Edit wallpapers
-            Row(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = Color.White.copy(alpha = 0.8F)),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = stringResource(R.string.loading),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                )
             }
         }
     }
@@ -141,7 +115,6 @@ fun NavigationWrapper(
     navigationDestination: String,
     navigationBackgroundResource: Int,
     backgroundResource: Int,
-    uiState: UiState,
     sectionScreenComposable: @Composable (() -> Unit) -> Unit = {},
 ) {
     val systemUiController = rememberSystemUiController()
@@ -185,7 +158,7 @@ fun NavigationWrapper(
             }
         ) {
             AppScreen(
-                navigationType, backgroundResource, navigationDestination, uiState,
+                navigationType, backgroundResource, navigationDestination,
                 sectionScreenComposable = sectionScreenComposable
             )
         }
@@ -204,7 +177,7 @@ fun NavigationWrapper(
             drawerState = drawerState
         ) {
             AppScreen(
-                navigationType, backgroundResource, navigationDestination, uiState,
+                navigationType, backgroundResource, navigationDestination,
                 onDrawerClicked = { scope.launch { drawerState.open() } },
                 sectionScreenComposable = sectionScreenComposable
             )
@@ -335,7 +308,7 @@ fun NavigationDrawerContent(
                 )
                 IconButton(onClick = onDrawerClicked) {
                     Icon(
-                        imageVector = Icons.Default.MenuOpen,
+                        imageVector = Icons.AutoMirrored.Filled.MenuOpen,
                         contentDescription = stringResource(R.string.navigation_label)
                     )
                 }
