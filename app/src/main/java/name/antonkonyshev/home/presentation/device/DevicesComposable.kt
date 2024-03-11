@@ -1,6 +1,5 @@
 package name.antonkonyshev.home.presentation.device
 
-import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,16 +33,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.startActivity
 import name.antonkonyshev.home.R
 import name.antonkonyshev.home.domain.entity.Device
-import name.antonkonyshev.home.presentation.devicepreference.DevicePreferenceActivity
-import name.antonkonyshev.home.presentation.localizeDefaultServiceName
+import name.antonkonyshev.home.presentation.LocalizationUtils
 
 @Composable
 fun DevicesScreen(
     devices: List<Device>,
     onDiscoverDevicesClicked: () -> Unit = {},
+    onDeviceClicked: (Device) -> Unit = {},
     onDrawerClicked: () -> Unit = {}
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
@@ -74,7 +72,6 @@ fun DevicesScreen(
             }
         }
 
-        val context = LocalContext.current
         LazyColumn(
             modifier = Modifier
         ) {
@@ -82,7 +79,9 @@ fun DevicesScreen(
                 ListItem(
                     headlineContent = {
                         Text(
-                            text = localizeDefaultServiceName(device.name, LocalContext.current),
+                            text = LocalizationUtils.localizeDefaultServiceName(
+                                device.name, LocalContext.current
+                            ),
                             style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.padding(top = 10.dp, bottom = 10.dp)
                         )
@@ -147,14 +146,7 @@ fun DevicesScreen(
                     ),
                     modifier = Modifier
                         .padding(bottom = 18.dp)
-                        .clickable {
-                            startActivity(
-                                context,
-                                Intent(context, DevicePreferenceActivity::class.java)
-                                    .apply { putExtra("deviceId", device.id) },
-                                null
-                            )
-                        }
+                        .clickable { onDeviceClicked(device) }
                 )
             }
         }

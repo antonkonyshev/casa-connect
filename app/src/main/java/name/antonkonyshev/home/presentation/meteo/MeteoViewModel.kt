@@ -8,7 +8,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import name.antonkonyshev.home.HomeApplication
+import name.antonkonyshev.home.domain.entity.Device
 import name.antonkonyshev.home.domain.entity.Measurement
+import name.antonkonyshev.home.domain.repository.DiscoveryService
 import name.antonkonyshev.home.domain.usecase.GetDevicesByServiceUseCase
 import name.antonkonyshev.home.domain.usecase.GetMeasurementFromMeteoSensorUseCase
 import name.antonkonyshev.home.domain.usecase.UpdateDeviceAvailabilityUseCase
@@ -42,9 +44,16 @@ class MeteoViewModel : BaseViewModel() {
     @Inject
     lateinit var getMeasurementFromMeteoSensorUseCase: GetMeasurementFromMeteoSensorUseCase
 
+    @Inject
+    lateinit var discoveryService: DiscoveryService
+
     init {
+        _uiState.update { it.copy(loading = true) }
         HomeApplication.instance.component.inject(this)
-        observeMeasurement()
+        viewModelScope.async(Dispatchers.IO) {
+            discoveryService.discoverDevices()
+            observeMeasurement()
+        }
         measurementTimer.scheduleAtFixedRate(
             periodicalMeasurementUpdate, periodicalMeasurementUpdate * 1000L
         ) {
@@ -71,28 +80,36 @@ class MeteoViewModel : BaseViewModel() {
                     return@forEach
                 }
                 viewModelScope.async(Dispatchers.IO) {
-                    val available = device.available
-                    val measurement = getMeasurementFromMeteoSensorUseCase.getMeasurement(device)
-                    if (measurement is Measurement) {
-                        measurements[device.id]!!._measurement.value = measurement
-                    }
-                    if (device.available != available) {
-                        updateDeviceAvailabilityUseCase(device)
-                    }
-                    // TODO: Add settings for the history update period
-                    if (device.available && Date().time > measurements[device.id]!!
-                            .lastHistoryUpdate + 1200000L
-                    ) {
-                        measurements[device.id]!!.lastHistoryUpdate = Date().time
-                        val history = getMeasurementFromMeteoSensorUseCase.getHistory(device)
-                        if (history is List<Measurement>) {
-                            measurements[device.id]!!._history.value = history
-                        }
-                    }
+                    retrieveDeviceMeasurement(device)
                 }
             }
             // TODO: Wait until selected device
             _uiState.update { it.copy(loading = false, scanning = false) }
+        }
+    }
+
+    private suspend fun retrieveDeviceMeasurement(device: Device) {
+        val available = device.available
+        val measurement = getMeasurementFromMeteoSensorUseCase.getMeasurement(device)
+        if (measurement is Measurement) {
+            measurements[device.id]!!._measurement.value = measurement
+        }
+        if (device.available != available) {
+            updateDeviceAvailabilityUseCase(device)
+        }
+        retrieveDeviceHistory(device)
+    }
+
+    private suspend fun retrieveDeviceHistory(device: Device) {
+        // TODO: Add settings for the history update period
+        if (device.available && Date().time > measurements[device.id]!!
+                .lastHistoryUpdate + 1200000L
+        ) {
+            measurements[device.id]!!.lastHistoryUpdate = Date().time
+            val history = getMeasurementFromMeteoSensorUseCase.getHistory(device)
+            if (history is List<Measurement>) {
+                measurements[device.id]!!._history.value = history
+            }
         }
     }
 

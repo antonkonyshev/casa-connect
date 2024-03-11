@@ -57,12 +57,12 @@ class DiscoveryServiceImpl @Inject constructor(
         }
         CoroutineScope(Dispatchers.IO).async {
             if (ip.isReachable(1000)) {
-                fetchServiceInfo(ip)
+                retrieveServiceInfo(ip)
             }
         }
     }
 
-    private suspend fun fetchServiceInfo(ip: InetAddress?) {
+    private suspend fun retrieveServiceInfo(ip: InetAddress?) {
         try {
             var device = schema.getServiceInfo(NetworkDevice(ip!!).getServiceUrl())
             device.ip = ip

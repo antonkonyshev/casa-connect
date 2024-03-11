@@ -45,7 +45,7 @@ import androidx.compose.ui.unit.dp
 import name.antonkonyshev.home.R
 import name.antonkonyshev.home.domain.entity.Device
 import name.antonkonyshev.home.domain.entity.Measurement
-import name.antonkonyshev.home.presentation.localizeDefaultServiceName
+import name.antonkonyshev.home.presentation.LocalizationUtils
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -90,7 +90,7 @@ fun MeteoScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = localizeDefaultServiceName(
+                                    text = LocalizationUtils.localizeDefaultServiceName(
                                         device.name,
                                         LocalContext.current
                                     ),

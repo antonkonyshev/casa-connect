@@ -17,7 +17,7 @@ import name.antonkonyshev.home.ui.theme.HomeTheme
 import java.net.InetAddress
 
 class DevicePreferenceActivity : BaseActivity() {
-    private val viewModel: DevicePreferenceViewModel by viewModels()
+    val viewModel: DevicePreferenceViewModel by viewModels()
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,8 +40,8 @@ class DevicePreferenceActivity : BaseActivity() {
                     sectionScreenComposable = { onDrawerClicked: () -> Unit ->
                         DevicePreferenceScreen(
                             viewModel,
-                            onDrawerClicked = onDrawerClicked,
-                            onSave = { saveDevicePreference() }
+                            onDrawerClicked = { finish() },
+                            onSave = ::saveDevicePreference
                         )
                     }
                 )

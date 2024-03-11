@@ -1,5 +1,6 @@
 package name.antonkonyshev.home.presentation.device
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -9,9 +10,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import name.antonkonyshev.home.domain.entity.Device
 import name.antonkonyshev.home.presentation.BaseActivity
 import name.antonkonyshev.home.presentation.NavigationDestinations
 import name.antonkonyshev.home.presentation.NavigationWrapper
+import name.antonkonyshev.home.presentation.devicepreference.DevicePreferenceActivity
 import name.antonkonyshev.home.ui.theme.HomeTheme
 
 // TODO: Storing info about local services and checking availability of them on start up or resume
@@ -41,11 +44,17 @@ class DevicesActivity : BaseActivity() {
                                     viewModel.discoverDevicesInLocalNetworkUseCase()
                                 }
                             },
+                            onDeviceClicked = ::onDeviceClicked,
                             onDrawerClicked = onDrawerClicked
                         )
                     }
                 )
             }
         }
+    }
+
+    private fun onDeviceClicked(device: Device) {
+        startActivity(Intent(this, DevicePreferenceActivity::class.java)
+            .apply { putExtra("deviceId", device.id) })
     }
 }

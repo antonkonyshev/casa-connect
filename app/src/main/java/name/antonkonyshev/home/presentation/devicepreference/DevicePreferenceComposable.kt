@@ -12,7 +12,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.outlined.Masks
 import androidx.compose.material.icons.outlined.Thermostat
 import androidx.compose.material.icons.outlined.WatchLater
@@ -49,7 +49,7 @@ fun DevicePreferenceScreen(
         ) {
             IconButton(onClick = onDrawerClicked) {
                 Icon(
-                    imageVector = Icons.Default.Menu,
+                    imageVector = Icons.Default.ArrowBackIosNew,
                     contentDescription = stringResource(R.string.navigation_label)
                 )
             }

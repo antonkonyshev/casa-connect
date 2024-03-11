@@ -1,6 +1,5 @@
 package name.antonkonyshev.home.presentation
 
-import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -10,14 +9,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import org.lsposed.hiddenapibypass.HiddenApiBypass
 
 open class BaseActivity : ComponentActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        HiddenApiBypass.addHiddenApiExemptions("L")
-        super.onCreate(savedInstanceState)
-    }
 
     fun devicePostureFlow(): StateFlow<DevicePosture> {
         return WindowInfoTracker
