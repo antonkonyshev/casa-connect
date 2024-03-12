@@ -50,9 +50,9 @@ class MeteoViewModel : BaseViewModel() {
     init {
         onLoading()
         HomeApplication.instance.component.inject(this)
+        observeMeasurement()
         viewModelScope.launch(Dispatchers.IO) {
             discoveryService.discoverDevices()
-            observeMeasurement()
         }
         measurementTimer.scheduleAtFixedRate(
             periodicalMeasurementUpdate, periodicalMeasurementUpdate * 1000L
@@ -70,7 +70,6 @@ class MeteoViewModel : BaseViewModel() {
         } else {
             _uiState.update { it.copy(loading = true, scanning = true) }
         }
-        // TODO: Move to data layer
         viewModelScope.launch(Dispatchers.IO) {
             getDevicesByServiceUseCase.getMeteoDevicesList().forEach { device ->
                 if (!measurements.containsKey(device.id)) {
@@ -83,7 +82,6 @@ class MeteoViewModel : BaseViewModel() {
                     retrieveDeviceMeasurement(device)
                 }
             }
-            // TODO: Wait until selected device
             _uiState.update { it.copy(loading = false, scanning = false) }
         }
     }

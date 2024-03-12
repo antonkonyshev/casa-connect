@@ -1,5 +1,6 @@
 package name.antonkonyshev.home.presentation.meteo
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +30,7 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
@@ -51,9 +53,10 @@ fun MeteoScreen(
     devices: List<Device>,
     measurements: Map<String, State<Measurement>>,
     histories: Map<String, State<List<Measurement>>>,
+    uiState: UiState,
+    windowSize: WindowWidthSizeClass,
     onDrawerClicked: () -> Unit = {},
-    onRefresh: () -> Unit = {},
-    uiState: UiState
+    onRefresh: () -> Unit = {}
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         Row(
@@ -63,11 +66,13 @@ fun MeteoScreen(
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            IconButton(onClick = onDrawerClicked) {
-                Icon(
-                    imageVector = Icons.Default.Menu,
-                    contentDescription = stringResource(R.string.navigation_label)
-                )
+            AnimatedVisibility(visible = windowSize == WindowWidthSizeClass.Compact) {
+                IconButton(onClick = onDrawerClicked) {
+                    Icon(
+                        imageVector = Icons.Default.Menu,
+                        contentDescription = stringResource(R.string.navigation_label)
+                    )
+                }
             }
             Text(
                 text = stringResource(R.string.meteostation),

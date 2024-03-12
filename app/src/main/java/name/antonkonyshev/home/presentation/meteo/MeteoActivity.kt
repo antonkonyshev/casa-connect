@@ -20,9 +20,10 @@ class MeteoActivity : BaseActivity() {
         val viewModel: MeteoViewModel by viewModels()
 
         setContent {
+            val windowSize = calculateWindowSizeClass(activity = this).widthSizeClass
             HomeTheme {
                 NavigationWrapper(
-                    calculateWindowSizeClass(activity = this).widthSizeClass,
+                    windowSize,
                     devicePostureFlow().collectAsState().value,
                     NavigationDestinations.METEO,
                     viewModel.navigationBackgroundResource,
@@ -32,9 +33,10 @@ class MeteoActivity : BaseActivity() {
                             viewModel.getDevicesByServiceUseCase.getMeteoDevicesFlow().collectAsState(initial = emptyList()).value,
                             viewModel.measurements.mapValues { it.value.measurementFlow.collectAsState() },
                             viewModel.measurements.mapValues { it.value.historyFlow.collectAsState() },
+                            uiState = viewModel.uiState.collectAsState().value,
+                            windowSize = windowSize,
                             onDrawerClicked = onDrawerClicked,
-                            onRefresh = { viewModel.observeMeasurement(true) },
-                            uiState = viewModel.uiState.collectAsState().value
+                            onRefresh = { viewModel.observeMeasurement(true) }
                         )
                     }
                 )

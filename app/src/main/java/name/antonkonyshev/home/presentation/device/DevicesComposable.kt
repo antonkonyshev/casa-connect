@@ -71,7 +71,6 @@ fun DevicesScreen(
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            // TODO: Hide nav button when in landscape mode
             AnimatedVisibility(visible = windowSize == WindowWidthSizeClass.Compact) {
                 IconButton(onClick = onDrawerClicked) {
                     Icon(
