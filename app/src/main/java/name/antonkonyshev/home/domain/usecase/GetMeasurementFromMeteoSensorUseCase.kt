@@ -6,13 +6,13 @@ import name.antonkonyshev.home.domain.repository.MeteoApiClient
 import javax.inject.Inject
 
 class GetMeasurementFromMeteoSensorUseCase @Inject constructor(
-    private val meteoapi: MeteoApiClient
+    private val client: MeteoApiClient
 ) {
     suspend fun getMeasurement(device: Device): Measurement? {
-        return meteoapi.getMeasurement(device)
+        return client.getMeasurement(device)
     }
 
     suspend fun getHistory(device: Device): List<Measurement>? {
-        return meteoapi.getHistory(device)
+        return client.getHistory(device)
     }
 }

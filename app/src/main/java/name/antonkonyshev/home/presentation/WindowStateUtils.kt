@@ -20,7 +20,7 @@ fun isSeparating(foldFeature: FoldingFeature?): Boolean {
 }
 
 sealed interface DevicePosture {
-    object NormalPosture: DevicePosture
+    data object NormalPosture: DevicePosture
 
     data class BookPosture(
         val hingePosition: Rect?

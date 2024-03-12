@@ -6,7 +6,7 @@ import android.net.LinkAddress
 import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import name.antonkonyshev.home.HomeApplication
 import name.antonkonyshev.home.data.database.DeviceModel
 import name.antonkonyshev.home.domain.repository.DeviceRepository
@@ -55,7 +55,7 @@ class DiscoveryServiceImpl @Inject constructor(
         if (ip.isMulticastAddress) {
             return
         }
-        CoroutineScope(Dispatchers.IO).async {
+        CoroutineScope(Dispatchers.IO).launch {
             if (ip.isReachable(1000)) {
                 retrieveServiceInfo(ip)
             }
@@ -64,7 +64,7 @@ class DiscoveryServiceImpl @Inject constructor(
 
     private suspend fun retrieveServiceInfo(ip: InetAddress?) {
         try {
-            var device = schema.getServiceInfo(NetworkDevice(ip!!).getServiceUrl())
+            val device = schema.getServiceInfo(NetworkDevice(ip!!).getServiceUrl())
             device.ip = ip
             deviceRepository.updateStateOrCreate(device)
         } catch (err: Exception) {

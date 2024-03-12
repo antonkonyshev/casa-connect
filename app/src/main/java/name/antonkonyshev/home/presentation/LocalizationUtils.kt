@@ -8,17 +8,17 @@ import javax.inject.Singleton
 class LocalizationUtils {
     companion object {
         fun localizeDefaultServiceName(name: String, context: Context): String {
-            when (name) {
-                "Room" -> return context.getString(R.string.room)
-                "Kitchen" -> return context.getString(R.string.kitchen)
-                "Bathroom" -> return context.getString(R.string.bathroom)
-                "Balcony" -> return context.getString(R.string.balcony)
-                "Vestibule" -> return context.getString(R.string.vestibule)
-                "Entrance" -> return context.getString(R.string.entrance)
-                "Outdoors" -> return context.getString(R.string.outdoors)
-                "Yard" -> return context.getString(R.string.yard)
-                "Sauna" -> return context.getString(R.string.sauna)
-                else -> return name
+            return when (name) {
+                "Room" -> context.getString(R.string.room)
+                "Kitchen" -> context.getString(R.string.kitchen)
+                "Bathroom" -> context.getString(R.string.bathroom)
+                "Balcony" -> context.getString(R.string.balcony)
+                "Vestibule" -> context.getString(R.string.vestibule)
+                "Entrance" -> context.getString(R.string.entrance)
+                "Outdoors" -> context.getString(R.string.outdoors)
+                "Yard" -> context.getString(R.string.yard)
+                "Sauna" -> context.getString(R.string.sauna)
+                else -> name
             }
         }
     }

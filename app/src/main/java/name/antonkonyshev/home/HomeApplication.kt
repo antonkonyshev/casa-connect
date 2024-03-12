@@ -1,11 +1,12 @@
 package name.antonkonyshev.home
 
 import android.app.Application
+import name.antonkonyshev.home.di.AppComponent
 import name.antonkonyshev.home.di.DaggerAppComponent
 
 class HomeApplication : Application() {
 
-    val component by lazy { DaggerAppComponent.create() }
+    val component by lazy<AppComponent> { DaggerAppComponent.create() }
 
     override fun onCreate() {
         instance = this

@@ -1,6 +1,6 @@
 package name.antonkonyshev.home.presentation
 
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.window.layout.FoldingFeature
@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
-open class BaseActivity : ComponentActivity() {
+open class BaseActivity : AppCompatActivity() {
 
     fun devicePostureFlow(): StateFlow<DevicePosture> {
         return WindowInfoTracker

@@ -63,7 +63,6 @@ object NavigationDestinations {
     const val LIGHT = "light"
     const val DOOR = "door"
     const val DEVICES = "devices"
-    const val DEVICE_PREFERENCES = "preferences"
 }
 
 @Composable
@@ -76,7 +75,6 @@ fun AppScreen(
 ) {
     Box(modifier = Modifier.background(color = MaterialTheme.colorScheme.background)) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // TODO: Visibility animation for the background image
             Image(
                 painter = getBackgroundPainter(backgroundResource = backgroundResource),
                 contentDescription = null,

@@ -39,12 +39,6 @@
             android:label="@string/devices"
             android:theme="@style/Theme.CoderLabHome">
         </activity>
-        <activity
-            android:name=".presentation.devicepreference.DevicePreferenceActivity"
-            android:exported="false"
-            android:label="Device Settings"
-            android:theme="@style/Theme.CoderLabHome">
-        </activity>
     </application>
 
 </manifest>
