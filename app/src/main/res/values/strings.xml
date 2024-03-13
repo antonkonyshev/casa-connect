@@ -37,10 +37,11 @@
     <string name="entrance">Entrance</string>
     <string name="sauna">Sauna</string>
     <string name="yard">Yard</string>
-    <string name="loading">Loading...</string>
+    <string name="loading">Loading&#8230;</string>
     <string name="device_name">Device name</string>
     <string name="save">Save</string>
     <string name="carbon_monoxide_concentration_threshold">Carbon monoxide concentration threshold</string>
     <string name="warn_about_exceeding_the_concentration_of_co">Warn about exceeding the concentration of CO</string>
     <string name="device_preferences">Device preferences</string>
+    <string name="temperature_over_time">Temperature over time</string>
 </resources>

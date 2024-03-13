@@ -37,10 +37,11 @@
     <string name="entrance">Вход</string>
     <string name="sauna">Баня</string>
     <string name="yard">Двор</string>
-    <string name="loading">Загрузка...</string>
+    <string name="loading">Загрузка&#8230;</string>
     <string name="device_name">Название устройства</string>
     <string name="save">Сохранить</string>
     <string name="carbon_monoxide_concentration_threshold">Порог концентрации окиси углерода</string>
     <string name="warn_about_exceeding_the_concentration_of_co">Предупреждать о превышении указанной концентрации CO</string>
     <string name="device_preferences">Настройки устройства</string>
+    <string name="temperature_over_time">Изменение температуры</string>
 </resources>

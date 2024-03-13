@@ -99,6 +99,7 @@ dependencies {
     implementation "com.google.dagger:dagger:$dagger2_version"
     implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
+    implementation "com.github.philjay:mpandroidchart:v3.1.0"
     ksp "androidx.room:room-compiler:$room_version"
     ksp "com.google.dagger:dagger-compiler:$dagger2_version"
     testImplementation 'junit:junit:4.13.2'
