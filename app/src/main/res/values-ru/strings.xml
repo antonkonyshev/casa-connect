@@ -16,7 +16,7 @@
     <string name="history">История</string>
     <string name="records">Записей</string>
     <string name="devices">Устройства</string>
-    <string name="mg_m3">мг/м3</string>
+    <string name="mg_m3">мг/м&#179;</string>
     <string name="m">м</string>
     <string name="mmhg">мм. рт. ст.</string>
     <string name="pollution">Загрязнение</string>
@@ -44,4 +44,8 @@
     <string name="warn_about_exceeding_the_concentration_of_co">Предупреждать о превышении указанной концентрации CO</string>
     <string name="device_preferences">Настройки устройства</string>
     <string name="temperature_over_time">Изменение температуры</string>
+    <string name="atmosphere_pressure">Атмосферное давление</string>
+    <string name="air_pollution">Загрязнение воздуха</string>
+    <string name="air_temperature">Температура воздуха</string>
+    <string name="altitude_above_sea_level">Высота над уровнем моря</string>
 </resources>

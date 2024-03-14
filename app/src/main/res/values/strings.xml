@@ -15,10 +15,10 @@
     <string name="history">History</string>
     <string name="records">Records</string>
     <string name="devices">Devices</string>
-    <string name="mg_m3">mg/m3</string>
+    <string name="mg_m3">mg/m&#179;</string>
     <string name="m">m</string>
     <string name="mmhg">mmHg</string>
-    <string name="c" translatable="false">°C</string>
+    <string name="c" translatable="false">&#176;C</string>
     <string name="pollution">Pollution</string>
     <string name="minimal_temperature">Minimal temperature</string>
     <string name="maximal_temperature">Maximal temperature</string>
@@ -44,4 +44,8 @@
     <string name="warn_about_exceeding_the_concentration_of_co">Warn about exceeding the concentration of CO</string>
     <string name="device_preferences">Device preferences</string>
     <string name="temperature_over_time">Temperature over time</string>
+    <string name="atmosphere_pressure">Atmosphere pressure</string>
+    <string name="air_pollution">Air pollution</string>
+    <string name="air_temperature">Air temperature</string>
+    <string name="altitude_above_sea_level">Altitude above sea level</string>
 </resources>
