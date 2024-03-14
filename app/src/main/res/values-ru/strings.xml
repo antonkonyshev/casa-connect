@@ -16,6 +16,7 @@
     <string name="history">История</string>
     <string name="records">Записей</string>
     <string name="devices">Устройства</string>
+    <string name="settings">Настройки</string>
     <string name="mg_m3">мг/м&#179;</string>
     <string name="m">м</string>
     <string name="mmhg">мм. рт. ст.</string>
@@ -48,4 +49,9 @@
     <string name="air_pollution">Загрязнение воздуха</string>
     <string name="air_temperature">Температура воздуха</string>
     <string name="altitude_above_sea_level">Высота над уровнем моря</string>
+    <string name="period_must_be_greater_than_1_second">Период должен быть больше 1 секунды</string>
+    <string name="int_second_s">%d секунд(а)</string>
+    <string name="only_digits_are_allowed">Разрешены только цифры</string>
+    <string name="measurement_update_period">Период обновления измерений</string>
+    <string name="measurement_charts_update_period">Период обновления графиков</string>
 </resources>

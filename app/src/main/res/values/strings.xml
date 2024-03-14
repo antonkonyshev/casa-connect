@@ -15,6 +15,7 @@
     <string name="history">History</string>
     <string name="records">Records</string>
     <string name="devices">Devices</string>
+    <string name="settings">Settings</string>
     <string name="mg_m3">mg/m&#179;</string>
     <string name="m">m</string>
     <string name="mmhg">mmHg</string>
@@ -48,4 +49,9 @@
     <string name="air_pollution">Air pollution</string>
     <string name="air_temperature">Air temperature</string>
     <string name="altitude_above_sea_level">Altitude above sea level</string>
+    <string name="period_must_be_greater_than_1_second">Period must be greater than 1 second</string>
+    <string name="int_second_s">%d second(s)</string>
+    <string name="only_digits_are_allowed">Only digits are allowed</string>
+    <string name="measurement_update_period">Measurement update period</string>
+    <string name="measurement_charts_update_period">Measurement charts update period</string>
 </resources>

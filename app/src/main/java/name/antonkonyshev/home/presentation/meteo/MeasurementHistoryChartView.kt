@@ -82,7 +82,7 @@ class MeasurementHistoryChartView(
             setDrawHorizontalHighlightIndicator(false)
             setDrawValues(false)
 
-            setFillFormatter { dataSet, dataProvider -> axisMinimum }
+            setFillFormatter { _, _ -> axisMinimum }
         }
     }
 

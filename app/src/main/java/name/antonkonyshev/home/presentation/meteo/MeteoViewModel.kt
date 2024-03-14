@@ -29,7 +29,7 @@ data class DeviceMeasurement(val deviceId: String) {
 }
 
 class MeteoViewModel : BaseViewModel() {
-    // TODO: Add settings for the period of the measurement updates
+    // TODO: Use settings for the period of the measurement updates
     private val periodicalMeasurementUpdate = 15L  // seconds
     private val measurementTimer = Timer()
 
@@ -99,7 +99,7 @@ class MeteoViewModel : BaseViewModel() {
     }
 
     private suspend fun retrieveDeviceHistory(device: Device) {
-        // TODO: Add settings for the history update period
+        // TODO: Use settings for the history update period
         if (device.available && Date().time > measurements[device.id]!!
                 .lastHistoryUpdate + 1200000L
         ) {

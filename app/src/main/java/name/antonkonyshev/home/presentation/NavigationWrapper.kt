@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Light
 import androidx.compose.material.icons.filled.MeetingRoom
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Sensors
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Thermostat
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
@@ -54,6 +55,7 @@ import androidx.core.content.ContextCompat.startActivity
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 import name.antonkonyshev.home.R
+import name.antonkonyshev.home.presentation.settings.SettingsActivity
 import name.antonkonyshev.home.presentation.device.DevicesActivity
 import name.antonkonyshev.home.presentation.meteo.MeteoActivity
 
@@ -63,6 +65,7 @@ object NavigationDestinations {
     const val LIGHT = "light"
     const val DOOR = "door"
     const val DEVICES = "devices"
+    const val SETTINGS = "settings"
 }
 
 @Composable
@@ -212,9 +215,12 @@ fun BottomNavigationBar(
                 )
             }
         )
+
         NavigationBarItem(
             selected = navigationDestination == NavigationDestinations.WINDOW,
-            onClick = {},
+            onClick = {
+                startActivity(context, Intent(context, SettingsActivity::class.java), null)
+            },
             icon = {
                 Icon(
                     imageVector = Icons.Default.Air,
@@ -222,6 +228,7 @@ fun BottomNavigationBar(
                 )
             }
         )
+
         NavigationBarItem(
             selected = navigationDestination == NavigationDestinations.LIGHT,
             onClick = {},
@@ -232,6 +239,7 @@ fun BottomNavigationBar(
                 )
             }
         )
+
         NavigationBarItem(
             selected = navigationDestination == NavigationDestinations.DOOR,
             onClick = {},
@@ -242,6 +250,7 @@ fun BottomNavigationBar(
                 )
             }
         )
+
         NavigationBarItem(
             selected = navigationDestination == NavigationDestinations.DEVICES,
             onClick = {
@@ -256,6 +265,24 @@ fun BottomNavigationBar(
                 Icon(
                     imageVector = Icons.Default.Sensors,
                     contentDescription = stringResource(R.string.devices_label)
+                )
+            }
+        )
+
+        NavigationBarItem(
+            selected = navigationDestination == NavigationDestinations.SETTINGS,
+            onClick = {
+                if (navigationDestination != NavigationDestinations.SETTINGS) {
+                    startActivity(
+                        context,
+                        Intent(context, SettingsActivity::class.java), null
+                    )
+                }
+            },
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = stringResource(R.string.settings)
                 )
             }
         )
@@ -337,6 +364,7 @@ fun NavigationDrawerContent(
                 },
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
+
             NavigationDrawerItem(
                 selected = navigationDestination == NavigationDestinations.WINDOW,
                 label = {
@@ -355,6 +383,7 @@ fun NavigationDrawerContent(
                 onClick = {},
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
+
             NavigationDrawerItem(
                 selected = navigationDestination == NavigationDestinations.LIGHT,
                 label = {
@@ -373,6 +402,7 @@ fun NavigationDrawerContent(
                 onClick = {},
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
+
             NavigationDrawerItem(
                 selected = navigationDestination == NavigationDestinations.DOOR,
                 label = {
@@ -391,6 +421,7 @@ fun NavigationDrawerContent(
                 onClick = {},
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
+
             NavigationDrawerItem(
                 selected = navigationDestination == NavigationDestinations.DEVICES,
                 label = {
@@ -411,6 +442,32 @@ fun NavigationDrawerContent(
                         startActivity(
                             context,
                             Intent(context, DevicesActivity::class.java), null
+                        )
+                    }
+                },
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+
+            NavigationDrawerItem(
+                selected = navigationDestination == NavigationDestinations.SETTINGS,
+                label = {
+                    Text(
+                        text = stringResource(R.string.settings),
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = stringResource(R.string.settings)
+                    )
+                },
+                colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent),
+                onClick = {
+                    if (navigationDestination != NavigationDestinations.SETTINGS) {
+                        startActivity(
+                            context,
+                            Intent(context, SettingsActivity::class.java), null
                         )
                     }
                 },
@@ -443,6 +500,7 @@ fun AppNavigationRail(
                 )
             },
         )
+
         NavigationRailItem(
             selected = navigationDestination == NavigationDestinations.METEO,
             onClick = {
@@ -460,6 +518,7 @@ fun AppNavigationRail(
                 )
             },
         )
+
         NavigationRailItem(
             selected = navigationDestination == NavigationDestinations.WINDOW,
             onClick = {},
@@ -470,6 +529,7 @@ fun AppNavigationRail(
                 )
             },
         )
+
         NavigationRailItem(
             selected = navigationDestination == NavigationDestinations.LIGHT,
             onClick = {},
@@ -480,6 +540,7 @@ fun AppNavigationRail(
                 )
             },
         )
+
         NavigationRailItem(
             selected = navigationDestination == NavigationDestinations.DOOR,
             onClick = {},
@@ -490,6 +551,7 @@ fun AppNavigationRail(
                 )
             },
         )
+
         NavigationRailItem(
             selected = navigationDestination == NavigationDestinations.DEVICES,
             onClick = {
@@ -504,6 +566,24 @@ fun AppNavigationRail(
                 Icon(
                     imageVector = Icons.Default.Sensors,
                     contentDescription = stringResource(R.string.devices_label)
+                )
+            },
+        )
+
+        NavigationRailItem(
+            selected = navigationDestination == NavigationDestinations.SETTINGS,
+            onClick = {
+                if (navigationDestination != NavigationDestinations.SETTINGS) {
+                    startActivity(
+                        context,
+                        Intent(context, SettingsActivity::class.java), null
+                    )
+                }
+            },
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = stringResource(R.string.settings)
                 )
             },
         )

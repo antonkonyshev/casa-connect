@@ -1,5 +1,6 @@
 package name.antonkonyshev.home.presentation.device
 
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -189,17 +190,15 @@ fun DevicesScreen(
                 modifier = if (windowSize == WindowWidthSizeClass.Compact) Modifier.fillMaxSize()
                 else Modifier.weight(3f)
             ) {
-                val fragmentManager =
-                    (LocalContext.current as? DevicesActivity)?.supportFragmentManager
-                if (fragmentManager != null && selectedDevice != null) {
-                    AndroidView(factory = cb@{ ctx ->
-                        val view = FragmentContainerView(ctx)
-                        view.id = ViewCompat.generateViewId()
-                        fragmentManager.commit {
-                            setReorderingAllowed(true)
-                            add(view.id, DevicePreferenceFragment.newInstance(selectedDevice))
+                if (selectedDevice != null) {
+                    AndroidView(factory = { context ->
+                        FragmentContainerView(context).apply {
+                            id = ViewCompat.generateViewId()
+                            (context as AppCompatActivity).supportFragmentManager.commit {
+                                setReorderingAllowed(true)
+                                add(id, DevicePreferenceFragment.newInstance(selectedDevice))
+                            }
                         }
-                        return@cb view
                     })
                 }
             }

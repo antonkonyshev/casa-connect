@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <name.antonkonyshev.home.presentation.settings.UpdatePeriodPreference
+        android:key="measurement_update_period"
+        android:title="@string/measurement_update_period"
+        android:inputType="number"
+        android:defaultValue="15"
+        android:min="1"
+        />
+
+    <name.antonkonyshev.home.presentation.settings.UpdatePeriodPreference
+        android:key="measurement_history_update_period"
+        android:title="@string/measurement_charts_update_period"
+        android:inputType="number"
+        android:defaultValue="1800"
+        android:min="1"
+        />
+
+</androidx.preference.PreferenceScreen>
