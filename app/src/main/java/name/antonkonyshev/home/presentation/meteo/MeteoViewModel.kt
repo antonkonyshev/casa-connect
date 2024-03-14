@@ -16,9 +16,7 @@ import name.antonkonyshev.home.domain.usecase.GetMeasurementFromMeteoSensorUseCa
 import name.antonkonyshev.home.domain.usecase.UpdateDeviceAvailabilityUseCase
 import name.antonkonyshev.home.presentation.BaseViewModel
 import java.util.Date
-import java.util.Timer
 import javax.inject.Inject
-import kotlin.concurrent.scheduleAtFixedRate
 
 data class DeviceMeasurement(val deviceId: String) {
     val _measurement: MutableStateFlow<Measurement> = MutableStateFlow(Measurement())
@@ -29,11 +27,9 @@ data class DeviceMeasurement(val deviceId: String) {
 }
 
 class MeteoViewModel : BaseViewModel() {
-    // TODO: Use settings for the period of the measurement updates
-    private val periodicalMeasurementUpdate = 15L  // seconds
-    private val measurementTimer = Timer()
 
     val measurements: HashMap<String, DeviceMeasurement> = HashMap()
+    var measurementHistoryUpdatePeriod: Long = 600000L
 
     @Inject
     lateinit var getDevicesByServiceUseCase: GetDevicesByServiceUseCase
@@ -48,16 +44,9 @@ class MeteoViewModel : BaseViewModel() {
     lateinit var discoveryService: DiscoveryService
 
     init {
-        onLoading()
         HomeApplication.instance.component.inject(this)
-        observeMeasurement()
         viewModelScope.launch(Dispatchers.IO) {
             discoveryService.discoverDevices()
-        }
-        measurementTimer.scheduleAtFixedRate(
-            periodicalMeasurementUpdate, periodicalMeasurementUpdate * 1000L
-        ) {
-            observeMeasurement(true)
         }
     }
 
@@ -99,9 +88,8 @@ class MeteoViewModel : BaseViewModel() {
     }
 
     private suspend fun retrieveDeviceHistory(device: Device) {
-        // TODO: Use settings for the history update period
         if (device.available && Date().time > measurements[device.id]!!
-                .lastHistoryUpdate + 1200000L
+                .lastHistoryUpdate + measurementHistoryUpdatePeriod
         ) {
             measurements[device.id]!!.lastHistoryUpdate = Date().time
             val history = getMeasurementFromMeteoSensorUseCase.getHistory(device)
@@ -109,10 +97,5 @@ class MeteoViewModel : BaseViewModel() {
                 measurements[device.id]!!._history.value = history
             }
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        measurementTimer.cancel()
     }
 }
