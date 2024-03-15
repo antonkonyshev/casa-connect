@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace 'name.antonkonyshev.home'
+    namespace 'com.github.antonkonyshev.casaconnect'
     compileSdk 34
 
     defaultConfig {
-        applicationId "name.antonkonyshev.home"
+        applicationId "com.github.antonkonyshev.casaconnect"
         minSdk 30
         targetSdk 34
         versionCode 1

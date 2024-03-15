@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="name.antonkonyshev.home">
+    package="com.github.antonkonyshev.casaconnect">
     
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -11,19 +11,19 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:name=".HomeApplication"
+        android:name="com.github.antonkonyshev.casaconnect.CasaConnectApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
-        android:theme="@style/Theme.CoderLabHome"
+        android:theme="@style/Theme.CasaConnectTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.meteo.MeteoActivity"
+            android:name="com.github.antonkonyshev.casaconnect.presentation.meteo.MeteoActivity"
             android:exported="true"
             android:label="@string/meteostation"
-            android:theme="@style/Theme.CoderLabHome">
+            android:theme="@style/Theme.CasaConnectTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -34,16 +34,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".presentation.device.DevicesActivity"
+            android:name="com.github.antonkonyshev.casaconnect.presentation.device.DevicesActivity"
             android:exported="false"
             android:label="@string/devices"
-            android:theme="@style/Theme.CoderLabHome">
+            android:theme="@style/Theme.CasaConnectTheme">
         </activity>
         <activity
-            android:name=".presentation.settings.SettingsActivity"
+            android:name="com.github.antonkonyshev.casaconnect.presentation.settings.SettingsActivity"
             android:exported="false"
             android:label="@string/settings"
-            android:theme="@style/Theme.CoderLabHome">
+            android:theme="@style/Theme.CasaConnectTheme">
         </activity>
     </application>
 

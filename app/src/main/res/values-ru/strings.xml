@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Дом</string>
+    <string name="app_name">Casa Connect</string>
     <string name="error_on_connecting_to_meteo">Ошибка при подключении к метеодатчикам</string>
     <string name="navigation_label">Навигация</string>
     <string name="meteo_label">Метео</string>
