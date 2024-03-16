@@ -48,13 +48,13 @@ data class DevicePreferenceModel(
 
     fun toHashMap(): HashMap<String, String> {
         return hashMapOf(
-            "highPollution" to highPollution.toString(),
-            "minTemperature" to minTemperature.toString(),
-            "maxTemperature" to maxTemperature.toString(),
-            "measurementPeriod" to measurementPeriod.toString(),
-            "timeSyncPeriod" to timeSyncPeriod.toString(),
-            "historyLength" to historyLength.toString(),
-            "historyRecordPeriod" to historyRecordPeriod.toString(),
+            "high_pollution_value" to highPollution.toString(),
+            "min_thermometer_temperature" to minTemperature.toString(),
+            "max_thermometer_temperature" to maxTemperature.toString(),
+            "measurement_period" to measurementPeriod.toString(),
+            "time_sync_period" to timeSyncPeriod.toString(),
+            "history_length" to historyLength.toString(),
+            "history_record_period" to historyRecordPeriod.toString(),
         )
     }
 
