@@ -35,6 +35,10 @@ class DeviceRepositoryImpl @Inject constructor(
         deviceDao.updateAvailabilityById(device.id, device.available)
     }
 
+    override fun updateDeviceName(device: Device) {
+        deviceDao.updateDeviceName(device.id, device.name)
+    }
+
     override fun updateAllDevicesAvailability(available: Boolean) {
         deviceDao.updateAllDevicesAvailability(available)
     }

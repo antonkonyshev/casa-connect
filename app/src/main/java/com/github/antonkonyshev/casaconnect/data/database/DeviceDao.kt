@@ -38,4 +38,7 @@ interface DeviceDao {
 
     @Query("update device set available = :available")
     fun updateAllDevicesAvailability(available: Boolean)
+
+    @Query("update device set name = :name where id = :id")
+    fun updateDeviceName(id: String, name: String)
 }

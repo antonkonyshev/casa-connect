@@ -53,14 +53,14 @@ class DevicePreferenceViewModelTest {
             viewModel.prepareData { assertTrue(it) }
             verify(viewModel.getDevicePreferenceUseCase, timeout(5000L)).invoke(device)
 
-            assertEquals(device.name, viewModel.deviceName)
-            assertEquals(0, viewModel.highPollution)
-            assertEquals(0, viewModel.minTemperature)
-            assertEquals(0, viewModel.maxTemperature)
-            assertEquals(0, viewModel.measurementPeriod)
-            assertEquals(0, viewModel.historyLength)
-            assertEquals(0, viewModel.historyRecordPeriod)
-            assertEquals("", viewModel.wifiSsid)
+            assertEquals(device.name, viewModel.preference.value!!.device!!.name)
+            assertEquals(0, viewModel.preference.value!!.highPollution)
+            assertEquals(0, viewModel.preference.value!!.minTemperature)
+            assertEquals(0, viewModel.preference.value!!.maxTemperature)
+            assertEquals(0, viewModel.preference.value!!.measurementPeriod)
+            assertEquals(0, viewModel.preference.value!!.historyLength)
+            assertEquals(0, viewModel.preference.value!!.historyRecordPeriod)
+            assertEquals("", viewModel.preference.value!!.wifiSsid)
         }
     }
 
@@ -83,15 +83,17 @@ class DevicePreferenceViewModelTest {
 
             val viewModel = controller.get().viewModels<DevicePreferenceViewModel>().value
             viewModel.setDevicePreferenceUseCase = spy(viewModel.setDevicePreferenceUseCase)
+            viewModel.setDeviceNameUseCase = spy(viewModel.setDeviceNameUseCase)
             viewModel.selectedDevice = device
             doReturn(true).`when`(viewModel.setDevicePreferenceUseCase).invoke(any())
             controller.setup()
-            viewModel.highPollution = 1
-            viewModel.minTemperature = 2
-            viewModel.maxTemperature = 3
-            viewModel.measurementPeriod = 4
-            viewModel.historyLength = 5
-            viewModel.historyRecordPeriod = 6
+            viewModel.preference.value!!.highPollution = 1
+            viewModel.preference.value!!.minTemperature = 2
+            viewModel.preference.value!!.maxTemperature = 3
+            viewModel.preference.value!!.measurementPeriod = 4
+            viewModel.preference.value!!.historyLength = 5
+            viewModel.preference.value!!.historyRecordPeriod = 6
+            viewModel.preference.value!!.device!!.name = "Test-Room"
             viewModel.saveDevicePreference { assertTrue(it) }
             verify(viewModel.setDevicePreferenceUseCase, timeout(5000L)).invoke(argThat { preference: DevicePreference ->
                 assertEquals(1, preference.highPollution)
@@ -100,6 +102,10 @@ class DevicePreferenceViewModelTest {
                 assertEquals(4, preference.measurementPeriod)
                 assertEquals(5, preference.historyLength)
                 assertEquals(6, preference.historyRecordPeriod)
+                return@argThat true
+            })
+            verify(viewModel.setDeviceNameUseCase, timeout(5000L)).invoke(argThat { deviceArg: Device ->
+                assertEquals("Test-Room", deviceArg.name)
                 return@argThat true
             })
         }

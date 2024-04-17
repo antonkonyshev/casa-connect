@@ -14,5 +14,6 @@ interface DeviceRepository {
     fun updateAvailability(device: Device)
     fun updateStateOrCreate(device: DeviceModel)
     fun updateAllDevicesAvailability(available: Boolean)
+    fun updateDeviceName(device: Device)
 
 }
