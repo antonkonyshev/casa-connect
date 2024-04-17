@@ -1,5 +1,6 @@
 package com.github.antonkonyshev.casaconnect.presentation.meteo
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,6 +41,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.github.antonkonyshev.casaconnect.R
 import com.github.antonkonyshev.casaconnect.domain.entity.Device
@@ -141,7 +144,12 @@ fun MeteoScreen(
                                             icon = Icons.Outlined.Thermostat,
                                             sensorValue = measurements[device.id]!!.value.temperature,
                                             units = stringResource(R.string.c),
-                                            modifier = Modifier.padding(20.dp, 20.dp, 20.dp, 0.dp)
+                                            modifier = Modifier.padding(
+                                                20.dp,
+                                                20.dp,
+                                                20.dp,
+                                                0.dp
+                                            )
                                         )
                                     }
 
@@ -168,7 +176,12 @@ fun MeteoScreen(
                                             icon = Icons.Outlined.Masks,
                                             sensorValue = measurements[device.id]!!.value.pollution,
                                             units = stringResource(R.string.mg_m3),
-                                            modifier = Modifier.padding(20.dp, 40.dp, 20.dp, 0.dp)
+                                            modifier = Modifier.padding(
+                                                20.dp,
+                                                40.dp,
+                                                20.dp,
+                                                0.dp
+                                            )
                                         )
                                     }
 
@@ -197,7 +210,12 @@ fun MeteoScreen(
                                             icon = Icons.Outlined.TireRepair,
                                             sensorValue = measurements[device.id]!!.value.pressure,
                                             units = stringResource(R.string.mmhg),
-                                            modifier = Modifier.padding(20.dp, 40.dp, 20.dp, 20.dp)
+                                            modifier = Modifier.padding(
+                                                20.dp,
+                                                40.dp,
+                                                20.dp,
+                                                20.dp
+                                            )
                                         )
                                     }
 
@@ -254,4 +272,29 @@ fun SensorValueListItem(
             textAlign = TextAlign.End
         )
     }
+}
+
+@SuppressLint("UnrememberedMutableState")
+@Preview(showBackground = true)
+@Composable
+fun MeteoScreenPrevew() {
+    MeteoScreen(
+        devices = listOf(
+            Device(
+                id = "room-1", service = "meteo", name = "Room",
+                sensors = listOf("temperature", "pressure", "altitude", "pollution")
+            )
+        ),
+        measurements = mapOf(
+            "room-1" to mutableStateOf(
+                Measurement(
+                    0L, 22.53f, 738.52f, 184.32f,
+                    15.21f
+                )
+            )
+        ),
+        histories = emptyMap(),
+        uiState = UiState(false, false),
+        windowSize = WindowWidthSizeClass.Compact
+    )
 }
