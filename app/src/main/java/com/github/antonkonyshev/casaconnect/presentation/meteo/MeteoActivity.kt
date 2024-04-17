@@ -5,7 +5,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.preference.PreferenceManager
 import com.github.antonkonyshev.casaconnect.presentation.BaseActivity
 import com.github.antonkonyshev.casaconnect.presentation.NavigationDestinations
@@ -15,7 +15,7 @@ import java.util.Timer
 import kotlin.concurrent.scheduleAtFixedRate
 
 class MeteoActivity : BaseActivity() {
-    private lateinit var measurementTimer: Timer
+    private var measurementTimer: Timer? = null
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,24 +23,23 @@ class MeteoActivity : BaseActivity() {
 
         val viewModel: MeteoViewModel by viewModels()
         viewModel.observeMeasurement()
-        measurementTimer = Timer()
 
         setContent {
             val windowSize = calculateWindowSizeClass(activity = this).widthSizeClass
             CasaConnectTheme {
                 NavigationWrapper(
                     windowSize,
-                    devicePostureFlow().collectAsState().value,
+                    devicePostureFlow().collectAsStateWithLifecycle().value,
                     NavigationDestinations.METEO,
                     viewModel.navigationBackgroundResource,
                     viewModel.backgroundResource,
                     sectionScreenComposable = { onDrawerClicked: () -> Unit ->
                         MeteoScreen(
                             viewModel.getDevicesByServiceUseCase.getMeteoDevicesFlow()
-                                .collectAsState(initial = emptyList()).value,
-                            viewModel.measurements.mapValues { it.value.measurementFlow.collectAsState() },
-                            viewModel.measurements.mapValues { it.value.historyFlow.collectAsState() },
-                            uiState = viewModel.uiState.collectAsState().value,
+                                .collectAsStateWithLifecycle(initialValue = emptyList()).value,
+                            viewModel.measurements.mapValues { it.value.measurementFlow.collectAsStateWithLifecycle() },
+                            viewModel.measurements.mapValues { it.value.historyFlow.collectAsStateWithLifecycle() },
+                            uiState = viewModel.uiState.collectAsStateWithLifecycle().value,
                             windowSize = windowSize,
                             onDrawerClicked = onDrawerClicked,
                             onRefresh = { viewModel.observeMeasurement(true) }
@@ -67,13 +66,16 @@ class MeteoActivity : BaseActivity() {
         } catch (_: Exception) {
         }
 
-        measurementTimer.scheduleAtFixedRate(measurementUpdatePeriod, measurementUpdatePeriod) {
+        if (measurementTimer == null) {
+            measurementTimer = Timer()
+        }
+        measurementTimer?.scheduleAtFixedRate(measurementUpdatePeriod, measurementUpdatePeriod) {
             viewModel.observeMeasurement(true)
         }
     }
 
     override fun onStop() {
         super.onStop()
-        measurementTimer.cancel()
+        measurementTimer?.cancel()
     }
 }

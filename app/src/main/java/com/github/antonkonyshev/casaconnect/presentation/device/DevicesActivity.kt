@@ -5,7 +5,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.antonkonyshev.casaconnect.domain.entity.Device
 import com.github.antonkonyshev.casaconnect.presentation.BaseActivity
 import com.github.antonkonyshev.casaconnect.presentation.NavigationDestinations
@@ -25,16 +25,17 @@ class DevicesActivity : BaseActivity() {
             CasaConnectTheme {
                 NavigationWrapper(
                     windowSize,
-                    devicePostureFlow().collectAsState().value,
+                    devicePostureFlow().collectAsStateWithLifecycle().value,
                     NavigationDestinations.DEVICES,
                     viewModel.navigationBackgroundResource,
                     viewModel.backgroundResource,
                     sectionScreenComposable = { onDrawerClicked: () -> Unit ->
                         DevicesScreen(
                             viewModel.getDevicesByServiceUseCase.getAllDevicesFlow()
-                                .collectAsState(initial = emptyList()).value,
-                            selectedDevice = viewModel.selectedDevice.collectAsState().value,
-                            uiState = viewModel.uiState.collectAsState().value,
+                                .collectAsStateWithLifecycle(initialValue = emptyList()).value,
+                            selectedDevice = viewModel.selectedDevice.collectAsStateWithLifecycle()
+                                .value,
+                            uiState = viewModel.uiState.collectAsStateWithLifecycle().value,
                             windowSize = windowSize,
                             onDiscoverDevicesClicked = viewModel::discoverDevices,
                             onDeviceClicked = { device: Device ->

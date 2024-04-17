@@ -5,11 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.antonkonyshev.casaconnect.domain.entity.Device
 import com.github.antonkonyshev.casaconnect.presentation.device.DevicesActivity
 
@@ -29,14 +29,15 @@ class DevicePreferenceFragment : Fragment() {
         if (viewModel.selectedDevice == null) {
             backToDevices()
         }
+        // TODO: check usage of the composeview
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                DevicePreferenceComposable(
-                    viewModel,
-                    viewModel.uiState.collectAsState().value,
+                DevicePreferenceScreen(
+                    viewModel.preference.collectAsStateWithLifecycle().value,
+                    viewModel.uiState.collectAsStateWithLifecycle().value,
                     onSave = {
-                        viewModel.saveDevicePreference { result ->
+                        viewModel.saveDevicePreference() { result ->
                             if (result)
                                 backToDevices()
                         }
