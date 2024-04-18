@@ -32,7 +32,7 @@ class DevicesActivity : BaseActivity() {
                         selectedDevice = viewModel.selectedDevice.collectAsStateWithLifecycle()
                             .value,
                         uiState = viewModel.uiState.collectAsStateWithLifecycle().value,
-                        onDiscoverDevicesClicked = viewModel::discoverDevices,
+                        onDiscoverDevicesClicked = ::onDiscoverDevices,
                         onDeviceClicked = { device: Device ->
                             viewModel._selectedDevice.value = device
                         }
@@ -40,6 +40,10 @@ class DevicesActivity : BaseActivity() {
                 }
             }
         }
+    }
+
+    fun onDiscoverDevices() {
+        viewModel.discoverDevices()
     }
 
     fun deselectDevice() {

@@ -53,9 +53,11 @@ fun MeteoScreen(
     onRefresh: () -> Unit = {}
 ) {
     val refreshingState = rememberPullRefreshState(uiState.loading, onRefresh)
-    Box(modifier = Modifier
-        .pullRefresh(refreshingState)
-        .fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .pullRefresh(refreshingState)
+            .fillMaxSize()
+    ) {
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(devices) { device ->
                 ListItem(headlineContent = {
@@ -256,12 +258,33 @@ fun MeteoScreenPrevew() {
         measurements = mapOf(
             "room-1" to mutableStateOf(
                 Measurement(
-                    0L, 22.53f, 738.52f, 184.32f,
+                    10L, 22.53f, 738.52f, 184.32f,
                     15.21f
                 )
             )
         ),
-        histories = emptyMap(),
+        histories = mapOf(
+            "room-1" to mutableStateOf(
+                listOf(
+                    Measurement(
+                        0L, 21.53f, 738.52f, 184.32f,
+                        14.21f
+                    ),
+                    Measurement(
+                        0L, 22.53f, 738.52f, 184.32f,
+                        15.21f
+                    ),
+                    Measurement(
+                        0L, 23.53f, 738.52f, 184.32f,
+                        16.21f
+                    ),
+                    Measurement(
+                        0L, 22.53f, 738.52f, 184.32f,
+                        15.21f
+                    ),
+                )
+            )
+        ),
         uiState = UiState(false, false)
     )
 }

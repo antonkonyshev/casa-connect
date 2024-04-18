@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
@@ -123,4 +124,10 @@ fun MeasurementHistoryChart(
     ) { chartView ->
         chartView.updateData(history, measurement, label, color)
     }
+}
+
+@Preview
+@Composable
+fun MeasurementHistoryChartPreview() {
+    MeasurementHistoryChart(history = listOf(10f, 11f, 12f, 11f), measurement = 11f)
 }

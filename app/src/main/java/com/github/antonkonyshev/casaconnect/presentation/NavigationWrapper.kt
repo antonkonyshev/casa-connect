@@ -119,12 +119,20 @@ fun AppScreen(
 @Composable
 fun AppTopBarActions() {
     val currentActivity = LocalContext.current.getActivity()
-    if (LocalNavigationDestination.current == NavigationDestinations.METEO) {
-        IconButton(onClick = { (currentActivity as MeteoActivity).onMeasurementsRefresh() }) {
+    if (LocalNavigationDestination.current == NavigationDestinations.METEO && currentActivity is MeteoActivity) {
+        IconButton(onClick = { currentActivity.onMeasurementsRefresh() }) {
             Icon(
                 imageVector = Icons.Default.Sync,
                 contentDescription = stringResource(id = R.string.refresh)
             )
+        }
+    } else if (LocalNavigationDestination.current == NavigationDestinations.DEVICES && currentActivity is DevicesActivity) {
+        IconButton(onClick = { currentActivity.onDiscoverDevices() }) {
+            Icon(
+                imageVector = Icons.Default.Sync,
+                contentDescription = stringResource(id = R.string.refresh)
+            )
+
         }
     }
 }
