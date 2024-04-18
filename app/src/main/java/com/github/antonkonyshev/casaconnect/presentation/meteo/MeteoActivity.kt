@@ -35,7 +35,7 @@ class MeteoActivity : BaseActivity() {
                         viewModel.measurements.mapValues { it.value.measurementFlow.collectAsStateWithLifecycle() },
                         viewModel.measurements.mapValues { it.value.historyFlow.collectAsStateWithLifecycle() },
                         uiState = viewModel.uiState.collectAsStateWithLifecycle().value,
-                        onRefresh = { viewModel.observeMeasurement(true) }
+                        onRefresh = ::onMeasurementsRefresh
                     )
                 }
             }
@@ -69,5 +69,9 @@ class MeteoActivity : BaseActivity() {
     override fun onStop() {
         super.onStop()
         measurementTimer?.cancel()
+    }
+
+    fun onMeasurementsRefresh() {
+        viewModel.observeMeasurement(true)
     }
 }

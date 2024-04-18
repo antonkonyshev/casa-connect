@@ -18,12 +18,12 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuOpen
-import androidx.compose.material.icons.filled.Air
 import androidx.compose.material.icons.filled.Light
 import androidx.compose.material.icons.filled.MeetingRoom
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Sensors
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.icons.filled.Thermostat
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -71,7 +71,6 @@ import kotlinx.coroutines.launch
 
 object NavigationDestinations {
     const val METEO = "meteo"
-    const val WINDOW = "window"
     const val LIGHT = "light"
     const val DOOR = "door"
     const val DEVICES = "devices"
@@ -84,16 +83,14 @@ val LocalNavigationDestination = compositionLocalOf { NavigationDestinations.MET
 
 @Composable
 fun AppScreen(
-    sectionScreenComposable: @Composable () -> Unit = {},
-    onDrawerClicked: () -> Unit
+    sectionScreenComposable: @Composable () -> Unit = {}, onDrawerClicked: () -> Unit
 ) {
     Scaffold(
         topBar = {
             AppTopBar(onDrawerClicked)
         },
         bottomBar = {
-            if (LocalNavigationType.current == NavigationType.BOTTOM_NAVIGATION)
-                BottomNavigationBar()
+            if (LocalNavigationType.current == NavigationType.BOTTOM_NAVIGATION) BottomNavigationBar()
         },
     ) { contentPaddings ->
         Row(
@@ -119,6 +116,19 @@ fun AppScreen(
     }
 }
 
+@Composable
+fun AppTopBarActions() {
+    val currentActivity = LocalContext.current.getActivity()
+    if (LocalNavigationDestination.current == NavigationDestinations.METEO) {
+        IconButton(onClick = { (currentActivity as MeteoActivity).onMeasurementsRefresh() }) {
+            Icon(
+                imageVector = Icons.Default.Sync,
+                contentDescription = stringResource(id = R.string.refresh)
+            )
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppTopBar(onDrawerClicked: () -> Unit) {
@@ -128,8 +138,7 @@ fun AppTopBar(onDrawerClicked: () -> Unit) {
                 text = LocalContext.current.getActivity()?.header
                     ?: stringResource(id = R.string.app_name)
             )
-        },
-        navigationIcon = {
+        }, navigationIcon = {
             IconButton(onClick = onDrawerClicked) {
                 Icon(
                     imageVector = Icons.Default.Menu, contentDescription = stringResource(
@@ -137,22 +146,15 @@ fun AppTopBar(onDrawerClicked: () -> Unit) {
                     )
                 )
             }
-        },
-        actions = {
-            IconButton(onClick = {}) {
-                Icon(
-                    imageVector = Icons.Default.Sensors,
-                    contentDescription = stringResource(id = R.string.devices)
-                )
-            }
-        },
-        colors = TopAppBarColors(
+        }, actions = {
+            AppTopBarActions()
+        }, colors = TopAppBarColors(
             Color.Transparent,
             Color.Transparent,
             MaterialTheme.colorScheme.onPrimaryContainer,
             MaterialTheme.colorScheme.onPrimaryContainer,
             MaterialTheme.colorScheme.onPrimaryContainer
-        )
+        ), modifier = Modifier.padding(start = 12.dp)
     )
 }
 
@@ -223,31 +225,24 @@ fun NavigationWrapper(
             }
 
             if (LocalNavigationType.current == NavigationType.PERMANENT_NAVIGATION_DRAWER) {
-                PermanentNavigationDrawer(
-                    drawerContent = {
-                        PermanentDrawerSheet {
-                            NavigationDrawerContent(onDrawerClicked = { drawerScope.launch { drawerState.open() } })
-                        }
+                PermanentNavigationDrawer(drawerContent = {
+                    PermanentDrawerSheet {
+                        NavigationDrawerContent(onDrawerClicked = { drawerScope.launch { drawerState.open() } })
                     }
-                ) {
-                    AppScreen(
-                        sectionScreenComposable,
+                }) {
+                    AppScreen(sectionScreenComposable,
                         onDrawerClicked = { drawerScope.launch { drawerState.open() } })
                 }
             } else {
                 ModalNavigationDrawer(
                     drawerContent = {
                         ModalDrawerSheet {
-                            NavigationDrawerContent(
-                                currentActivity?.viewModel?.navigationBackgroundResource,
-                                onDrawerClicked = { drawerScope.launch { drawerState.open() } }
-                            )
+                            NavigationDrawerContent(currentActivity?.viewModel?.navigationBackgroundResource,
+                                onDrawerClicked = { drawerScope.launch { drawerState.close() } })
                         }
-                    },
-                    drawerState = drawerState
+                    }, drawerState = drawerState
                 ) {
-                    AppScreen(
-                        sectionScreenComposable,
+                    AppScreen(sectionScreenComposable,
                         onDrawerClicked = { drawerScope.launch { drawerState.open() } })
                 }
             }
@@ -266,13 +261,11 @@ fun BottomNavigationBar() {
             .fillMaxWidth(),
         containerColor = Color.Transparent,
     ) {
-        NavigationBarItem(
-            selected = navigationDestination == NavigationDestinations.METEO,
+        NavigationBarItem(selected = navigationDestination == NavigationDestinations.METEO,
             onClick = {
                 if (navigationDestination != NavigationDestinations.METEO) {
                     startActivity(
-                        context,
-                        Intent(context, MeteoActivity::class.java), null
+                        context, Intent(context, MeteoActivity::class.java), null
                     )
                 }
             },
@@ -281,51 +274,31 @@ fun BottomNavigationBar() {
                     imageVector = Icons.Default.Thermostat,
                     contentDescription = stringResource(R.string.meteo_label)
                 )
-            }
-        )
+            })
 
-        NavigationBarItem(
-            selected = navigationDestination == NavigationDestinations.WINDOW,
-            onClick = {
-                startActivity(context, Intent(context, SettingsActivity::class.java), null)
-            },
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Air,
-                    contentDescription = stringResource(R.string.window_label)
-                )
-            }
-        )
-
-        NavigationBarItem(
-            selected = navigationDestination == NavigationDestinations.LIGHT,
+        NavigationBarItem(selected = navigationDestination == NavigationDestinations.LIGHT,
             onClick = {},
             icon = {
                 Icon(
                     imageVector = Icons.Default.Light,
                     contentDescription = stringResource(R.string.light_label)
                 )
-            }
-        )
+            })
 
-        NavigationBarItem(
-            selected = navigationDestination == NavigationDestinations.DOOR,
+        NavigationBarItem(selected = navigationDestination == NavigationDestinations.DOOR,
             onClick = {},
             icon = {
                 Icon(
                     imageVector = Icons.Default.MeetingRoom,
                     contentDescription = stringResource(R.string.door_label)
                 )
-            }
-        )
+            })
 
-        NavigationBarItem(
-            selected = navigationDestination == NavigationDestinations.DEVICES,
+        NavigationBarItem(selected = navigationDestination == NavigationDestinations.DEVICES,
             onClick = {
                 if (navigationDestination != NavigationDestinations.DEVICES) {
                     startActivity(
-                        context,
-                        Intent(context, DevicesActivity::class.java), null
+                        context, Intent(context, DevicesActivity::class.java), null
                     )
                 }
             },
@@ -334,16 +307,13 @@ fun BottomNavigationBar() {
                     imageVector = Icons.Default.Sensors,
                     contentDescription = stringResource(R.string.devices_label)
                 )
-            }
-        )
+            })
 
-        NavigationBarItem(
-            selected = navigationDestination == NavigationDestinations.SETTINGS,
+        NavigationBarItem(selected = navigationDestination == NavigationDestinations.SETTINGS,
             onClick = {
                 if (navigationDestination != NavigationDestinations.SETTINGS) {
                     startActivity(
-                        context,
-                        Intent(context, SettingsActivity::class.java), null
+                        context, Intent(context, SettingsActivity::class.java), null
                     )
                 }
             },
@@ -352,15 +322,13 @@ fun BottomNavigationBar() {
                     imageVector = Icons.Default.Settings,
                     contentDescription = stringResource(R.string.settings)
                 )
-            }
-        )
+            })
     }
 }
 
 @Composable
 fun NavigationDrawerContent(
-    navigationBackgroundResource: Int? = null,
-    onDrawerClicked: () -> Unit
+    navigationBackgroundResource: Int? = null, onDrawerClicked: () -> Unit
 ) {
     val context = LocalContext.current
     val navigationDestination = LocalNavigationDestination.current
@@ -423,30 +391,10 @@ fun NavigationDrawerContent(
                 onClick = {
                     if (navigationDestination != NavigationDestinations.METEO) {
                         startActivity(
-                            context,
-                            Intent(context, MeteoActivity::class.java), null
+                            context, Intent(context, MeteoActivity::class.java), null
                         )
                     }
                 },
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-
-            NavigationDrawerItem(
-                selected = navigationDestination == NavigationDestinations.WINDOW,
-                label = {
-                    Text(
-                        text = stringResource(R.string.window_label),
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
-                },
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.Air,
-                        contentDescription = stringResource(R.string.window_label)
-                    )
-                },
-                colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent),
-                onClick = {},
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
 
@@ -506,8 +454,7 @@ fun NavigationDrawerContent(
                 onClick = {
                     if (navigationDestination != NavigationDestinations.DEVICES) {
                         startActivity(
-                            context,
-                            Intent(context, DevicesActivity::class.java), null
+                            context, Intent(context, DevicesActivity::class.java), null
                         )
                     }
                 },
@@ -532,8 +479,7 @@ fun NavigationDrawerContent(
                 onClick = {
                     if (navigationDestination != NavigationDestinations.SETTINGS) {
                         startActivity(
-                            context,
-                            Intent(context, SettingsActivity::class.java), null
+                            context, Intent(context, SettingsActivity::class.java), null
                         )
                     }
                 },
@@ -544,9 +490,7 @@ fun NavigationDrawerContent(
 }
 
 @Composable
-fun AppNavigationRail(
-    onDrawerClicked: () -> Unit = {},
-) {
+fun AppNavigationRail() {
     val context = LocalContext.current
     val navigationDestination = context.getActivity()?.navigationDestination
     NavigationRail(
@@ -557,23 +501,11 @@ fun AppNavigationRail(
         containerColor = Color.Transparent,
     ) {
         NavigationRailItem(
-            selected = false,
-            onClick = onDrawerClicked,
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Menu,
-                    contentDescription = stringResource(R.string.navigation_label)
-                )
-            },
-        )
-
-        NavigationRailItem(
             selected = navigationDestination == NavigationDestinations.METEO,
             onClick = {
                 if (navigationDestination != NavigationDestinations.METEO) {
                     startActivity(
-                        context,
-                        Intent(context, MeteoActivity::class.java), null
+                        context, Intent(context, MeteoActivity::class.java), null
                     )
                 }
             },
@@ -581,17 +513,6 @@ fun AppNavigationRail(
                 Icon(
                     imageVector = Icons.Default.Thermostat,
                     contentDescription = stringResource(R.string.meteo_label)
-                )
-            },
-        )
-
-        NavigationRailItem(
-            selected = navigationDestination == NavigationDestinations.WINDOW,
-            onClick = {},
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Air,
-                    contentDescription = stringResource(R.string.window_label)
                 )
             },
         )
@@ -623,8 +544,7 @@ fun AppNavigationRail(
             onClick = {
                 if (navigationDestination != NavigationDestinations.DEVICES) {
                     startActivity(
-                        context,
-                        Intent(context, DevicesActivity::class.java), null
+                        context, Intent(context, DevicesActivity::class.java), null
                     )
                 }
             },
@@ -641,8 +561,7 @@ fun AppNavigationRail(
             onClick = {
                 if (navigationDestination != NavigationDestinations.SETTINGS) {
                     startActivity(
-                        context,
-                        Intent(context, SettingsActivity::class.java), null
+                        context, Intent(context, SettingsActivity::class.java), null
                     )
                 }
             },

@@ -34,7 +34,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,7 +41,6 @@ import androidx.compose.ui.unit.dp
 import com.github.antonkonyshev.casaconnect.R
 import com.github.antonkonyshev.casaconnect.domain.entity.Device
 import com.github.antonkonyshev.casaconnect.domain.entity.Measurement
-import com.github.antonkonyshev.casaconnect.presentation.LocalizationUtils
 import com.github.antonkonyshev.casaconnect.presentation.UiState
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -66,13 +64,11 @@ fun MeteoScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = LocalizationUtils.localizeDefaultServiceName(
-                                device.name, LocalContext.current
-                            ),
+                            text = device.name,
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             modifier = Modifier
-                                .padding(top = 10.dp, bottom = 10.dp)
+                                .padding(12.dp, 10.dp, 12.dp, 10.dp)
                                 .weight(1f)
                         )
                         if (device.available) {
