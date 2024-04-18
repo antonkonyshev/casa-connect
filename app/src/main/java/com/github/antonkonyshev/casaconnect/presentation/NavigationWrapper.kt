@@ -41,8 +41,10 @@ import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.PermanentDrawerSheet
 import androidx.compose.material3.PermanentNavigationDrawer
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -92,7 +94,7 @@ fun AppScreen(
         bottomBar = {
             if (LocalNavigationType.current == NavigationType.BOTTOM_NAVIGATION)
                 BottomNavigationBar()
-        }
+        },
     ) { contentPaddings ->
         Row(
             modifier = Modifier
@@ -143,7 +145,15 @@ fun AppTopBar(onDrawerClicked: () -> Unit) {
                     contentDescription = stringResource(id = R.string.devices)
                 )
             }
-        })
+        },
+        colors = TopAppBarColors(
+            Color.Transparent,
+            Color.Transparent,
+            MaterialTheme.colorScheme.onPrimaryContainer,
+            MaterialTheme.colorScheme.onPrimaryContainer,
+            MaterialTheme.colorScheme.onPrimaryContainer
+        )
+    )
 }
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
@@ -197,7 +207,7 @@ fun NavigationWrapper(
         LocalNavigationDestination provides navigationDestination,
         LocalNavigationType provides navigationType
     ) {
-        Box(modifier = Modifier.background(color = MaterialTheme.colorScheme.background)) {
+        Surface(modifier = Modifier.background(color = MaterialTheme.colorScheme.background)) {
             if (currentActivity?.viewModel?.backgroundResource != null) {
                 Column(modifier = Modifier.fillMaxSize()) {
                     Image(
