@@ -3,9 +3,7 @@ package com.github.antonkonyshev.casaconnect.presentation.settings
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.github.antonkonyshev.casaconnect.R
 import com.github.antonkonyshev.casaconnect.presentation.BaseActivity
 import com.github.antonkonyshev.casaconnect.presentation.NavigationDestinations
 import com.github.antonkonyshev.casaconnect.presentation.NavigationWrapper
@@ -13,28 +11,19 @@ import com.github.antonkonyshev.casaconnect.ui.theme.CasaConnectTheme
 
 class SettingsActivity : BaseActivity() {
 
-    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+    override val viewModel: SettingsViewModel by viewModels()
+    override var header: String = ""
+    override val navigationDestination: String = NavigationDestinations.SETTINGS
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val viewModel: SettingsViewModel by viewModels()
+        header = resources.getString(R.string.settings)
 
         setContent {
-            val windowSize = calculateWindowSizeClass(activity = this).widthSizeClass
             CasaConnectTheme {
-                NavigationWrapper(
-                    windowSize,
-                    devicePostureFlow().collectAsStateWithLifecycle().value,
-                    NavigationDestinations.SETTINGS,
-                    viewModel.navigationBackgroundResource,
-                    viewModel.backgroundResource,
-                    sectionScreenComposable = { onDrawerClicked: () -> Unit ->
-                        SettingsScreen(
-                            windowSize,
-                            onDrawerClicked
-                        )
-                    }
-                )
+                NavigationWrapper {
+                    SettingsScreen()
+                }
             }
         }
     }

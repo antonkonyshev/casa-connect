@@ -3,9 +3,8 @@ package com.github.antonkonyshev.casaconnect.presentation.device
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.github.antonkonyshev.casaconnect.R
 import com.github.antonkonyshev.casaconnect.domain.entity.Device
 import com.github.antonkonyshev.casaconnect.presentation.BaseActivity
 import com.github.antonkonyshev.casaconnect.presentation.NavigationDestinations
@@ -14,37 +13,31 @@ import com.github.antonkonyshev.casaconnect.ui.theme.CasaConnectTheme
 
 class DevicesActivity : BaseActivity() {
 
-    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+    override val viewModel: DevicesViewModel by viewModels()
+    override var header: String = ""
+    override val navigationDestination: String = NavigationDestinations.DEVICES
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        header = resources.getString(R.string.devices)
 
         val viewModel: DevicesViewModel by viewModels()
 
         setContent {
-            val windowSize = calculateWindowSizeClass(activity = this).widthSizeClass
             CasaConnectTheme {
-                NavigationWrapper(
-                    windowSize,
-                    devicePostureFlow().collectAsStateWithLifecycle().value,
-                    NavigationDestinations.DEVICES,
-                    viewModel.navigationBackgroundResource,
-                    viewModel.backgroundResource,
-                    sectionScreenComposable = { onDrawerClicked: () -> Unit ->
-                        DevicesScreen(
-                            viewModel.getDevicesByServiceUseCase.getAllDevicesFlow()
-                                .collectAsStateWithLifecycle(initialValue = emptyList()).value,
-                            selectedDevice = viewModel.selectedDevice.collectAsStateWithLifecycle()
-                                .value,
-                            uiState = viewModel.uiState.collectAsStateWithLifecycle().value,
-                            windowSize = windowSize,
-                            onDiscoverDevicesClicked = viewModel::discoverDevices,
-                            onDeviceClicked = { device: Device ->
-                                viewModel._selectedDevice.value = device
-                            },
-                            onDrawerClicked = onDrawerClicked
-                        )
-                    }
-                )
+                NavigationWrapper {
+                    DevicesScreen(
+                        viewModel.getDevicesByServiceUseCase.getAllDevicesFlow()
+                            .collectAsStateWithLifecycle(initialValue = emptyList()).value,
+                        selectedDevice = viewModel.selectedDevice.collectAsStateWithLifecycle()
+                            .value,
+                        uiState = viewModel.uiState.collectAsStateWithLifecycle().value,
+                        onDiscoverDevicesClicked = viewModel::discoverDevices,
+                        onDeviceClicked = { device: Device ->
+                            viewModel._selectedDevice.value = device
+                        }
+                    )
+                }
             }
         }
     }

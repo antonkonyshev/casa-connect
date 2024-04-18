@@ -3,11 +3,12 @@ package com.github.antonkonyshev.casaconnect.presentation.devicepreference
 import android.content.Intent
 import androidx.activity.viewModels
 import androidx.test.core.app.ApplicationProvider
-import kotlinx.coroutines.runBlocking
 import com.github.antonkonyshev.casaconnect.CasaConnectApplication
 import com.github.antonkonyshev.casaconnect.domain.entity.Device
 import com.github.antonkonyshev.casaconnect.domain.entity.DevicePreference
 import com.github.antonkonyshev.casaconnect.presentation.device.DevicesActivity
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -75,6 +76,11 @@ class DevicePreferenceViewModelTest {
                 Inet4Address.getByName("192.168.0.101"),
                 true
             )
+            val preference = DevicePreference(
+                20, 14, 24,
+                15, 1800, 50, 1800,
+                "", device
+            )
             val ctx = ApplicationProvider.getApplicationContext<CasaConnectApplication>()
             val controller = Robolectric.buildActivity(
                 DevicesActivity::class.java,
@@ -82,11 +88,15 @@ class DevicePreferenceViewModelTest {
             )
 
             val viewModel = controller.get().viewModels<DevicePreferenceViewModel>().value
+            viewModel.getDevicePreferenceUseCase = spy(viewModel.getDevicePreferenceUseCase)
             viewModel.setDevicePreferenceUseCase = spy(viewModel.setDevicePreferenceUseCase)
             viewModel.setDeviceNameUseCase = spy(viewModel.setDeviceNameUseCase)
             viewModel.selectedDevice = device
+            doReturn(preference).`when`(viewModel.getDevicePreferenceUseCase).invoke(any())
             doReturn(true).`when`(viewModel.setDevicePreferenceUseCase).invoke(any())
             controller.setup()
+            viewModel.prepareData { assertTrue(it) }
+            delay(100L)
             viewModel.preference.value!!.highPollution = 1
             viewModel.preference.value!!.minTemperature = 2
             viewModel.preference.value!!.maxTemperature = 3
@@ -95,7 +105,10 @@ class DevicePreferenceViewModelTest {
             viewModel.preference.value!!.historyRecordPeriod = 6
             viewModel.preference.value!!.device!!.name = "Test-Room"
             viewModel.saveDevicePreference { assertTrue(it) }
-            verify(viewModel.setDevicePreferenceUseCase, timeout(5000L)).invoke(argThat { preference: DevicePreference ->
+            verify(
+                viewModel.setDevicePreferenceUseCase,
+                timeout(5000L)
+            ).invoke(argThat { preference: DevicePreference ->
                 assertEquals(1, preference.highPollution)
                 assertEquals(2, preference.minTemperature)
                 assertEquals(3, preference.maxTemperature)
@@ -104,7 +117,10 @@ class DevicePreferenceViewModelTest {
                 assertEquals(6, preference.historyRecordPeriod)
                 return@argThat true
             })
-            verify(viewModel.setDeviceNameUseCase, timeout(5000L)).invoke(argThat { deviceArg: Device ->
+            verify(
+                viewModel.setDeviceNameUseCase,
+                timeout(5000L)
+            ).invoke(argThat { deviceArg: Device ->
                 assertEquals("Test-Room", deviceArg.name)
                 return@argThat true
             })

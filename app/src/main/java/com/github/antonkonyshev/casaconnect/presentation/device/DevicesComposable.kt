@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Sensors
 import androidx.compose.material.icons.filled.SensorsOff
 import androidx.compose.material.icons.filled.Sync
@@ -48,6 +47,7 @@ import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.commit
 import com.github.antonkonyshev.casaconnect.R
 import com.github.antonkonyshev.casaconnect.domain.entity.Device
+import com.github.antonkonyshev.casaconnect.presentation.LocalWindowWidthSizeClass
 import com.github.antonkonyshev.casaconnect.presentation.LocalizationUtils
 import com.github.antonkonyshev.casaconnect.presentation.UiState
 import com.github.antonkonyshev.casaconnect.presentation.devicepreference.DevicePreferenceFragment
@@ -59,10 +59,8 @@ fun DevicesScreen(
     devices: List<Device>,
     selectedDevice: Device?,
     uiState: UiState,
-    windowSize: WindowWidthSizeClass,
     onDiscoverDevicesClicked: () -> Unit = {},
     onDeviceClicked: (Device) -> Unit = {},
-    onDrawerClicked: () -> Unit = {}
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         Row(
@@ -72,14 +70,6 @@ fun DevicesScreen(
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            AnimatedVisibility(visible = windowSize == WindowWidthSizeClass.Compact) {
-                IconButton(onClick = onDrawerClicked) {
-                    Icon(
-                        imageVector = Icons.Default.Menu,
-                        contentDescription = stringResource(R.string.navigation_label)
-                    )
-                }
-            }
             Text(
                 text = stringResource(R.string.devices),
                 style = MaterialTheme.typography.titleLarge,
@@ -187,8 +177,11 @@ fun DevicesScreen(
 
             AnimatedVisibility(
                 visible = selectedDevice is Device,
-                modifier = if (windowSize == WindowWidthSizeClass.Compact) Modifier.fillMaxSize()
-                else Modifier.weight(3f)
+                modifier = if (LocalWindowWidthSizeClass.current == WindowWidthSizeClass.Compact) {
+                    Modifier.fillMaxSize()
+                } else {
+                    Modifier.weight(3f)
+                }
             ) {
                 if (selectedDevice != null) {
                     AndroidView(factory = { context ->
@@ -229,7 +222,6 @@ fun PreviewDevices() {
     DevicesScreen(
         devices = devices,
         selectedDevice = null,
-        UiState(loading = false, scanning = false),
-        windowSize = WindowWidthSizeClass.Compact
+        UiState(loading = false, scanning = false)
     )
 }

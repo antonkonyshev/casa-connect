@@ -1,5 +1,7 @@
 package com.github.antonkonyshev.casaconnect.presentation
 
+import android.content.Context
+import android.content.ContextWrapper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -10,7 +12,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
-open class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity : AppCompatActivity() {
+
+    abstract val viewModel: BaseViewModel
+    abstract val header: String
+    abstract val navigationDestination: String
 
     fun devicePostureFlow(): StateFlow<DevicePosture> {
         return WindowInfoTracker
@@ -39,4 +45,10 @@ open class BaseActivity : AppCompatActivity() {
                 initialValue = DevicePosture.NormalPosture
             )
     }
+}
+
+fun Context.getActivity(): BaseActivity? = when (this) {
+    is BaseActivity -> this
+    is ContextWrapper -> baseContext.getActivity() as BaseActivity
+    else -> null
 }

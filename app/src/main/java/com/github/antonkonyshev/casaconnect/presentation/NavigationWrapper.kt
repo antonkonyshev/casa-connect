@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.Sensors
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Thermostat
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -39,10 +40,16 @@ import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.PermanentDrawerSheet
 import androidx.compose.material3.PermanentNavigationDrawer
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,12 +59,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import kotlinx.coroutines.launch
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.antonkonyshev.casaconnect.R
-import com.github.antonkonyshev.casaconnect.presentation.settings.SettingsActivity
 import com.github.antonkonyshev.casaconnect.presentation.device.DevicesActivity
 import com.github.antonkonyshev.casaconnect.presentation.meteo.MeteoActivity
+import com.github.antonkonyshev.casaconnect.presentation.settings.SettingsActivity
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.launch
 
 object NavigationDestinations {
     const val METEO = "meteo"
@@ -68,27 +76,32 @@ object NavigationDestinations {
     const val SETTINGS = "settings"
 }
 
+val LocalWindowWidthSizeClass = compositionLocalOf { WindowWidthSizeClass.Compact }
+val LocalNavigationType = compositionLocalOf { NavigationType.BOTTOM_NAVIGATION }
+val LocalNavigationDestination = compositionLocalOf { NavigationDestinations.METEO }
+
 @Composable
 fun AppScreen(
-    navigationType: NavigationType,
-    backgroundResource: Int,
-    navigationDestination: String,
-    sectionScreenComposable: @Composable (() -> Unit) -> Unit = {},
-    onDrawerClicked: () -> Unit = {},
+    sectionScreenComposable: @Composable () -> Unit = {},
+    onDrawerClicked: () -> Unit
 ) {
-    Box(modifier = Modifier.background(color = MaterialTheme.colorScheme.background)) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            Image(
-                painter = getBackgroundPainter(backgroundResource = backgroundResource),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                alpha = 0.3F,
-                modifier = Modifier.fillMaxSize()
-            )
+    val currentActivity = LocalContext.current.getActivity()
+    Scaffold(
+        topBar = {
+            AppTopBar(onDrawerClicked)
+        },
+        bottomBar = {
+            if (LocalNavigationType.current == NavigationType.BOTTOM_NAVIGATION)
+                BottomNavigationBar()
         }
-        Row(modifier = Modifier.fillMaxSize()) {
-            AnimatedVisibility(navigationType == NavigationType.NAVIGATION_RAIL) {
-                AppNavigationRail(navigationDestination, onDrawerClicked = onDrawerClicked)
+    ) { contentPaddings ->
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(contentPaddings)
+        ) {
+            AnimatedVisibility(LocalNavigationType.current == NavigationType.NAVIGATION_RAIL) {
+                AppNavigationRail()
             }
 
             Column(
@@ -98,25 +111,46 @@ fun AppScreen(
             ) {
 
                 Row(modifier = Modifier.weight(1f)) {
-                    sectionScreenComposable(onDrawerClicked)
-                }
-
-                AnimatedVisibility(navigationType == NavigationType.BOTTOM_NAVIGATION) {
-                    BottomNavigationBar(navigationDestination)
+                    sectionScreenComposable()
                 }
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AppTopBar(onDrawerClicked: () -> Unit) {
+    TopAppBar(
+        title = {
+            Text(
+                text = LocalContext.current.getActivity()?.header
+                    ?: stringResource(id = R.string.app_name)
+            )
+        },
+        navigationIcon = {
+            IconButton(onClick = onDrawerClicked) {
+                Icon(
+                    imageVector = Icons.Default.Menu, contentDescription = stringResource(
+                        id = R.string.navigation_label
+                    )
+                )
+            }
+        },
+        actions = {
+            IconButton(onClick = {}) {
+                Icon(
+                    imageVector = Icons.Default.Sensors,
+                    contentDescription = stringResource(id = R.string.devices)
+                )
+            }
+        })
+}
+
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun NavigationWrapper(
-    windowSize: WindowWidthSizeClass,
-    foldingDevicePosture: DevicePosture,
-    navigationDestination: String,
-    navigationBackgroundResource: Int,
-    backgroundResource: Int,
-    sectionScreenComposable: @Composable (() -> Unit) -> Unit = {},
+    sectionScreenComposable: @Composable () -> Unit = {},
 ) {
     val systemUiController = rememberSystemUiController()
     systemUiController.setStatusBarColor(
@@ -124,8 +158,16 @@ fun NavigationWrapper(
         darkIcons = true,
     )
 
+    val currentActivity = LocalContext.current.getActivity()
+    val windowWidthSizeClass = currentActivity?.let {
+        calculateWindowSizeClass(activity = it).widthSizeClass
+    } ?: WindowWidthSizeClass.Compact
+
+    val foldingDevicePosture =
+        currentActivity?.devicePostureFlow()?.collectAsStateWithLifecycle()?.value
+
     val navigationType: NavigationType
-    when (windowSize) {
+    when (windowWidthSizeClass) {
         WindowWidthSizeClass.Compact -> {
             navigationType = NavigationType.BOTTOM_NAVIGATION
         }
@@ -148,49 +190,66 @@ fun NavigationWrapper(
     }
 
     val drawerState = rememberDrawerState(DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
+    val drawerScope = rememberCoroutineScope()
+    val navigationDestination = currentActivity?.navigationDestination ?: ""
 
-    if (navigationType == NavigationType.PERMANENT_NAVIGATION_DRAWER) {
-        PermanentNavigationDrawer(
-            drawerContent = {
-                PermanentDrawerSheet {
-                    NavigationDrawerContent(navigationDestination)
+    CompositionLocalProvider(
+        LocalWindowWidthSizeClass provides windowWidthSizeClass,
+        LocalNavigationDestination provides navigationDestination,
+        LocalNavigationType provides navigationType
+    ) {
+        Box(modifier = Modifier.background(color = MaterialTheme.colorScheme.background)) {
+            if (currentActivity?.viewModel?.backgroundResource != null) {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    Image(
+                        painter = getBackgroundPainter(
+                            backgroundResource = currentActivity.viewModel.backgroundResource
+                        ),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        alpha = 0.3F,
+                        modifier = Modifier.fillMaxSize()
+                    )
                 }
             }
-        ) {
-            AppScreen(
-                navigationType, backgroundResource, navigationDestination,
-                sectionScreenComposable = sectionScreenComposable
-            )
-        }
-    } else {
-        ModalNavigationDrawer(
-            drawerContent = {
-                ModalDrawerSheet {
-                    NavigationDrawerContent(
-                        navigationDestination,
-                        navigationBackgroundResource = navigationBackgroundResource,
-                        onDrawerClicked = { scope.launch { drawerState.close() } }
-                    )
 
+            if (LocalNavigationType.current == NavigationType.PERMANENT_NAVIGATION_DRAWER) {
+                PermanentNavigationDrawer(
+                    drawerContent = {
+                        PermanentDrawerSheet {
+                            NavigationDrawerContent(onDrawerClicked = { drawerScope.launch { drawerState.open() } })
+                        }
+                    }
+                ) {
+                    AppScreen(
+                        sectionScreenComposable,
+                        onDrawerClicked = { drawerScope.launch { drawerState.open() } })
                 }
-            },
-            drawerState = drawerState
-        ) {
-            AppScreen(
-                navigationType, backgroundResource, navigationDestination,
-                onDrawerClicked = { scope.launch { drawerState.open() } },
-                sectionScreenComposable = sectionScreenComposable
-            )
+            } else {
+                ModalNavigationDrawer(
+                    drawerContent = {
+                        ModalDrawerSheet {
+                            NavigationDrawerContent(
+                                currentActivity?.viewModel?.navigationBackgroundResource,
+                                onDrawerClicked = { drawerScope.launch { drawerState.open() } }
+                            )
+                        }
+                    },
+                    drawerState = drawerState
+                ) {
+                    AppScreen(
+                        sectionScreenComposable,
+                        onDrawerClicked = { drawerScope.launch { drawerState.open() } })
+                }
+            }
         }
     }
 }
 
 @Composable
-fun BottomNavigationBar(
-    navigationDestination: String,
-) {
+fun BottomNavigationBar() {
     val context = LocalContext.current
+    val navigationDestination = LocalNavigationDestination.current
     NavigationBar(
         modifier = Modifier
             .background(color = Color.Transparent)
@@ -291,18 +350,16 @@ fun BottomNavigationBar(
 
 @Composable
 fun NavigationDrawerContent(
-    navigationDestination: String,
-    modifier: Modifier = Modifier,
     navigationBackgroundResource: Int? = null,
-    onDrawerClicked: () -> Unit = {},
+    onDrawerClicked: () -> Unit
 ) {
     val context = LocalContext.current
+    val navigationDestination = LocalNavigationDestination.current
     Box(
-        modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.background)
+        modifier = Modifier.background(color = MaterialTheme.colorScheme.background)
     ) {
-        Column(modifier = modifier) {
-            if (navigationBackgroundResource != null) {
+        if (navigationBackgroundResource != null) {
+            Column {
                 Image(
                     painter = getBackgroundPainter(navigationBackgroundResource),
                     contentDescription = null,
@@ -313,13 +370,13 @@ fun NavigationDrawerContent(
             }
         }
         Column(
-            modifier
+            Modifier
                 .wrapContentWidth()
                 .fillMaxHeight()
                 .verticalScroll(ScrollState(0))
         ) {
             Row(
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -340,7 +397,7 @@ fun NavigationDrawerContent(
             }
 
             NavigationDrawerItem(
-                selected = navigationDestination == NavigationDestinations.METEO,
+                selected = LocalNavigationDestination.current == NavigationDestinations.METEO,
                 label = {
                     Text(
                         text = stringResource(R.string.meteo_label),
@@ -479,10 +536,10 @@ fun NavigationDrawerContent(
 
 @Composable
 fun AppNavigationRail(
-    navigationDestination: String,
     onDrawerClicked: () -> Unit = {},
 ) {
     val context = LocalContext.current
+    val navigationDestination = context.getActivity()?.navigationDestination
     NavigationRail(
         modifier = Modifier
             .fillMaxHeight()
