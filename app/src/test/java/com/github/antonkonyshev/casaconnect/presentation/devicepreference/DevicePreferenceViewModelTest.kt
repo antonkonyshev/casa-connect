@@ -108,13 +108,13 @@ class DevicePreferenceViewModelTest {
             verify(
                 viewModel.setDevicePreferenceUseCase,
                 timeout(5000L)
-            ).invoke(argThat { preference: DevicePreference ->
-                assertEquals(1, preference.highPollution)
-                assertEquals(2, preference.minTemperature)
-                assertEquals(3, preference.maxTemperature)
-                assertEquals(4, preference.measurementPeriod)
-                assertEquals(5, preference.historyLength)
-                assertEquals(6, preference.historyRecordPeriod)
+            ).invoke(argThat { preferenceArg: DevicePreference ->
+                assertEquals(1, preferenceArg.highPollution)
+                assertEquals(2, preferenceArg.minTemperature)
+                assertEquals(3, preferenceArg.maxTemperature)
+                assertEquals(4, preferenceArg.measurementPeriod)
+                assertEquals(5, preferenceArg.historyLength)
+                assertEquals(6, preferenceArg.historyRecordPeriod)
                 return@argThat true
             })
             verify(

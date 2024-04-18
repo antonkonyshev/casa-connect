@@ -85,7 +85,6 @@ fun AppScreen(
     sectionScreenComposable: @Composable () -> Unit = {},
     onDrawerClicked: () -> Unit
 ) {
-    val currentActivity = LocalContext.current.getActivity()
     Scaffold(
         topBar = {
             AppTopBar(onDrawerClicked)
