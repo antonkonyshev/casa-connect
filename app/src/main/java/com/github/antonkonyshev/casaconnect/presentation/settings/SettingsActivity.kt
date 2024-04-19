@@ -21,9 +21,7 @@ class SettingsActivity : BaseActivity() {
 
         setContent {
             CasaConnectTheme {
-                NavigationWrapper {
-                    SettingsScreen()
-                }
+                NavigationWrapper()
             }
         }
     }

@@ -73,6 +73,7 @@ dependencies {
     val preference_version = "1.2.1"
     val dagger2_version = "2.51"
     val okhttp_version = "4.12.0"
+    val nav_version = "2.7.7"
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.9.22"))
@@ -103,6 +104,9 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:$okhttp_version")
     implementation("com.github.philjay:mpandroidchart:v3.1.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
+    implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
+    implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
+    implementation("androidx.navigation:navigation-compose:$nav_version")
     ksp("androidx.room:room-compiler:$room_version")
     ksp("com.google.dagger:dagger-compiler:$dagger2_version")
     testImplementation("junit:junit:4.13.2")

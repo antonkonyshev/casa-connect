@@ -1,6 +1,5 @@
 package com.github.antonkonyshev.casaconnect.presentation.meteo
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,32 +28,36 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.antonkonyshev.casaconnect.R
-import com.github.antonkonyshev.casaconnect.domain.entity.Device
 import com.github.antonkonyshev.casaconnect.domain.entity.Measurement
-import com.github.antonkonyshev.casaconnect.presentation.common.UiState
-import com.github.antonkonyshev.casaconnect.presentation.navigation.NavigationWrapper
-import com.github.antonkonyshev.casaconnect.ui.theme.CasaConnectTheme
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MeteoScreen(
-    devices: List<Device>,
-    measurements: Map<String, State<Measurement>>,
-    histories: Map<String, State<List<Measurement>>>,
-    uiState: UiState,
-    onRefresh: () -> Unit = {}
-) {
-    val refreshingState = rememberPullRefreshState(uiState.loading, onRefresh)
+fun MeteoScreen(viewModel: MeteoViewModel = viewModel()) {
+    val devices by viewModel.getDevicesByServiceUseCase.getMeteoDevicesFlow()
+        .collectAsStateWithLifecycle(initialValue = emptyList())
+    val measurements = viewModel.measurements.mapValues {
+        it.value.measurementFlow.collectAsStateWithLifecycle()
+    }
+    val histories = viewModel.measurements.mapValues {
+        it.value.historyFlow.collectAsStateWithLifecycle()
+    }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val refreshingState = rememberPullRefreshState(uiState.loading, {
+        viewModel.observeMeasurement(true)
+    })
+    viewModel.observeMeasurement()
+
     Box(
         modifier = Modifier
             .pullRefresh(refreshingState)
@@ -246,51 +249,51 @@ fun SensorValueListItem(
     }
 }
 
-@SuppressLint("UnrememberedMutableState")
-@Preview(showBackground = true)
-@Composable
-fun MeteoScreenPreview() {
-    CasaConnectTheme {
-        NavigationWrapper {
-            MeteoScreen(
-                devices = listOf(
-                    Device(
-                        id = "room-1", service = "meteo", name = "Room",
-                        sensors = listOf("temperature", "pressure", "altitude", "pollution")
-                    )
-                ),
-                measurements = mapOf(
-                    "room-1" to mutableStateOf(
-                        Measurement(
-                            10L, 22.53f, 738.52f, 184.32f,
-                            15.21f
-                        )
-                    )
-                ),
-                histories = mapOf(
-                    "room-1" to mutableStateOf(
-                        listOf(
-                            Measurement(
-                                0L, 21.53f, 738.52f, 184.32f,
-                                14.21f
-                            ),
-                            Measurement(
-                                0L, 22.53f, 738.52f, 184.32f,
-                                15.21f
-                            ),
-                            Measurement(
-                                0L, 23.53f, 738.52f, 184.32f,
-                                16.21f
-                            ),
-                            Measurement(
-                                0L, 22.53f, 738.52f, 184.32f,
-                                15.21f
-                            ),
-                        )
-                    )
-                ),
-                uiState = UiState(loading = false, scanning = false)
-            )
-        }
-    }
-}
+//@SuppressLint("UnrememberedMutableState")
+//@Preview(showBackground = true)
+//@Composable
+//fun MeteoScreenPreview() {
+//    CasaConnectTheme {
+//        NavigationWrapper {
+//            MeteoScreen(
+//                devices = listOf(
+//                    Device(
+//                        id = "room-1", service = "meteo", name = "Room",
+//                        sensors = listOf("temperature", "pressure", "altitude", "pollution")
+//                    )
+//                ),
+//                measurements = mapOf(
+//                    "room-1" to mutableStateOf(
+//                        Measurement(
+//                            10L, 22.53f, 738.52f, 184.32f,
+//                            15.21f
+//                        )
+//                    )
+//                ),
+//                histories = mapOf(
+//                    "room-1" to mutableStateOf(
+//                        listOf(
+//                            Measurement(
+//                                0L, 21.53f, 738.52f, 184.32f,
+//                                14.21f
+//                            ),
+//                            Measurement(
+//                                0L, 22.53f, 738.52f, 184.32f,
+//                                15.21f
+//                            ),
+//                            Measurement(
+//                                0L, 23.53f, 738.52f, 184.32f,
+//                                16.21f
+//                            ),
+//                            Measurement(
+//                                0L, 22.53f, 738.52f, 184.32f,
+//                                15.21f
+//                            ),
+//                        )
+//                    )
+//                ),
+//                uiState = UiState(loading = false, scanning = false)
+//            )
+//        }
+//    }
+//}

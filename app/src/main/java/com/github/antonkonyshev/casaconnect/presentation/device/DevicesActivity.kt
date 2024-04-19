@@ -3,9 +3,7 @@ package com.github.antonkonyshev.casaconnect.presentation.device
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.antonkonyshev.casaconnect.R
-import com.github.antonkonyshev.casaconnect.domain.entity.Device
 import com.github.antonkonyshev.casaconnect.presentation.common.BaseActivity
 import com.github.antonkonyshev.casaconnect.presentation.navigation.NavigationDestinations
 import com.github.antonkonyshev.casaconnect.presentation.navigation.NavigationWrapper
@@ -25,19 +23,7 @@ class DevicesActivity : BaseActivity() {
 
         setContent {
             CasaConnectTheme {
-                NavigationWrapper {
-                    DevicesScreen(
-                        viewModel.getDevicesByServiceUseCase.getAllDevicesFlow()
-                            .collectAsStateWithLifecycle(initialValue = emptyList()).value,
-                        selectedDevice = viewModel.selectedDevice.collectAsStateWithLifecycle()
-                            .value,
-                        uiState = viewModel.uiState.collectAsStateWithLifecycle().value,
-                        onDiscoverDevicesClicked = ::onDiscoverDevices,
-                        onDeviceClicked = { device: Device ->
-                            viewModel._selectedDevice.value = device
-                        }
-                    )
-                }
+                NavigationWrapper()
             }
         }
     }

@@ -1,12 +1,7 @@
 package com.github.antonkonyshev.casaconnect.presentation.meteo
 
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
+import androidx.preference.PreferenceManager
 import com.github.antonkonyshev.casaconnect.CasaConnectApplication
 import com.github.antonkonyshev.casaconnect.domain.entity.Device
 import com.github.antonkonyshev.casaconnect.domain.entity.Measurement
@@ -15,8 +10,16 @@ import com.github.antonkonyshev.casaconnect.domain.usecase.GetDevicesByServiceUs
 import com.github.antonkonyshev.casaconnect.domain.usecase.GetMeasurementFromMeteoSensorUseCase
 import com.github.antonkonyshev.casaconnect.domain.usecase.UpdateDeviceAvailabilityUseCase
 import com.github.antonkonyshev.casaconnect.presentation.common.BaseViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.util.Date
+import java.util.Timer
 import javax.inject.Inject
+import kotlin.concurrent.scheduleAtFixedRate
 
 data class DeviceMeasurement(val deviceId: String) {
     val _measurement: MutableStateFlow<Measurement> = MutableStateFlow(Measurement())
@@ -43,11 +46,15 @@ class MeteoViewModel : BaseViewModel() {
     @Inject
     lateinit var discoveryService: DiscoveryService
 
+    private var measurementTimer: Timer? = null
+
     init {
         CasaConnectApplication.instance.component.inject(this)
         viewModelScope.launch(Dispatchers.IO) {
             discoveryService.discoverDevices()
         }
+        observeMeasurement()
+        startMeasurementTimer()
     }
 
     fun observeMeasurement(silent: Boolean = false) {
@@ -97,5 +104,39 @@ class MeteoViewModel : BaseViewModel() {
                 measurements[device.id]!!._history.value = history
             }
         }
+    }
+
+    fun startMeasurementTimer() {
+        val settings =
+            PreferenceManager.getDefaultSharedPreferences(CasaConnectApplication.instance)
+        val measurementUpdatePeriod: Long = 1000L * try {
+            settings.getString("measurement_update_period", "15")!!.toLong()
+        } catch (_: Exception) {
+            15L
+        }
+
+        try {
+            measurementHistoryUpdatePeriod = settings.getString(
+                "measurement_history_update_period", "600"
+            )!!.toLong() * 1000L
+        } catch (_: Exception) {
+        }
+
+        if (measurementTimer == null) {
+            measurementTimer = Timer()
+        }
+        measurementTimer?.scheduleAtFixedRate(measurementUpdatePeriod, measurementUpdatePeriod) {
+            observeMeasurement(true)
+        }
+    }
+
+    fun stopMeasurementTimer() {
+        measurementTimer?.cancel()
+        measurementTimer = null
+    }
+
+    override fun onCleared() {
+        stopMeasurementTimer()
+        super.onCleared()
     }
 }

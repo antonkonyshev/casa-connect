@@ -29,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,24 +39,24 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.commit
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.antonkonyshev.casaconnect.domain.entity.Device
-import com.github.antonkonyshev.casaconnect.presentation.navigation.LocalWindowWidthSizeClass
-import com.github.antonkonyshev.casaconnect.presentation.common.UiState
 import com.github.antonkonyshev.casaconnect.presentation.devicepreference.DevicePreferenceFragment
+import com.github.antonkonyshev.casaconnect.presentation.navigation.LocalWindowWidthSizeClass
 import java.net.Inet4Address
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun DevicesScreen(
-    devices: List<Device>,
-    selectedDevice: Device?,
-    uiState: UiState,
-    onDiscoverDevicesClicked: () -> Unit = {},
-    onDeviceClicked: (Device) -> Unit = {},
-) {
+fun DevicesScreen(viewModel: DevicesViewModel = viewModel()) {
+    val devices by viewModel.getDevicesByServiceUseCase.getAllDevicesFlow()
+        .collectAsStateWithLifecycle(initialValue = emptyList())
+    val selectedDevice by viewModel.selectedDevice.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
     Row {
         val refreshingState = rememberPullRefreshState(
-            uiState.loading, onDiscoverDevicesClicked
+            uiState.loading, viewModel::discoverDevices
         )
         Box(
             modifier = Modifier
@@ -134,7 +135,7 @@ fun DevicesScreen(
                         ),
                         modifier = Modifier
                             .padding(bottom = 18.dp)
-                            .clickable { onDeviceClicked(device) })
+                            .clickable { viewModel._selectedDevice.value = device })
                 }
             }
             PullRefreshIndicator(
@@ -156,7 +157,7 @@ fun DevicesScreen(
                         id = ViewCompat.generateViewId()
                         (context as AppCompatActivity).supportFragmentManager.commit {
                             setReorderingAllowed(true)
-                            add(id, DevicePreferenceFragment.newInstance(selectedDevice))
+                            add(id, DevicePreferenceFragment.newInstance(selectedDevice!!))
                         }
                     }
                 })
@@ -185,9 +186,9 @@ fun PreviewDevices() {
             false
         )
     )
-    DevicesScreen(
-        devices = devices,
-        selectedDevice = null,
-        UiState(loading = false, scanning = false)
-    )
+//    DevicesScreen(
+//        devices = devices,
+//        selectedDevice = null,
+//        UiState(loading = false, scanning = false)
+//    )
 }
