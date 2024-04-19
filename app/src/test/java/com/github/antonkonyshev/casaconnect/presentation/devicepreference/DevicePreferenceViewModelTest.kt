@@ -6,7 +6,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.github.antonkonyshev.casaconnect.CasaConnectApplication
 import com.github.antonkonyshev.casaconnect.domain.entity.Device
 import com.github.antonkonyshev.casaconnect.domain.entity.DevicePreference
-import com.github.antonkonyshev.casaconnect.presentation.device.DevicesActivity
+import com.github.antonkonyshev.casaconnect.presentation.common.MainActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
@@ -39,8 +39,8 @@ class DevicePreferenceViewModelTest {
             )
             val ctx = ApplicationProvider.getApplicationContext<CasaConnectApplication>()
             val controller = Robolectric.buildActivity(
-                DevicesActivity::class.java,
-                Intent(ctx, DevicesActivity::class.java)
+                MainActivity::class.java,
+                Intent(ctx, MainActivity::class.java)
             )
 
             val viewModel = controller.get().viewModels<DevicePreferenceViewModel>().value
@@ -83,8 +83,8 @@ class DevicePreferenceViewModelTest {
             )
             val ctx = ApplicationProvider.getApplicationContext<CasaConnectApplication>()
             val controller = Robolectric.buildActivity(
-                DevicesActivity::class.java,
-                Intent(ctx, DevicesActivity::class.java)
+                MainActivity::class.java,
+                Intent(ctx, MainActivity::class.java)
             )
 
             val viewModel = controller.get().viewModels<DevicePreferenceViewModel>().value

@@ -20,7 +20,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name="com.github.antonkonyshev.casaconnect.presentation.meteo.MeteoActivity"
+            android:name="com.github.antonkonyshev.casaconnect.presentation.common.MainActivity"
             android:exported="true"
             android:label="@string/meteostation"
             android:theme="@style/Theme.CasaConnectTheme">
@@ -32,18 +32,6 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name="com.github.antonkonyshev.casaconnect.presentation.device.DevicesActivity"
-            android:exported="false"
-            android:label="@string/devices"
-            android:theme="@style/Theme.CasaConnectTheme">
-        </activity>
-        <activity
-            android:name="com.github.antonkonyshev.casaconnect.presentation.settings.SettingsActivity"
-            android:exported="false"
-            android:label="@string/settings"
-            android:theme="@style/Theme.CasaConnectTheme">
         </activity>
     </application>
 
