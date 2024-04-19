@@ -42,11 +42,11 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.antonkonyshev.casaconnect.domain.entity.Device
+import com.github.antonkonyshev.casaconnect.presentation.common.UiState
 import com.github.antonkonyshev.casaconnect.presentation.devicepreference.DevicePreferenceFragment
 import com.github.antonkonyshev.casaconnect.presentation.navigation.LocalWindowWidthSizeClass
 import java.net.Inet4Address
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun DevicesScreen(viewModel: DevicesViewModel = viewModel()) {
     val devices by viewModel.getDevicesByServiceUseCase.getAllDevicesFlow()
@@ -54,19 +54,36 @@ fun DevicesScreen(viewModel: DevicesViewModel = viewModel()) {
     val selectedDevice by viewModel.selectedDevice.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    DevicesScreenContent(
+        devices, selectedDevice, uiState, viewModel::selectDevice, viewModel::discoverDevices
+    )
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun DevicesScreenContent(
+    devices: List<Device>,
+    selectedDevice: Device?,
+    uiState: UiState,
+    selectDevice: (Device) -> Unit = {},
+    discoverDevices: () -> Unit = {}
+) {
     Row {
         val refreshingState = rememberPullRefreshState(
-            uiState.loading, viewModel::discoverDevices
+            uiState.loading, discoverDevices
         )
+
         Box(
             modifier = Modifier
                 .weight(2f)
                 .pullRefresh(refreshingState)
         ) {
+
             LazyColumn(
                 modifier = Modifier
             ) {
                 items(devices) { device ->
+
                     ListItem(headlineContent = {
                         Text(
                             text = device.name,
@@ -135,7 +152,7 @@ fun DevicesScreen(viewModel: DevicesViewModel = viewModel()) {
                         ),
                         modifier = Modifier
                             .padding(bottom = 18.dp)
-                            .clickable { viewModel.selectDevice(device) })
+                            .clickable { selectDevice(device) })
                 }
             }
             PullRefreshIndicator(
@@ -157,7 +174,7 @@ fun DevicesScreen(viewModel: DevicesViewModel = viewModel()) {
                         id = ViewCompat.generateViewId()
                         (context as AppCompatActivity).supportFragmentManager.commit {
                             setReorderingAllowed(true)
-                            add(id, DevicePreferenceFragment.newInstance(selectedDevice!!))
+                            add(id, DevicePreferenceFragment.newInstance(selectedDevice))
                         }
                     }
                 })
@@ -186,9 +203,28 @@ fun PreviewDevices() {
             false
         )
     )
-//    DevicesScreen(
-//        devices = devices,
-//        selectedDevice = null,
-//        UiState(loading = false, scanning = false)
-//    )
+    DevicesScreenContent(devices, null, UiState(loading = false, scanning = false))
+}
+
+@Preview(showBackground = true, widthDp = 800)
+@Composable
+fun PreviewSelectedDevice() {
+    val devices = listOf(
+        Device(
+            "room-1",
+            "meteo",
+            "Room",
+            listOf("temperature", "pressure", "pollution", "altitude"),
+            Inet4Address.getByName("192.168.0.101"),
+            true
+        ), Device(
+            "kitchen-1",
+            "meteo",
+            "Kitchen",
+            listOf("temperature", "pressure", "pollution"),
+            Inet4Address.getByName("192.168.0.101"),
+            false
+        )
+    )
+    DevicesScreenContent(devices, null, UiState(loading = false, scanning = false))
 }

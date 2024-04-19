@@ -1,5 +1,6 @@
 package com.github.antonkonyshev.casaconnect.presentation.meteo
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +15,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Sensors
 import androidx.compose.material.icons.filled.SensorsOff
-import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.icons.outlined.Landscape
 import androidx.compose.material.icons.outlined.Masks
 import androidx.compose.material.icons.outlined.Thermostat
@@ -23,7 +23,6 @@ import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -31,19 +30,23 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.antonkonyshev.casaconnect.R
+import com.github.antonkonyshev.casaconnect.domain.entity.Device
 import com.github.antonkonyshev.casaconnect.domain.entity.Measurement
+import com.github.antonkonyshev.casaconnect.presentation.common.UiState
+import com.github.antonkonyshev.casaconnect.ui.theme.CasaConnectTheme
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MeteoScreen(viewModel: MeteoViewModel = viewModel()) {
     val devices by viewModel.getDevicesByServiceUseCase.getMeteoDevicesFlow()
@@ -55,10 +58,23 @@ fun MeteoScreen(viewModel: MeteoViewModel = viewModel()) {
         it.value.historyFlow.collectAsStateWithLifecycle()
     }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    MeteoScreenContent(devices, measurements, histories, uiState, viewModel::observeMeasurement)
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun MeteoScreenContent(
+    devices: List<Device>,
+    measurements: Map<String, State<Measurement>>,
+    histories: Map<String, State<List<Measurement>>>,
+    uiState: UiState,
+    observeMeasurement: (Boolean) -> Unit = {}
+) {
     val refreshingState = rememberPullRefreshState(uiState.loading, {
-        viewModel.observeMeasurement(true)
+        observeMeasurement(true)
     })
-    viewModel.observeMeasurement()
+    observeMeasurement(false)
 
     Box(
         modifier = Modifier
@@ -250,51 +266,49 @@ fun SensorValueListItem(
     }
 }
 
-//@SuppressLint("UnrememberedMutableState")
-//@Preview(showBackground = true)
-//@Composable
-//fun MeteoScreenPreview() {
-//    CasaConnectTheme {
-//        NavigationWrapper {
-//            MeteoScreen(
-//                devices = listOf(
-//                    Device(
-//                        id = "room-1", service = "meteo", name = "Room",
-//                        sensors = listOf("temperature", "pressure", "altitude", "pollution")
-//                    )
-//                ),
-//                measurements = mapOf(
-//                    "room-1" to mutableStateOf(
-//                        Measurement(
-//                            10L, 22.53f, 738.52f, 184.32f,
-//                            15.21f
-//                        )
-//                    )
-//                ),
-//                histories = mapOf(
-//                    "room-1" to mutableStateOf(
-//                        listOf(
-//                            Measurement(
-//                                0L, 21.53f, 738.52f, 184.32f,
-//                                14.21f
-//                            ),
-//                            Measurement(
-//                                0L, 22.53f, 738.52f, 184.32f,
-//                                15.21f
-//                            ),
-//                            Measurement(
-//                                0L, 23.53f, 738.52f, 184.32f,
-//                                16.21f
-//                            ),
-//                            Measurement(
-//                                0L, 22.53f, 738.52f, 184.32f,
-//                                15.21f
-//                            ),
-//                        )
-//                    )
-//                ),
-//                uiState = UiState(loading = false, scanning = false)
-//            )
-//        }
-//    }
-//}
+@SuppressLint("UnrememberedMutableState")
+@Preview(showBackground = true)
+@Composable
+fun MeteoScreenPreview() {
+    CasaConnectTheme {
+        MeteoScreenContent(
+            devices = listOf(
+                Device(
+                    id = "room-1", service = "meteo", name = "Room",
+                    sensors = listOf("temperature", "pressure", "altitude", "pollution")
+                )
+            ),
+            measurements = mapOf(
+                "room-1" to mutableStateOf(
+                    Measurement(
+                        10L, 22.53f, 738.52f, 184.32f,
+                        15.21f
+                    )
+                )
+            ),
+            histories = mapOf(
+                "room-1" to mutableStateOf(
+                    listOf(
+                        Measurement(
+                            0L, 21.53f, 738.52f, 184.32f,
+                            14.21f
+                        ),
+                        Measurement(
+                            0L, 22.53f, 738.52f, 184.32f,
+                            15.21f
+                        ),
+                        Measurement(
+                            0L, 23.53f, 738.52f, 184.32f,
+                            16.21f
+                        ),
+                        Measurement(
+                            0L, 22.53f, 738.52f, 184.32f,
+                            15.21f
+                        ),
+                    )
+                )
+            ),
+            uiState = UiState(loading = false, scanning = false)
+        )
+    }
+}
