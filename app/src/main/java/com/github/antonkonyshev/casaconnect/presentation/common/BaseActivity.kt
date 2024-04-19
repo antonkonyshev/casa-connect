@@ -1,4 +1,4 @@
-package com.github.antonkonyshev.casaconnect.presentation
+package com.github.antonkonyshev.casaconnect.presentation.common
 
 import android.content.Context
 import android.content.ContextWrapper

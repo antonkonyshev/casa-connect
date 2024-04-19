@@ -35,7 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.github.antonkonyshev.casaconnect.R
 import com.github.antonkonyshev.casaconnect.domain.entity.DevicePreference
-import com.github.antonkonyshev.casaconnect.presentation.UiState
+import com.github.antonkonyshev.casaconnect.presentation.common.UiState
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

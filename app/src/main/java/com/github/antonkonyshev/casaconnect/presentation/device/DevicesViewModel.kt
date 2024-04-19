@@ -9,7 +9,7 @@ import com.github.antonkonyshev.casaconnect.CasaConnectApplication
 import com.github.antonkonyshev.casaconnect.domain.entity.Device
 import com.github.antonkonyshev.casaconnect.domain.usecase.DiscoverDevicesInLocalNetworkUseCase
 import com.github.antonkonyshev.casaconnect.domain.usecase.GetDevicesByServiceUseCase
-import com.github.antonkonyshev.casaconnect.presentation.BaseViewModel
+import com.github.antonkonyshev.casaconnect.presentation.common.BaseViewModel
 import javax.inject.Inject
 
 class DevicesViewModel : BaseViewModel() {

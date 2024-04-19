@@ -1,4 +1,4 @@
-package com.github.antonkonyshev.casaconnect.presentation
+package com.github.antonkonyshev.casaconnect.presentation.common
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

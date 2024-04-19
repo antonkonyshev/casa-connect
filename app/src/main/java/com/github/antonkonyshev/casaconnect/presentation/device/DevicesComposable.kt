@@ -40,7 +40,7 @@ import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.commit
 import com.github.antonkonyshev.casaconnect.domain.entity.Device
 import com.github.antonkonyshev.casaconnect.presentation.navigation.LocalWindowWidthSizeClass
-import com.github.antonkonyshev.casaconnect.presentation.UiState
+import com.github.antonkonyshev.casaconnect.presentation.common.UiState
 import com.github.antonkonyshev.casaconnect.presentation.devicepreference.DevicePreferenceFragment
 import java.net.Inet4Address
 

@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import com.github.antonkonyshev.casaconnect.R
-import com.github.antonkonyshev.casaconnect.presentation.BaseActivity
+import com.github.antonkonyshev.casaconnect.presentation.common.BaseActivity
 import com.github.antonkonyshev.casaconnect.presentation.navigation.NavigationDestinations
 import com.github.antonkonyshev.casaconnect.presentation.navigation.NavigationWrapper
 import com.github.antonkonyshev.casaconnect.ui.theme.CasaConnectTheme

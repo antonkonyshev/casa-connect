@@ -41,7 +41,9 @@ import androidx.compose.ui.unit.dp
 import com.github.antonkonyshev.casaconnect.R
 import com.github.antonkonyshev.casaconnect.domain.entity.Device
 import com.github.antonkonyshev.casaconnect.domain.entity.Measurement
-import com.github.antonkonyshev.casaconnect.presentation.UiState
+import com.github.antonkonyshev.casaconnect.presentation.common.UiState
+import com.github.antonkonyshev.casaconnect.presentation.navigation.NavigationWrapper
+import com.github.antonkonyshev.casaconnect.ui.theme.CasaConnectTheme
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -247,44 +249,48 @@ fun SensorValueListItem(
 @SuppressLint("UnrememberedMutableState")
 @Preview(showBackground = true)
 @Composable
-fun MeteoScreenPrevew() {
-    MeteoScreen(
-        devices = listOf(
-            Device(
-                id = "room-1", service = "meteo", name = "Room",
-                sensors = listOf("temperature", "pressure", "altitude", "pollution")
+fun MeteoScreenPreview() {
+    CasaConnectTheme {
+        NavigationWrapper {
+            MeteoScreen(
+                devices = listOf(
+                    Device(
+                        id = "room-1", service = "meteo", name = "Room",
+                        sensors = listOf("temperature", "pressure", "altitude", "pollution")
+                    )
+                ),
+                measurements = mapOf(
+                    "room-1" to mutableStateOf(
+                        Measurement(
+                            10L, 22.53f, 738.52f, 184.32f,
+                            15.21f
+                        )
+                    )
+                ),
+                histories = mapOf(
+                    "room-1" to mutableStateOf(
+                        listOf(
+                            Measurement(
+                                0L, 21.53f, 738.52f, 184.32f,
+                                14.21f
+                            ),
+                            Measurement(
+                                0L, 22.53f, 738.52f, 184.32f,
+                                15.21f
+                            ),
+                            Measurement(
+                                0L, 23.53f, 738.52f, 184.32f,
+                                16.21f
+                            ),
+                            Measurement(
+                                0L, 22.53f, 738.52f, 184.32f,
+                                15.21f
+                            ),
+                        )
+                    )
+                ),
+                uiState = UiState(loading = false, scanning = false)
             )
-        ),
-        measurements = mapOf(
-            "room-1" to mutableStateOf(
-                Measurement(
-                    10L, 22.53f, 738.52f, 184.32f,
-                    15.21f
-                )
-            )
-        ),
-        histories = mapOf(
-            "room-1" to mutableStateOf(
-                listOf(
-                    Measurement(
-                        0L, 21.53f, 738.52f, 184.32f,
-                        14.21f
-                    ),
-                    Measurement(
-                        0L, 22.53f, 738.52f, 184.32f,
-                        15.21f
-                    ),
-                    Measurement(
-                        0L, 23.53f, 738.52f, 184.32f,
-                        16.21f
-                    ),
-                    Measurement(
-                        0L, 22.53f, 738.52f, 184.32f,
-                        15.21f
-                    ),
-                )
-            )
-        ),
-        uiState = UiState(false, false)
-    )
+        }
+    }
 }

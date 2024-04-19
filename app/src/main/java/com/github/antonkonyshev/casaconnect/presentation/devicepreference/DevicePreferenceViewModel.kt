@@ -7,7 +7,7 @@ import com.github.antonkonyshev.casaconnect.domain.entity.DevicePreference
 import com.github.antonkonyshev.casaconnect.domain.usecase.GetDevicePreferencesUseCase
 import com.github.antonkonyshev.casaconnect.domain.usecase.SetDeviceNameUseCase
 import com.github.antonkonyshev.casaconnect.domain.usecase.SetDevicePreferencesUseCase
-import com.github.antonkonyshev.casaconnect.presentation.BaseViewModel
+import com.github.antonkonyshev.casaconnect.presentation.common.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

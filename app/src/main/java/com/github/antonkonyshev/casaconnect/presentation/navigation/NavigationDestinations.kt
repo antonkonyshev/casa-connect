@@ -2,7 +2,7 @@ package com.github.antonkonyshev.casaconnect.presentation.navigation
 
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.compositionLocalOf
-import com.github.antonkonyshev.casaconnect.presentation.NavigationType
+import com.github.antonkonyshev.casaconnect.presentation.common.NavigationType
 
 object NavigationDestinations {
     const val METEO = "meteo"

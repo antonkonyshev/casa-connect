@@ -27,10 +27,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.github.antonkonyshev.casaconnect.presentation.DevicePosture
-import com.github.antonkonyshev.casaconnect.presentation.NavigationType
-import com.github.antonkonyshev.casaconnect.presentation.getActivity
-import com.github.antonkonyshev.casaconnect.presentation.getBackgroundPainter
+import com.github.antonkonyshev.casaconnect.presentation.common.DevicePosture
+import com.github.antonkonyshev.casaconnect.presentation.common.NavigationType
+import com.github.antonkonyshev.casaconnect.presentation.common.getActivity
+import com.github.antonkonyshev.casaconnect.presentation.common.getBackgroundPainter
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 

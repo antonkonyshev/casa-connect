@@ -48,8 +48,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.github.antonkonyshev.casaconnect.R
 import com.github.antonkonyshev.casaconnect.presentation.device.DevicesActivity
-import com.github.antonkonyshev.casaconnect.presentation.getActivity
-import com.github.antonkonyshev.casaconnect.presentation.getBackgroundPainter
+import com.github.antonkonyshev.casaconnect.presentation.common.getActivity
+import com.github.antonkonyshev.casaconnect.presentation.common.getBackgroundPainter
 import com.github.antonkonyshev.casaconnect.presentation.meteo.MeteoActivity
 import com.github.antonkonyshev.casaconnect.presentation.settings.SettingsActivity
 

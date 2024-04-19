@@ -14,7 +14,7 @@ import com.github.antonkonyshev.casaconnect.domain.repository.DiscoveryService
 import com.github.antonkonyshev.casaconnect.domain.usecase.GetDevicesByServiceUseCase
 import com.github.antonkonyshev.casaconnect.domain.usecase.GetMeasurementFromMeteoSensorUseCase
 import com.github.antonkonyshev.casaconnect.domain.usecase.UpdateDeviceAvailabilityUseCase
-import com.github.antonkonyshev.casaconnect.presentation.BaseViewModel
+import com.github.antonkonyshev.casaconnect.presentation.common.BaseViewModel
 import java.util.Date
 import javax.inject.Inject
 
