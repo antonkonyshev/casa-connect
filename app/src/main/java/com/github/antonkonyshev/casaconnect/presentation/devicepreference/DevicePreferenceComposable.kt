@@ -1,5 +1,6 @@
 package com.github.antonkonyshev.casaconnect.presentation.devicepreference
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Masks
 import androidx.compose.material.icons.outlined.Thermostat
@@ -32,19 +32,42 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.antonkonyshev.casaconnect.R
+import com.github.antonkonyshev.casaconnect.domain.entity.Device
 import com.github.antonkonyshev.casaconnect.domain.entity.DevicePreference
 import com.github.antonkonyshev.casaconnect.presentation.common.UiState
+import com.github.antonkonyshev.casaconnect.ui.theme.CasaConnectTheme
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun DevicePreferenceScreen(
+    device: Device, deselectDevice: () -> Unit = {},
+    viewModel: DevicePreferenceViewModel = viewModel()
+) {
+    viewModel.selectDevice(device)
+
+    BackHandler {
+        viewModel.deselectDevice()
+        deselectDevice()
+    }
+
+    // TODO: Use snackbar to show results of the operation
+    DevicePreferenceScreenContent(
+        viewModel.preference.collectAsStateWithLifecycle().value,
+        viewModel.uiState.collectAsStateWithLifecycle().value
+    ) { viewModel.saveDevicePreference { deselectDevice() } }
+}
+
+@Composable
+fun DevicePreferenceScreenContent(
     preference: DevicePreference?,
     uiState: UiState,
     onSave: () -> Unit = {}
 ) {
-    Crossfade(targetState = uiState.loading) { loading ->
+    Crossfade(targetState = uiState.loading, label = "Device Preference Loading") { loading ->
 
         if (loading) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.CenterStart) {
@@ -186,5 +209,22 @@ fun PreferenceInput(
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DevicePreferenceScreenPreview() {
+    val device = Device(
+        "room-1", "meteo", "Room",
+        listOf("temperature", "pressure", "pollution", "altitude"), available = true
+    )
+    val preference = DevicePreference(
+        20, 14, 24,
+        15, 1800, 50, 1800,
+        "", device
+    )
+    CasaConnectTheme {
+        DevicePreferenceScreenContent(preference, UiState(loading = false, scanning = false))
     }
 }

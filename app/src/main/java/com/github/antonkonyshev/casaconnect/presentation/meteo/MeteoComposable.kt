@@ -74,7 +74,6 @@ fun MeteoScreenContent(
     val refreshingState = rememberPullRefreshState(uiState.loading, {
         observeMeasurement(true)
     })
-    observeMeasurement(false)
 
     Box(
         modifier = Modifier

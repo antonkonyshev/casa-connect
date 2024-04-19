@@ -1,6 +1,5 @@
 package com.github.antonkonyshev.casaconnect.presentation.device
 
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -35,15 +34,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.view.ViewCompat
-import androidx.fragment.app.FragmentContainerView
-import androidx.fragment.app.commit
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.antonkonyshev.casaconnect.domain.entity.Device
 import com.github.antonkonyshev.casaconnect.presentation.common.UiState
-import com.github.antonkonyshev.casaconnect.presentation.devicepreference.DevicePreferenceFragment
+import com.github.antonkonyshev.casaconnect.presentation.devicepreference.DevicePreferenceScreen
 import com.github.antonkonyshev.casaconnect.presentation.navigation.LocalWindowWidthSizeClass
 import java.net.Inet4Address
 
@@ -55,7 +50,8 @@ fun DevicesScreen(viewModel: DevicesViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     DevicesScreenContent(
-        devices, selectedDevice, uiState, viewModel::selectDevice, viewModel::discoverDevices
+        devices, selectedDevice, uiState, viewModel::selectDevice, viewModel::discoverDevices,
+        viewModel::deselectDevice
     )
 }
 
@@ -66,7 +62,8 @@ fun DevicesScreenContent(
     selectedDevice: Device?,
     uiState: UiState,
     selectDevice: (Device) -> Unit = {},
-    discoverDevices: () -> Unit = {}
+    discoverDevices: () -> Unit = {},
+    deselectDevice: () -> Unit = {}
 ) {
     Row {
         val refreshingState = rememberPullRefreshState(
@@ -169,15 +166,16 @@ fun DevicesScreenContent(
             }
         ) {
             if (selectedDevice != null) {
-                AndroidView(factory = { context ->
-                    FragmentContainerView(context).apply {
-                        id = ViewCompat.generateViewId()
-                        (context as AppCompatActivity).supportFragmentManager.commit {
-                            setReorderingAllowed(true)
-                            add(id, DevicePreferenceFragment.newInstance(selectedDevice))
-                        }
-                    }
-                })
+                DevicePreferenceScreen(selectedDevice, deselectDevice)
+//                AndroidView(factory = { context ->
+//                    FragmentContainerView(context).apply {
+//                        id = ViewCompat.generateViewId()
+//                        (context as AppCompatActivity).supportFragmentManager.commit {
+//                            setReorderingAllowed(true)
+//                            add(id, DevicePreferenceFragment.newInstance(selectedDevice))
+//                        }
+//                    }
+//                })
             }
         }
     }

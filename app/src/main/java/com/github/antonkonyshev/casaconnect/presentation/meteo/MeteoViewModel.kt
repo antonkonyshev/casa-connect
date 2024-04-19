@@ -5,7 +5,6 @@ import androidx.preference.PreferenceManager
 import com.github.antonkonyshev.casaconnect.CasaConnectApplication
 import com.github.antonkonyshev.casaconnect.domain.entity.Device
 import com.github.antonkonyshev.casaconnect.domain.entity.Measurement
-import com.github.antonkonyshev.casaconnect.domain.repository.DiscoveryService
 import com.github.antonkonyshev.casaconnect.domain.usecase.GetDevicesByServiceUseCase
 import com.github.antonkonyshev.casaconnect.domain.usecase.GetMeasurementFromMeteoSensorUseCase
 import com.github.antonkonyshev.casaconnect.domain.usecase.UpdateDeviceAvailabilityUseCase
@@ -43,16 +42,10 @@ class MeteoViewModel : BaseViewModel() {
     @Inject
     lateinit var getMeasurementFromMeteoSensorUseCase: GetMeasurementFromMeteoSensorUseCase
 
-    @Inject
-    lateinit var discoveryService: DiscoveryService
-
     private var measurementTimer: Timer? = null
 
     init {
         CasaConnectApplication.instance.component.inject(this)
-        viewModelScope.launch(Dispatchers.IO) {
-            discoveryService.discoverDevices()
-        }
         observeMeasurement()
         startMeasurementTimer()
     }

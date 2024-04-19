@@ -34,8 +34,19 @@ class DevicePreferenceViewModel : BaseViewModel() {
         CasaConnectApplication.instance.component.inject(this)
     }
 
-    fun prepareData(callback: (Boolean) -> Unit) {
+    fun selectDevice(device: Device) {
         if (selectedDevice == null) {
+            selectedDevice = device
+            prepareData { if (!it) deselectDevice() }
+        }
+    }
+
+    fun deselectDevice() {
+        selectedDevice = null
+    }
+
+    fun prepareData(callback: (Boolean) -> Unit) {
+        if (selectedDevice == null || uiState.value.loading) {
             callback(false)
             return
         }
@@ -55,7 +66,7 @@ class DevicePreferenceViewModel : BaseViewModel() {
     }
 
     fun saveDevicePreference(callback: (Boolean) -> Unit) {
-        if (selectedDevice != null) {
+        if (selectedDevice != null && !uiState.value.loading) {
             onLoading()
             viewModelScope.launch(Dispatchers.IO) {
                 try {

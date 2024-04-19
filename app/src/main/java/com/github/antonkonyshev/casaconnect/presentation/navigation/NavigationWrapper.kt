@@ -126,6 +126,7 @@ fun AppScreen(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { contentPaddings ->
+        // TODO: Check nested layouts, exclude unnecessary
         Row(
             modifier = Modifier
                 .fillMaxSize()
