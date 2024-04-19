@@ -14,10 +14,6 @@ import kotlinx.coroutines.flow.stateIn
 
 abstract class BaseActivity : AppCompatActivity() {
 
-    abstract val viewModel: BaseViewModel
-    abstract val header: String
-    abstract val navigationDestination: String
-
     fun devicePostureFlow(): StateFlow<DevicePosture> {
         return WindowInfoTracker
             .getOrCreate(this)

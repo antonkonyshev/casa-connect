@@ -21,7 +21,7 @@ fun SettingsScreen() {
                 id = ViewCompat.generateViewId()
                 (context as AppCompatActivity).supportFragmentManager.commit {
                     setReorderingAllowed(true)
-                    add(id, SettingsFragment(context))
+                    add(id, SettingsFragment())
                 }
             }
         })

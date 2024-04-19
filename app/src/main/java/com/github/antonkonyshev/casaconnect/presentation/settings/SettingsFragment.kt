@@ -11,7 +11,7 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.github.antonkonyshev.casaconnect.R
 
-class SettingsFragment(private val context: Context) : PreferenceFragmentCompat() {
+class SettingsFragment() : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.settings_fragment, rootKey)
     }

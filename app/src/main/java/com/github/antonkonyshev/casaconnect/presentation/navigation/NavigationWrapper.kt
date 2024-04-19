@@ -2,7 +2,8 @@ package com.github.antonkonyshev.casaconnect.presentation.navigation
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,12 +30,12 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -42,15 +43,18 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.github.antonkonyshev.casaconnect.R
+import com.github.antonkonyshev.casaconnect.presentation.common.BackgroundImage
 import com.github.antonkonyshev.casaconnect.presentation.common.DevicePosture
 import com.github.antonkonyshev.casaconnect.presentation.common.NavigationType
 import com.github.antonkonyshev.casaconnect.presentation.common.getActivity
-import com.github.antonkonyshev.casaconnect.presentation.common.getBackgroundPainter
 import com.github.antonkonyshev.casaconnect.presentation.device.DevicesScreen
 import com.github.antonkonyshev.casaconnect.presentation.meteo.MeteoScreen
 import com.github.antonkonyshev.casaconnect.presentation.settings.SettingsScreen
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
+
+val LocalWindowWidthSizeClass = compositionLocalOf { WindowWidthSizeClass.Compact }
+val LocalNavigationType = compositionLocalOf { NavigationType.BOTTOM_NAVIGATION }
 
 sealed class AppNavRouting(
     val route: String,
@@ -84,7 +88,13 @@ sealed class AppNavRouting(
 fun AppNavHost(
     navController: NavHostController
 ) {
-    NavHost(navController = navController, startDestination = AppNavRouting.route_meteo) {
+    NavHost(
+        navController = navController, startDestination = AppNavRouting.route_meteo,
+        enterTransition = { fadeIn() },
+        exitTransition = { fadeOut() },
+        popEnterTransition = { fadeIn() },
+        popExitTransition = { fadeOut() }
+    ) {
         composable(AppNavRouting.route_meteo) {
             MeteoScreen()
         }
@@ -99,14 +109,15 @@ fun AppNavHost(
 
 @Composable
 fun AppScreen(
+    navController: NavHostController,
     onDrawerClicked: () -> Unit
 ) {
-    val navController = rememberNavController()
+    // TODO: Use snackbar
     val snackbarScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     Scaffold(
         topBar = {
-            AppTopBar(onDrawerClicked)
+            AppTopBar(navController, onDrawerClicked)
         },
         bottomBar = {
             if (LocalNavigationType.current == NavigationType.BOTTOM_NAVIGATION) BottomNavigationBar(
@@ -121,7 +132,7 @@ fun AppScreen(
                 .padding(contentPaddings)
         ) {
             AnimatedVisibility(LocalNavigationType.current == NavigationType.NAVIGATION_RAIL) {
-                AppNavigationRail()
+                AppNavigationRail(navController)
             }
 
             Column(
@@ -149,6 +160,7 @@ fun NavigationWrapper() {
         )
     }
 
+    val navController = rememberNavController()
     val currentActivity = LocalContext.current.getActivity()
     val windowWidthSizeClass = currentActivity?.let {
         calculateWindowSizeClass(activity = it).widthSizeClass
@@ -182,49 +194,39 @@ fun NavigationWrapper() {
 
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val drawerScope = rememberCoroutineScope()
-    val navigationDestination = currentActivity?.navigationDestination ?: ""
 
     CompositionLocalProvider(
         LocalWindowWidthSizeClass provides windowWidthSizeClass,
-        LocalNavigationDestination provides navigationDestination,
         LocalNavigationType provides navigationType
     ) {
         Surface(modifier = Modifier.background(color = MaterialTheme.colorScheme.background)) {
-            if (currentActivity?.viewModel?.backgroundResource != null) {
-                Column(modifier = Modifier.fillMaxSize()) {
-                    Image(
-                        painter = getBackgroundPainter(
-                            backgroundResource = currentActivity.viewModel.backgroundResource
-                        ),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        alpha = 0.3F,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
+            Column(modifier = Modifier.fillMaxSize()) {
+                BackgroundImage()
             }
 
             if (LocalNavigationType.current == NavigationType.PERMANENT_NAVIGATION_DRAWER) {
                 PermanentNavigationDrawer(drawerContent = {
                     PermanentDrawerSheet {
-                        NavigationDrawerContent(onDrawerClicked = { drawerScope.launch { drawerState.open() } })
+                        NavigationDrawerContent(navController,
+                            onDrawerClicked = { drawerScope.launch { drawerState.open() } })
                     }
                 }) {
-                    AppScreen(onDrawerClicked = { drawerScope.launch { drawerState.open() } })
+                    AppScreen(navController,
+                        onDrawerClicked = { drawerScope.launch { drawerState.open() } })
                 }
             } else {
                 ModalNavigationDrawer(
                     drawerContent = {
                         ModalDrawerSheet {
-                            NavigationDrawerContent(currentActivity?.viewModel?.navigationBackgroundResource,
+                            NavigationDrawerContent(navController,
                                 onDrawerClicked = { drawerScope.launch { drawerState.close() } })
                         }
                     }, drawerState = drawerState
                 ) {
-                    AppScreen(onDrawerClicked = { drawerScope.launch { drawerState.open() } })
+                    AppScreen(navController,
+                        onDrawerClicked = { drawerScope.launch { drawerState.open() } })
                 }
             }
         }
     }
 }
-

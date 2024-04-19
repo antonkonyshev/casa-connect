@@ -135,7 +135,7 @@ fun DevicesScreen(viewModel: DevicesViewModel = viewModel()) {
                         ),
                         modifier = Modifier
                             .padding(bottom = 18.dp)
-                            .clickable { viewModel._selectedDevice.value = device })
+                            .clickable { viewModel.selectDevice(device) })
                 }
             }
             PullRefreshIndicator(

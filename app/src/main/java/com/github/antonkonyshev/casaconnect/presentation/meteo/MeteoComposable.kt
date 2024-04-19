@@ -14,6 +14,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Sensors
 import androidx.compose.material.icons.filled.SensorsOff
+import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.icons.outlined.Landscape
 import androidx.compose.material.icons.outlined.Masks
 import androidx.compose.material.icons.outlined.Thermostat
@@ -22,6 +23,7 @@ import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -216,7 +218,6 @@ fun MeteoScreen(viewModel: MeteoViewModel = viewModel()) {
             uiState.loading, refreshingState, Modifier.align(Alignment.TopCenter)
         )
     }
-//    }
 }
 
 @Composable

@@ -1,7 +1,5 @@
 package com.github.antonkonyshev.casaconnect.presentation.navigation
 
-import android.content.Intent
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -9,20 +7,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuOpen
-import androidx.compose.material.icons.filled.Light
-import androidx.compose.material.icons.filled.MeetingRoom
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Sensors
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Sync
-import androidx.compose.material.icons.filled.Thermostat
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -41,33 +33,30 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
-import androidx.navigation.NavController
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.github.antonkonyshev.casaconnect.R
-import com.github.antonkonyshev.casaconnect.presentation.common.getActivity
-import com.github.antonkonyshev.casaconnect.presentation.common.getBackgroundPainter
-import com.github.antonkonyshev.casaconnect.presentation.device.DevicesActivity
-import com.github.antonkonyshev.casaconnect.presentation.meteo.MeteoActivity
-import com.github.antonkonyshev.casaconnect.presentation.settings.SettingsActivity
+import com.github.antonkonyshev.casaconnect.presentation.common.BackgroundImage
+import com.github.antonkonyshev.casaconnect.presentation.device.DevicesViewModel
+import com.github.antonkonyshev.casaconnect.presentation.meteo.MeteoViewModel
 
 @Composable
-fun AppTopBarActions() {
-    val currentActivity = LocalContext.current.getActivity()
-    if (LocalNavigationDestination.current == NavigationDestinations.METEO && currentActivity is MeteoActivity) {
-        IconButton(onClick = currentActivity.viewModel::observeMeasurement) {
+fun AppTopBarActions(currentScreen: AppNavRouting?) {
+    if (currentScreen?.route == AppNavRouting.route_meteo) {
+        val viewModel: MeteoViewModel = viewModel()
+        IconButton(onClick = viewModel::observeMeasurement) {
             Icon(
                 imageVector = Icons.Default.Sync,
                 contentDescription = stringResource(id = R.string.refresh)
             )
         }
-    } else if (LocalNavigationDestination.current == NavigationDestinations.DEVICES && currentActivity is DevicesActivity) {
-        IconButton(onClick = currentActivity::onDiscoverDevices) {
+    } else if (currentScreen?.route == AppNavRouting.route_devices) {
+        val viewModel: DevicesViewModel = viewModel()
+        IconButton(onClick = viewModel::discoverDevices) {
             Icon(
                 imageVector = Icons.Default.Sync,
                 contentDescription = stringResource(id = R.string.refresh)
@@ -79,12 +68,14 @@ fun AppTopBarActions() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppTopBar(onDrawerClicked: () -> Unit) {
+fun AppTopBar(navController: NavHostController, onDrawerClicked: () -> Unit) {
+    val currentDestination = navController.currentBackStackEntryAsState().value?.destination
+    val currentScreen = AppNavRouting.screens.find { it.route == currentDestination?.route }
     TopAppBar(
         title = {
             Text(
-                text = LocalContext.current.getActivity()?.header
-                    ?: stringResource(id = R.string.app_name)
+                text = if (currentScreen != null) stringResource(id = currentScreen.label)
+                else stringResource(id = R.string.app_name)
             )
         }, navigationIcon = {
             IconButton(onClick = onDrawerClicked) {
@@ -95,7 +86,7 @@ fun AppTopBar(onDrawerClicked: () -> Unit) {
                 )
             }
         }, actions = {
-            AppTopBarActions()
+            AppTopBarActions(currentScreen)
         }, colors = TopAppBarColors(
             Color.Transparent,
             Color.Transparent,
@@ -107,7 +98,7 @@ fun AppTopBar(onDrawerClicked: () -> Unit) {
 }
 
 @Composable
-fun BottomNavigationBar(navController: NavController) {
+fun BottomNavigationBar(navController: NavHostController) {
     BottomAppBar(
         containerColor = Color.Transparent
     ) {
@@ -135,25 +126,14 @@ fun BottomNavigationBar(navController: NavController) {
 }
 
 @Composable
-fun NavigationDrawerContent(
-    navigationBackgroundResource: Int? = null, onDrawerClicked: () -> Unit
-) {
-    val context = LocalContext.current
-    val navigationDestination = LocalNavigationDestination.current
+fun NavigationDrawerContent(navController: NavHostController, onDrawerClicked: () -> Unit) {
     Box(
         modifier = Modifier.background(color = MaterialTheme.colorScheme.background)
     ) {
-        if (navigationBackgroundResource != null) {
-            Column {
-                Image(
-                    painter = getBackgroundPainter(navigationBackgroundResource),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    alpha = 0.3F,
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
+        Column {
+            BackgroundImage(1)
         }
+
         Column(
             Modifier
                 .wrapContentWidth()
@@ -173,6 +153,7 @@ fun NavigationDrawerContent(
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(horizontal = 20.dp)
                 )
+
                 IconButton(onClick = onDrawerClicked) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.MenuOpen,
@@ -181,126 +162,41 @@ fun NavigationDrawerContent(
                 }
             }
 
-            NavigationDrawerItem(
-                selected = LocalNavigationDestination.current == NavigationDestinations.METEO,
-                label = {
-                    Text(
-                        text = stringResource(R.string.meteo_label),
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
-                },
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.Thermostat,
-                        contentDescription = stringResource(R.string.meteo_label)
-                    )
-                },
-                colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent),
-                onClick = {
-                    if (navigationDestination != NavigationDestinations.METEO) {
-                        ContextCompat.startActivity(
-                            context, Intent(context, MeteoActivity::class.java), null
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentDestination = navBackStackEntry?.destination
+            AppNavRouting.screens.forEach { screen ->
+                NavigationDrawerItem(
+                    selected = currentDestination?.hierarchy?.any {
+                        it.route == screen.route
+                    } == true,
+                    label = {
+                        Text(
+                            text = stringResource(screen.label),
+                            modifier = Modifier.padding(horizontal = 16.dp)
                         )
-                    }
-                },
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-
-            NavigationDrawerItem(
-                selected = navigationDestination == NavigationDestinations.LIGHT,
-                label = {
-                    Text(
-                        text = stringResource(R.string.light_label),
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
-                },
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.Light,
-                        contentDescription = stringResource(R.string.light_label)
-                    )
-                },
-                colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent),
-                onClick = {},
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-
-            NavigationDrawerItem(
-                selected = navigationDestination == NavigationDestinations.DOOR,
-                label = {
-                    Text(
-                        text = stringResource(R.string.door_label),
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
-                },
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.MeetingRoom,
-                        contentDescription = stringResource(R.string.door_label)
-                    )
-                },
-                colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent),
-                onClick = {},
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-
-            NavigationDrawerItem(
-                selected = navigationDestination == NavigationDestinations.DEVICES,
-                label = {
-                    Text(
-                        text = stringResource(R.string.devices_label),
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
-                },
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.Sensors,
-                        contentDescription = stringResource(R.string.devices_label)
-                    )
-                },
-                colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent),
-                onClick = {
-                    if (navigationDestination != NavigationDestinations.DEVICES) {
-                        ContextCompat.startActivity(
-                            context, Intent(context, DevicesActivity::class.java), null
+                    },
+                    icon = {
+                        Icon(
+                            imageVector = screen.icon,
+                            contentDescription = stringResource(id = screen.label)
                         )
-                    }
-                },
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-
-            NavigationDrawerItem(
-                selected = navigationDestination == NavigationDestinations.SETTINGS,
-                label = {
-                    Text(
-                        text = stringResource(R.string.settings),
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
-                },
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.Settings,
-                        contentDescription = stringResource(R.string.settings)
-                    )
-                },
-                colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent),
-                onClick = {
-                    if (navigationDestination != NavigationDestinations.SETTINGS) {
-                        ContextCompat.startActivity(
-                            context, Intent(context, SettingsActivity::class.java), null
-                        )
-                    }
-                },
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
+                    },
+                    onClick = {
+                        onDrawerClicked()
+                        navController.navigate(screen.route) {
+                            launchSingleTop = true
+                        }
+                    },
+                    colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent),
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
         }
     }
 }
 
 @Composable
-fun AppNavigationRail() {
-    val context = LocalContext.current
-    val navigationDestination = context.getActivity()?.navigationDestination
+fun AppNavigationRail(navController: NavHostController) {
     NavigationRail(
         modifier = Modifier
             .fillMaxHeight()
@@ -308,77 +204,25 @@ fun AppNavigationRail() {
             .verticalScroll(ScrollState(0)),
         containerColor = Color.Transparent,
     ) {
-        NavigationRailItem(
-            selected = navigationDestination == NavigationDestinations.METEO,
-            onClick = {
-                if (navigationDestination != NavigationDestinations.METEO) {
-                    ContextCompat.startActivity(
-                        context, Intent(context, MeteoActivity::class.java), null
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentDestination = navBackStackEntry?.destination
+        AppNavRouting.screens.forEach { screen ->
+            NavigationRailItem(
+                selected = currentDestination?.hierarchy?.any {
+                    it.route == screen.route
+                } == true,
+                onClick = {
+                    navController.navigate(screen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                icon = {
+                    Icon(
+                        imageVector = screen.icon,
+                        contentDescription = stringResource(id = screen.label)
                     )
                 }
-            },
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Thermostat,
-                    contentDescription = stringResource(R.string.meteo_label)
-                )
-            },
-        )
-
-        NavigationRailItem(
-            selected = navigationDestination == NavigationDestinations.LIGHT,
-            onClick = {},
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Light,
-                    contentDescription = stringResource(R.string.light_label)
-                )
-            },
-        )
-
-        NavigationRailItem(
-            selected = navigationDestination == NavigationDestinations.DOOR,
-            onClick = {},
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.MeetingRoom,
-                    contentDescription = stringResource(R.string.door_label)
-                )
-            },
-        )
-
-        NavigationRailItem(
-            selected = navigationDestination == NavigationDestinations.DEVICES,
-            onClick = {
-                if (navigationDestination != NavigationDestinations.DEVICES) {
-                    ContextCompat.startActivity(
-                        context, Intent(context, DevicesActivity::class.java), null
-                    )
-                }
-            },
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Sensors,
-                    contentDescription = stringResource(R.string.devices_label)
-                )
-            },
-        )
-
-        NavigationRailItem(
-            selected = navigationDestination == NavigationDestinations.SETTINGS,
-            onClick = {
-                if (navigationDestination != NavigationDestinations.SETTINGS) {
-                    ContextCompat.startActivity(
-                        context, Intent(context, SettingsActivity::class.java), null
-                    )
-                }
-            },
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = stringResource(R.string.settings)
-                )
-            },
-        )
+            )
+        }
     }
 }

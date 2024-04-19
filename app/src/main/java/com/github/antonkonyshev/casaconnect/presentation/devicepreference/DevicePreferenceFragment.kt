@@ -11,9 +11,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.antonkonyshev.casaconnect.domain.entity.Device
-import com.github.antonkonyshev.casaconnect.presentation.device.DevicesActivity
+import com.github.antonkonyshev.casaconnect.presentation.device.DevicesViewModel
 
 class DevicePreferenceFragment : Fragment() {
+    // TODO: Replace fragment with composables
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             backToDevices()
@@ -49,7 +50,8 @@ class DevicePreferenceFragment : Fragment() {
 
     private fun backToDevices() {
         requireActivity().supportFragmentManager.popBackStack()
-        (requireActivity() as? DevicesActivity)?.deselectDevice()
+        val viewModel: DevicesViewModel by viewModels()
+        viewModel.deselectDevice()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
