@@ -7,8 +7,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.preference.PreferenceManager
 import com.github.antonkonyshev.casaconnect.R
 import com.github.antonkonyshev.casaconnect.presentation.BaseActivity
-import com.github.antonkonyshev.casaconnect.presentation.NavigationDestinations
-import com.github.antonkonyshev.casaconnect.presentation.NavigationWrapper
+import com.github.antonkonyshev.casaconnect.presentation.navigation.NavigationDestinations
+import com.github.antonkonyshev.casaconnect.presentation.navigation.NavigationWrapper
 import com.github.antonkonyshev.casaconnect.ui.theme.CasaConnectTheme
 import java.util.Timer
 import kotlin.concurrent.scheduleAtFixedRate

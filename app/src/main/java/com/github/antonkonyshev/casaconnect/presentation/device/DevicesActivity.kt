@@ -7,8 +7,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.antonkonyshev.casaconnect.R
 import com.github.antonkonyshev.casaconnect.domain.entity.Device
 import com.github.antonkonyshev.casaconnect.presentation.BaseActivity
-import com.github.antonkonyshev.casaconnect.presentation.NavigationDestinations
-import com.github.antonkonyshev.casaconnect.presentation.NavigationWrapper
+import com.github.antonkonyshev.casaconnect.presentation.navigation.NavigationDestinations
+import com.github.antonkonyshev.casaconnect.presentation.navigation.NavigationWrapper
 import com.github.antonkonyshev.casaconnect.ui.theme.CasaConnectTheme
 
 class DevicesActivity : BaseActivity() {
