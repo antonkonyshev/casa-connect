@@ -7,7 +7,7 @@ import java.net.InetAddress
 class NetworkDevice(
     val ip: InetAddress? = null,
 ) {
-    fun getMeasurementUrl(): String {
+    fun getMainEndpointUrl(): String {
         return "http://${ip!!.hostAddress}/"
     }
 

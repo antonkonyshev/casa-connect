@@ -9,12 +9,12 @@ open class BaseViewModel : ViewModel() {
     protected val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
 
-    fun onLoading() {
-        _uiState.update { it.copy(loading = true) }
+    fun onLoading(scanning: Boolean = false) {
+        _uiState.update { it.copy(loading = true, scanning = scanning) }
     }
 
-    fun onLoaded() {
-        _uiState.update { it.copy(loading = false) }
+    fun onLoaded(scanning: Boolean = false) {
+        _uiState.update { it.copy(loading = false, scanning = scanning) }
     }
 }
 

@@ -1,5 +1,6 @@
 package com.github.antonkonyshev.casaconnect.di
 
+import com.github.antonkonyshev.casaconnect.data.network.CameraApiSchema
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -45,5 +46,13 @@ class NetworkModule {
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .baseUrl("http://localhost")
             .build().create(DeviceModelSchema::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideCameraApiSchema(): CameraApiSchema {
+        return Retrofit.Builder()
+            .baseUrl("http://localhost")
+            .build().create(CameraApiSchema::class.java)
     }
 }

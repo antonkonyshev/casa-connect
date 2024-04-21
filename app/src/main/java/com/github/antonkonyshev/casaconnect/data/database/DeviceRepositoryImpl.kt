@@ -1,9 +1,10 @@
 package com.github.antonkonyshev.casaconnect.data.database
 
+import com.github.antonkonyshev.casaconnect.domain.entity.Device
+import com.github.antonkonyshev.casaconnect.domain.entity.DeviceType
+import com.github.antonkonyshev.casaconnect.domain.repository.DeviceRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import com.github.antonkonyshev.casaconnect.domain.entity.Device
-import com.github.antonkonyshev.casaconnect.domain.repository.DeviceRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -17,7 +18,7 @@ class DeviceRepositoryImpl @Inject constructor(
         it.map { deviceModel -> deviceModel.toDevice() }
     }
     override val meteoDevices: Flow<List<Device>> =
-        deviceDao.byServiceFlow(Device.METEO_SENSOR_SERVICE_TYPE).map {
+        deviceDao.byServiceFlow(DeviceType.MeteoDeviceType.service).map {
             it.map { deviceModel -> deviceModel.toDevice() }
         }
 
@@ -43,8 +44,8 @@ class DeviceRepositoryImpl @Inject constructor(
         deviceDao.updateAllDevicesAvailability(available)
     }
 
-    override fun byService(service: String): List<Device> {
-        return deviceDao.byService(service).map { it.toDevice() }
+    override fun byDeviceType(type: DeviceType): List<Device> {
+        return deviceDao.byService(type.service).map { it.toDevice() }
     }
 
     override fun byId(id: String): Device? {

@@ -70,7 +70,9 @@ fun AppTopBarActions(currentScreen: AppNavRouting?) {
 @Composable
 fun TopNavigationBar(navController: NavHostController, onDrawerClicked: () -> Unit) {
     val currentDestination = navController.currentBackStackEntryAsState().value?.destination
-    val currentScreen = AppNavRouting.screens.find { it.route == currentDestination?.route }
+    val currentScreen = AppNavRouting.screens.firstOrNull { screen ->
+        currentDestination?.hierarchy?.any { it.route?.contains(screen.route) ?: false } == true
+    }
     TopAppBar(
         title = {
             Text(
@@ -107,7 +109,7 @@ fun BottomNavigationBar(navController: NavHostController) {
         AppNavRouting.screens.forEach { screen ->
             NavigationBarItem(
                 selected = currentDestination?.hierarchy?.any {
-                    it.route == screen.route
+                    it.route?.contains(screen.route) ?: false
                 } == true,
                 onClick = {
                     navController.navigate(screen.route) {
@@ -167,7 +169,7 @@ fun NavigationDrawerContent(navController: NavHostController, onDrawerClicked: (
             AppNavRouting.screens.forEach { screen ->
                 NavigationDrawerItem(
                     selected = currentDestination?.hierarchy?.any {
-                        it.route == screen.route
+                        it.route?.contains(screen.route) ?: false
                     } == true,
                     label = {
                         Text(
@@ -209,7 +211,7 @@ fun AppNavigationRail(navController: NavHostController) {
         AppNavRouting.screens.forEach { screen ->
             NavigationRailItem(
                 selected = currentDestination?.hierarchy?.any {
-                    it.route == screen.route
+                    it.route?.contains(screen.route) ?: false
                 } == true,
                 onClick = {
                     navController.navigate(screen.route) {

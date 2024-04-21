@@ -11,6 +11,7 @@ import retrofit2.http.Url
 import javax.inject.Inject
 import javax.inject.Singleton
 
+@Singleton
 interface DevicePreferenceSchema {
     @GET
     suspend fun getPreferences(@Url url: String): DevicePreferenceModel

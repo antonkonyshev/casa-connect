@@ -44,6 +44,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.github.antonkonyshev.casaconnect.R
 import com.github.antonkonyshev.casaconnect.presentation.common.BackgroundImage
 import com.github.antonkonyshev.casaconnect.presentation.common.DevicePosture
@@ -107,10 +108,18 @@ fun AppNavHost(
             MeteoScreen()
         }
         composable(AppNavRouting.route_door) {
-            DoorScreen()
+            DoorScreen(navigateToDevicesDiscovering = {
+                navController.navigate("${AppNavRouting.route_devices}?discover=true")
+            })
         }
-        composable(AppNavRouting.route_devices) {
-            DevicesScreen()
+        composable(
+            "${AppNavRouting.route_devices}?discover={discover}",
+            arguments = listOf(navArgument("discover") { defaultValue = "false" })
+        ) { navBackStackEntry ->
+            DevicesScreen(
+                discover = (navBackStackEntry
+                    .arguments?.getString("discover") ?: "false") == "true"
+            )
         }
         composable(AppNavRouting.route_settings) {
             SettingsScreen()

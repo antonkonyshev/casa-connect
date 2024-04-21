@@ -13,8 +13,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Sensors
-import androidx.compose.material.icons.filled.SensorsOff
 import androidx.compose.material.icons.outlined.Landscape
 import androidx.compose.material.icons.outlined.Masks
 import androidx.compose.material.icons.outlined.Thermostat
@@ -45,6 +43,7 @@ import com.github.antonkonyshev.casaconnect.R
 import com.github.antonkonyshev.casaconnect.domain.entity.Device
 import com.github.antonkonyshev.casaconnect.domain.entity.Measurement
 import com.github.antonkonyshev.casaconnect.presentation.common.UiState
+import com.github.antonkonyshev.casaconnect.presentation.device.DeviceAvailabilityIcon
 import com.github.antonkonyshev.casaconnect.ui.theme.CasaConnectTheme
 
 @Composable
@@ -95,19 +94,7 @@ fun MeteoScreenContent(
                                 .padding(12.dp, 10.dp, 12.dp, 10.dp)
                                 .weight(1f)
                         )
-                        if (device.available) {
-                            Icon(
-                                imageVector = Icons.Default.Sensors,
-                                contentDescription = "Online",
-                                tint = MaterialTheme.colorScheme.primary,
-                            )
-                        } else {
-                            Icon(
-                                imageVector = Icons.Default.SensorsOff,
-                                contentDescription = "Offline",
-                                tint = MaterialTheme.colorScheme.secondary,
-                            )
-                        }
+                        DeviceAvailabilityIcon(device)
                     }
                 }, supportingContent = {
                     if (uiState.loading) {

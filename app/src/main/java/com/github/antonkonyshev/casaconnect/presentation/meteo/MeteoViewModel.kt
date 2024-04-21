@@ -51,27 +51,20 @@ class MeteoViewModel : BaseViewModel() {
     }
 
     fun observeMeasurement(silent: Boolean = false) {
-        if (uiState.value.scanning) {
+        if (uiState.value.scanning)
             return
-        }
-        if (silent) {
-            _uiState.update { it.copy(scanning = true) }
-        } else {
-            _uiState.update { it.copy(loading = true, scanning = true) }
-        }
+        _uiState.update { it.copy(loading = !silent, scanning = true) }
         viewModelScope.launch(Dispatchers.IO) {
             getDevicesByServiceUseCase.getMeteoDevicesList().forEach { device ->
-                if (!measurements.containsKey(device.id)) {
+                if (!measurements.containsKey(device.id))
                     measurements[device.id] = DeviceMeasurement(device.id)
-                }
-                if (device.ip == null) {
+                if (device.ip == null)
                     return@forEach
-                }
                 viewModelScope.launch(Dispatchers.IO) {
                     retrieveDeviceMeasurement(device)
                 }
             }
-            _uiState.update { it.copy(loading = false, scanning = false) }
+            onLoaded()
         }
     }
 

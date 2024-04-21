@@ -1,8 +1,9 @@
 package com.github.antonkonyshev.casaconnect.domain.usecase
 
-import kotlinx.coroutines.flow.Flow
 import com.github.antonkonyshev.casaconnect.domain.entity.Device
+import com.github.antonkonyshev.casaconnect.domain.entity.DeviceType
 import com.github.antonkonyshev.casaconnect.domain.repository.DeviceRepository
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GetDevicesByServiceUseCase @Inject constructor(
@@ -18,7 +19,10 @@ class GetDevicesByServiceUseCase @Inject constructor(
     }
 
     fun getMeteoDevicesList(): List<Device> {
-        return repository.byService(Device.METEO_SENSOR_SERVICE_TYPE)
+        return repository.byDeviceType(DeviceType.MeteoDeviceType)
     }
 
+    fun getDoorDevicesList(): List<Device> {
+        return repository.byDeviceType(DeviceType.DoorDeviceType)
+    }
 }

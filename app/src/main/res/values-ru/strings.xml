@@ -54,4 +54,7 @@
     <string name="only_digits_are_allowed">Разрешены только цифры</string>
     <string name="measurement_update_period">Период обновления измерений</string>
     <string name="measurement_charts_update_period">Период обновления графиков</string>
+    <string name="door_sensors_not_found">Устройства не найдены</string>
+    <string name="camera_picture">Изображение с камеры</string>
+    <string name="discover_devices">Искать устройства</string>
 </resources>

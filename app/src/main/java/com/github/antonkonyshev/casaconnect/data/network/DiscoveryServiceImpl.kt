@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import com.github.antonkonyshev.casaconnect.CasaConnectApplication
 import com.github.antonkonyshev.casaconnect.data.database.DeviceModel
+import com.github.antonkonyshev.casaconnect.domain.entity.Device
 import com.github.antonkonyshev.casaconnect.domain.repository.DeviceRepository
 import com.github.antonkonyshev.casaconnect.domain.repository.DiscoveryService
 import org.apache.commons.net.util.SubnetUtils
@@ -19,6 +20,7 @@ import java.net.InetAddress
 import javax.inject.Inject
 import javax.inject.Singleton
 
+@Singleton
 interface DeviceModelSchema {
     @GET
     suspend fun getServiceInfo(@Url url: String): DeviceModel
@@ -43,7 +45,11 @@ class DiscoveryServiceImpl @Inject constructor(
                 val ipRange = SubnetUtils(linkAddress.toString()).info.allAddresses.filter filter@{
                     it != linkAddress.address.hostAddress
                 }
-                ipRange.forEach { checkIpAddress(it) }
+                ipRange.forEach { addr ->
+                    CoroutineScope(Dispatchers.IO).launch {
+                        checkIpAddress(addr)
+                    }
+                }
             }
         } catch (_: Exception) {
         }
@@ -55,21 +61,21 @@ class DiscoveryServiceImpl @Inject constructor(
         if (ip.isMulticastAddress) {
             return
         }
-        CoroutineScope(Dispatchers.IO).launch {
-            if (ip.isReachable(1000)) {
-                retrieveServiceInfo(ip)
-            }
+        if (ip.isReachable(1000)) {
+            retrieveServiceInfo(ip)
         }
     }
 
-    private suspend fun retrieveServiceInfo(ip: InetAddress?) {
+    override suspend fun retrieveServiceInfo(ip: InetAddress): Device? {
         try {
-            val device = schema.getServiceInfo(NetworkDevice(ip!!).getServiceUrl())
+            val device = schema.getServiceInfo(NetworkDevice(ip).getServiceUrl())
             device.ip = ip
             deviceRepository.updateStateOrCreate(device)
+            return device.toDevice()
         } catch (err: Exception) {
             Log.d("Discover", err.toString())
         }
+        return null
     }
 
     private fun linkAddress(): LinkAddress? {

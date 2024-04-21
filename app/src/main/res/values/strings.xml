@@ -54,4 +54,7 @@
     <string name="only_digits_are_allowed">Only digits are allowed</string>
     <string name="measurement_update_period">Measurement update period</string>
     <string name="measurement_charts_update_period">Measurement charts update period</string>
+    <string name="door_sensors_not_found">Door sensors not found</string>
+    <string name="camera_picture">Camera picture</string>
+    <string name="discover_devices">Discover devices</string>
 </resources>

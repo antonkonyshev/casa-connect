@@ -1,6 +1,5 @@
 package com.github.antonkonyshev.casaconnect.data.network
 
-import com.github.antonkonyshev.casaconnect.data.network.NetworkDevice
 import com.github.antonkonyshev.casaconnect.domain.entity.Device
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -24,14 +23,14 @@ class NetworkDeviceTest {
 
     @Test
     fun getMeasurementUrl() {
-        assertEquals(networkDevice!!.getMeasurementUrl(), "http://192.168.0.101/")
+        assertEquals(networkDevice!!.getMainEndpointUrl(), "http://192.168.0.101/")
     }
 
     @Test
     fun getMeasurementUrl_withoutIp() {
         networkDevice = NetworkDevice(null)
         assertThrows(NullPointerException::class.java) {
-            networkDevice!!.getMeasurementUrl()
+            networkDevice!!.getMainEndpointUrl()
         }
     }
 
@@ -65,6 +64,6 @@ class NetworkDeviceTest {
                 Inet4Address.getByName("192.168.0.101"), true
             )
         )
-        assertEquals(networkDevice!!.getMeasurementUrl(), "http://192.168.0.101/")
+        assertEquals(networkDevice!!.getMainEndpointUrl(), "http://192.168.0.101/")
     }
 }

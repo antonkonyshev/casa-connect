@@ -8,6 +8,7 @@ import retrofit2.http.Url
 import javax.inject.Inject
 import javax.inject.Singleton
 
+@Singleton
 interface MeteoServiceSchema {
     @GET
     suspend fun getMeasurement(@Url url: String): Measurement
@@ -31,7 +32,7 @@ class MeteoApiClientImpl @Inject constructor(
         if (device.available) {
             try {
                 measurement = service.getMeasurement(
-                    NetworkDevice.fromDevice(device).getMeasurementUrl()
+                    NetworkDevice.fromDevice(device).getMainEndpointUrl()
                 )
             } catch (err: Exception) {
                 device.available = false

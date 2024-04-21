@@ -13,11 +13,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Sensors
 import androidx.compose.material.icons.filled.SensorsOff
-import androidx.compose.material.icons.outlined.Landscape
-import androidx.compose.material.icons.outlined.Masks
-import androidx.compose.material.icons.outlined.Thermostat
-import androidx.compose.material.icons.outlined.TireRepair
-import androidx.compose.material.icons.outlined.WaterDrop
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -28,7 +23,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,7 +42,16 @@ import com.github.antonkonyshev.casaconnect.presentation.navigation.LocalWindowW
 import java.net.Inet4Address
 
 @Composable
-fun DevicesScreen(viewModel: DevicesViewModel = viewModel()) {
+fun DevicesScreen(viewModel: DevicesViewModel = viewModel(), discover: Boolean = false) {
+    if (discover) {
+        var discovered by rememberSaveable { mutableStateOf(false) }
+        LaunchedEffect("discovering") {
+            if (!discovered) {
+                viewModel.discoverDevices()
+                discovered = true
+            }
+        }
+    }
     val devices by viewModel.getDevicesByServiceUseCase.getAllDevicesFlow()
         .collectAsStateWithLifecycle(initialValue = emptyList())
     val selectedDevice by viewModel.selectedDevice.collectAsStateWithLifecycle()
@@ -90,7 +98,7 @@ fun DevicesScreenContent(
                     },
                         leadingContent = {
                             Icon(
-                                imageVector = Icons.Outlined.Thermostat,
+                                imageVector = device.type.icon,
                                 contentDescription = null,
                                 modifier = Modifier.size(size = 40.dp)
                             )
@@ -98,50 +106,17 @@ fun DevicesScreenContent(
                         supportingContent = {
                             Row(modifier = Modifier.padding(bottom = 10.dp)) {
                                 val iconsModifier = Modifier.padding(end = 18.dp)
-                                if ("pollution" in device.sensors) {
+                                device.sensorTypesExcludingMain.sortedBy { it.ordering }.forEach {
                                     Icon(
-                                        imageVector = Icons.Outlined.Masks,
-                                        contentDescription = null,
-                                        modifier = iconsModifier,
-                                    )
-                                }
-                                if ("pressure" in device.sensors) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.TireRepair,
-                                        contentDescription = null,
-                                        modifier = iconsModifier,
-                                    )
-                                }
-                                if ("altitude" in device.sensors) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.Landscape,
-                                        contentDescription = null,
-                                        modifier = iconsModifier,
-                                    )
-                                }
-                                if ("humidity" in device.sensors) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.WaterDrop,
-                                        contentDescription = null,
-                                        modifier = iconsModifier,
+                                        imageVector = it.icon,
+                                        contentDescription = it.sensor,
+                                        modifier = iconsModifier
                                     )
                                 }
                             }
                         },
                         trailingContent = {
-                            if (device.available) {
-                                Icon(
-                                    imageVector = Icons.Default.Sensors,
-                                    contentDescription = "Online",
-                                    tint = MaterialTheme.colorScheme.primary,
-                                )
-                            } else {
-                                Icon(
-                                    imageVector = Icons.Default.SensorsOff,
-                                    contentDescription = "Offline",
-                                    tint = MaterialTheme.colorScheme.secondary,
-                                )
-                            }
+                            DeviceAvailabilityIcon(device)
                         },
                         colors = ListItemDefaults.colors(
                             containerColor = if (device.id == selectedDevice?.id) Color.White
@@ -167,17 +142,25 @@ fun DevicesScreenContent(
         ) {
             if (selectedDevice != null) {
                 DevicePreferenceScreen(selectedDevice, deselectDevice)
-//                AndroidView(factory = { context ->
-//                    FragmentContainerView(context).apply {
-//                        id = ViewCompat.generateViewId()
-//                        (context as AppCompatActivity).supportFragmentManager.commit {
-//                            setReorderingAllowed(true)
-//                            add(id, DevicePreferenceFragment.newInstance(selectedDevice))
-//                        }
-//                    }
-//                })
             }
         }
+    }
+}
+
+@Composable
+fun DeviceAvailabilityIcon(device: Device) {
+    if (device.available) {
+        Icon(
+            imageVector = Icons.Default.Sensors,
+            contentDescription = "Online",
+            tint = MaterialTheme.colorScheme.primary,
+        )
+    } else {
+        Icon(
+            imageVector = Icons.Default.SensorsOff,
+            contentDescription = "Offline",
+            tint = MaterialTheme.colorScheme.secondary,
+        )
     }
 }
 
