@@ -44,7 +44,7 @@ class DevicePreferenceViewModelTest {
             )
 
             val viewModel = controller.get().viewModels<DevicePreferenceViewModel>().value
-            viewModel.selectedDevice = device
+            viewModel.editableDevice = device
             viewModel.getDevicePreferenceUseCase = spy(viewModel.getDevicePreferenceUseCase)
             doReturn(DevicePreference(device = device)).`when`(viewModel.getDevicePreferenceUseCase)
                 .invoke(device)
@@ -91,7 +91,7 @@ class DevicePreferenceViewModelTest {
             viewModel.getDevicePreferenceUseCase = spy(viewModel.getDevicePreferenceUseCase)
             viewModel.setDevicePreferenceUseCase = spy(viewModel.setDevicePreferenceUseCase)
             viewModel.setDeviceNameUseCase = spy(viewModel.setDeviceNameUseCase)
-            viewModel.selectedDevice = device
+            viewModel.editableDevice = device
             doReturn(preference).`when`(viewModel.getDevicePreferenceUseCase).invoke(any())
             doReturn(true).`when`(viewModel.setDevicePreferenceUseCase).invoke(any())
             controller.setup()

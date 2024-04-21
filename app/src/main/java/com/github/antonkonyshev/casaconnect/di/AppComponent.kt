@@ -4,6 +4,7 @@ import dagger.Component
 import com.github.antonkonyshev.casaconnect.CasaConnectApplication
 import com.github.antonkonyshev.casaconnect.presentation.device.DevicesViewModel
 import com.github.antonkonyshev.casaconnect.presentation.devicepreference.DevicePreferenceViewModel
+import com.github.antonkonyshev.casaconnect.presentation.door.DoorViewModel
 import com.github.antonkonyshev.casaconnect.presentation.meteo.MeteoViewModel
 import javax.inject.Singleton
 
@@ -14,4 +15,5 @@ interface AppComponent {
     fun inject(viewModel: DevicesViewModel)
     fun inject(viewModel: MeteoViewModel)
     fun inject(viewModel: DevicePreferenceViewModel)
+    fun inject(viewModel: DoorViewModel)
 }

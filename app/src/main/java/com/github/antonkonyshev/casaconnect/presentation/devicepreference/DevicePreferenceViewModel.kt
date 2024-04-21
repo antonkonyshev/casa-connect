@@ -16,8 +16,6 @@ import java.net.InetAddress
 import javax.inject.Inject
 
 class DevicePreferenceViewModel : BaseViewModel() {
-    var selectedDevice: Device? = null
-
     private val _preference = MutableStateFlow<DevicePreference?>(null)
     val preference = _preference.asStateFlow()
 
@@ -30,30 +28,32 @@ class DevicePreferenceViewModel : BaseViewModel() {
     @Inject
     lateinit var setDeviceNameUseCase: SetDeviceNameUseCase
 
+    var editableDevice: Device? = null
+
     init {
         CasaConnectApplication.instance.component.inject(this)
     }
 
     fun selectDevice(device: Device) {
-        if (selectedDevice == null) {
-            selectedDevice = device
+        if (editableDevice == null) {
+            editableDevice = device
             prepareData { if (!it) deselectDevice() }
         }
     }
 
     fun deselectDevice() {
-        selectedDevice = null
+        editableDevice = null
     }
 
     fun prepareData(callback: (Boolean) -> Unit) {
-        if (selectedDevice == null || uiState.value.loading) {
+        if (editableDevice == null || uiState.value.loading) {
             callback(false)
             return
         }
         onLoading()
         viewModelScope.launch(Dispatchers.IO) {
-            if (selectedDevice?.ip is InetAddress) {
-                _preference.value = getDevicePreferenceUseCase(selectedDevice!!)
+            if (editableDevice?.ip is InetAddress) {
+                _preference.value = getDevicePreferenceUseCase(editableDevice!!)
                 if (preference.value != null) {
                     onLoaded()
                     callback(true)
@@ -66,7 +66,7 @@ class DevicePreferenceViewModel : BaseViewModel() {
     }
 
     fun saveDevicePreference(callback: (Boolean) -> Unit) {
-        if (selectedDevice != null && !uiState.value.loading) {
+        if (editableDevice != null && !uiState.value.loading) {
             onLoading()
             viewModelScope.launch(Dispatchers.IO) {
                 try {

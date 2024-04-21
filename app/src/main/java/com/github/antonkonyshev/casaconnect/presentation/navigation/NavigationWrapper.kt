@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.SensorDoor
 import androidx.compose.material.icons.filled.Sensors
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Thermostat
@@ -37,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -48,6 +50,7 @@ import com.github.antonkonyshev.casaconnect.presentation.common.DevicePosture
 import com.github.antonkonyshev.casaconnect.presentation.common.NavigationType
 import com.github.antonkonyshev.casaconnect.presentation.common.getActivity
 import com.github.antonkonyshev.casaconnect.presentation.device.DevicesScreen
+import com.github.antonkonyshev.casaconnect.presentation.door.DoorScreen
 import com.github.antonkonyshev.casaconnect.presentation.meteo.MeteoScreen
 import com.github.antonkonyshev.casaconnect.presentation.settings.SettingsScreen
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -63,16 +66,21 @@ sealed class AppNavRouting(
 ) {
     companion object {
         val screens = listOf(
-            Meteo, Devices, Settings
+            Meteo, Door, Devices, Settings
         )
 
         const val route_meteo = "meteo"
         const val route_devices = "devices"
         const val route_settings = "settings"
+        const val route_door = "door"
     }
 
     private object Meteo : AppNavRouting(
         route_meteo, R.string.meteostation, Icons.Default.Thermostat
+    )
+
+    private object Door : AppNavRouting(
+        route_door, R.string.door_label, Icons.Default.SensorDoor
     )
 
     private object Devices : AppNavRouting(
@@ -98,6 +106,9 @@ fun AppNavHost(
         composable(AppNavRouting.route_meteo) {
             MeteoScreen()
         }
+        composable(AppNavRouting.route_door) {
+            DoorScreen()
+        }
         composable(AppNavRouting.route_devices) {
             DevicesScreen()
         }
@@ -117,7 +128,7 @@ fun AppScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     Scaffold(
         topBar = {
-            AppTopBar(navController, onDrawerClicked)
+            TopNavigationBar(navController, onDrawerClicked)
         },
         bottomBar = {
             if (LocalNavigationType.current == NavigationType.BOTTOM_NAVIGATION) BottomNavigationBar(
@@ -230,4 +241,30 @@ fun NavigationWrapper() {
             }
         }
     }
+}
+
+@Preview(showBackground = true, heightDp = 300)
+@Composable
+fun NavigationRailPreview() {
+    AppNavigationRail(navController = rememberNavController())
+}
+
+@Preview(showBackground = true, heightDp = 350)
+@Composable
+fun NavigationDrawerPreview() {
+    NavigationDrawerContent(navController = rememberNavController()) {
+
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TopNavigationPreview() {
+    TopNavigationBar(navController = rememberNavController()) {}
+}
+
+@Preview(showBackground = true)
+@Composable
+fun BottomNavigationPreview() {
+    BottomNavigationBar(navController = rememberNavController())
 }

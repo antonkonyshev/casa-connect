@@ -68,7 +68,7 @@ fun AppTopBarActions(currentScreen: AppNavRouting?) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppTopBar(navController: NavHostController, onDrawerClicked: () -> Unit) {
+fun TopNavigationBar(navController: NavHostController, onDrawerClicked: () -> Unit) {
     val currentDestination = navController.currentBackStackEntryAsState().value?.destination
     val currentScreen = AppNavRouting.screens.find { it.route == currentDestination?.route }
     TopAppBar(
