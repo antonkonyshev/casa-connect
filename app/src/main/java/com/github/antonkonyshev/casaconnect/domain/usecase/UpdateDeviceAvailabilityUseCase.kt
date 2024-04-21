@@ -15,7 +15,7 @@ class UpdateDeviceAvailabilityUseCase @Inject constructor(
     }
 
     suspend fun checkDeviceAvailability(device: Device): Device? {
-        return device.ip?.let { service.retrieveServiceInfo(it) } ?: null
+        return device.ip?.let { service.retrieveServiceInfo(it) }
     }
 
 }

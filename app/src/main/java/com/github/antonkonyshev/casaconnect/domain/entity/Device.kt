@@ -1,13 +1,8 @@
 package com.github.antonkonyshev.casaconnect.domain.entity
 
-import android.hardware.Sensor
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Compress
 import androidx.compose.material.icons.filled.DeviceUnknown
-import androidx.compose.material.icons.filled.Masks
 import androidx.compose.material.icons.filled.SensorDoor
-import androidx.compose.material.icons.filled.Sensors
-import androidx.compose.material.icons.filled.SensorsOff
 import androidx.compose.material.icons.filled.Thermostat
 import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material.icons.outlined.Compress

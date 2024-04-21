@@ -8,6 +8,7 @@ import com.github.antonkonyshev.casaconnect.data.database.DeviceRepositoryImpl
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import com.github.antonkonyshev.casaconnect.domain.entity.Device
+import com.github.antonkonyshev.casaconnect.domain.entity.DeviceType
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -167,7 +168,7 @@ class DeviceRepositoryImplTest {
     }
 
     @Test
-    fun byService() {
+    fun byDeviceType() {
         runBlocking {
             repository.updateStateOrCreate(
                 DeviceModel(
@@ -178,12 +179,12 @@ class DeviceRepositoryImplTest {
             )
             repository.updateStateOrCreate(
                 DeviceModel(
-                    "kitchen-1", "light", "Kitchen",
+                    "kitchen-1", "door", "Kitchen",
                     listOf("temperature", "pressure"),
                     Inet4Address.getByName("192.168.0.102"), true
                 )
             )
-            val values = repository.byService("light")
+            val values = repository.byDeviceType(DeviceType.DoorDeviceType)
             assertEquals(values.size, 1)
             assertEquals(values[0].id, "kitchen-1")
             assertEquals(values[0].ip!!.hostAddress, "192.168.0.102")
