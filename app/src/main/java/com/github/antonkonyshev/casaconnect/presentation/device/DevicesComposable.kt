@@ -184,11 +184,11 @@ fun PreviewDevices() {
             Inet4Address.getByName("192.168.0.101"),
             true
         ), Device(
-            "kitchen-1",
-            "meteo",
-            "Kitchen",
-            listOf("temperature", "pressure", "pollution"),
-            Inet4Address.getByName("192.168.0.101"),
+            "door-1",
+            "door",
+            "Entrance",
+            listOf("photo", "presence"),
+            Inet4Address.getByName("192.168.0.102"),
             false
         )
     )
@@ -207,11 +207,11 @@ fun PreviewSelectedDevice() {
             Inet4Address.getByName("192.168.0.101"),
             true
         ), Device(
-            "kitchen-1",
-            "meteo",
-            "Kitchen",
-            listOf("temperature", "pressure", "pollution"),
-            Inet4Address.getByName("192.168.0.101"),
+            "door-1",
+            "door",
+            "Entrance",
+            listOf("photo", "presence"),
+            Inet4Address.getByName("192.168.0.102"),
             false
         )
     )

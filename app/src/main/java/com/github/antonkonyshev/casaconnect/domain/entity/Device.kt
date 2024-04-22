@@ -8,6 +8,7 @@ import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material.icons.outlined.Compress
 import androidx.compose.material.icons.outlined.Landscape
 import androidx.compose.material.icons.outlined.Masks
+import androidx.compose.material.icons.outlined.PersonSearch
 import androidx.compose.material.icons.outlined.VideoCameraBack
 import androidx.compose.material.icons.outlined.WaterDrop
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -26,16 +27,16 @@ class Device(
     }
 
     val type: DeviceType by lazy {
-        DeviceType::class.nestedClasses.filter { it.isFinal && it.isSubclassOf(DeviceType::class) }
-            .map { it.objectInstance as DeviceType }
-            .firstOrNull { it.service == service }
+        DeviceType::class.nestedClasses.filter {
+            it.isFinal && it.isSubclassOf(DeviceType::class) && it.objectInstance != null
+        }.map { it.objectInstance as DeviceType }.firstOrNull { it.service == service }
             ?: DeviceType.UnknownDeviceType
     }
 
     val sensorTypes: List<SensorType> by lazy {
-        SensorType::class.nestedClasses.filter { it.isFinal && it.isSubclassOf(SensorType::class) }
-            .map { it.objectInstance as SensorType }
-            .filter { it.sensor in sensors }
+        SensorType::class.nestedClasses.filter {
+            it.isFinal && it.isSubclassOf(SensorType::class) && it.objectInstance != null
+        }.map { it.objectInstance as SensorType }.filter { it.sensor in sensors }
     }
 
     val sensorTypesExcludingMain: List<SensorType> by lazy {
@@ -54,7 +55,8 @@ sealed class SensorType(val sensor: String, val icon: ImageVector, val ordering:
     object CameraSensor : SensorType("video", Icons.Outlined.VideoCameraBack, 1)
     object PictureSensor : SensorType("picture", Icons.Outlined.CameraAlt, 2)
     object PollutionSensor : SensorType("pollution", Icons.Outlined.Masks, 3)
-    object PressureSensor : SensorType("pressure", Icons.Outlined.Compress, 4)
-    object HumiditySensor : SensorType("humidity", Icons.Outlined.WaterDrop, 5)
-    object AltitudeSensor : SensorType("altitude", Icons.Outlined.Landscape, 6)
+    object PresenceSensor : SensorType("presence", Icons.Outlined.PersonSearch, 4)
+    object PressureSensor : SensorType("pressure", Icons.Outlined.Compress, 5)
+    object HumiditySensor : SensorType("humidity", Icons.Outlined.WaterDrop, 6)
+    object AltitudeSensor : SensorType("altitude", Icons.Outlined.Landscape, 7)
 }
