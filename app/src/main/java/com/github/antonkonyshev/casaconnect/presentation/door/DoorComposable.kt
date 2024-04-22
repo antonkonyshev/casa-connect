@@ -14,13 +14,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
@@ -73,7 +71,6 @@ fun DoorScreen(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun DoorScreenContent(
     device: Device?, frame: StateFlow<Bitmap>,
@@ -82,22 +79,23 @@ fun DoorScreenContent(
 ) {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .verticalScroll(rememberScrollState())
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
 
         Crossfade(targetState = uiState.loading, label = "Door Screen Loading") { loading ->
             if (!loading) {
                 if (device != null) {
+
                     CameraFrame(
                         frame.collectAsStateWithLifecycle().value,
                         isPlaying.collectAsStateWithLifecycle().value,
                         togglePlaying
                     )
+
                 } else {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
                         modifier = Modifier.fillMaxSize()
                     ) {
                         Text(
@@ -139,7 +137,11 @@ private fun CameraFrame(
     isPlaying: Boolean,
     togglePlaying: () -> Unit = {}
 ) {
-    Box {
+    Box(
+        modifier = Modifier
+            .aspectRatio(4f / 3f)
+            .fillMaxSize()
+    ) {
         Image(
             bitmap = frame.asImageBitmap(),
             contentDescription = stringResource(id = R.string.camera_picture),
@@ -176,7 +178,19 @@ private fun CameraFrame(
 
 @Preview(showBackground = true, heightDp = 300, widthDp = 300)
 @Composable
-fun DoorScreenPreview() {
+fun DoorScreenVerticalPreview() {
+    CasaConnectTheme {
+        DoorScreenContent(
+            Device("door-1", "door", "Door", listOf("picture"), available = true),
+            MutableStateFlow(Bitmap.createBitmap(160, 120, Bitmap.Config.RGB_565)).asStateFlow(),
+            uiState = UiState(scanning = false, loading = false)
+        )
+    }
+}
+
+@Preview(showBackground = true, heightDp = 180, widthDp = 300)
+@Composable
+fun DoorScreenHorizontalPreview() {
     CasaConnectTheme {
         DoorScreenContent(
             Device("door-1", "door", "Door", listOf("picture"), available = true),
