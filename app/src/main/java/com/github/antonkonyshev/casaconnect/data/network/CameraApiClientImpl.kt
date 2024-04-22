@@ -4,6 +4,9 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import com.github.antonkonyshev.casaconnect.domain.entity.Device
 import com.github.antonkonyshev.casaconnect.domain.repository.CameraApiClient
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -29,36 +32,42 @@ interface CameraApiSchema {
 class CameraApiClientImpl @Inject constructor(
     private val schema: CameraApiSchema
 ) : CameraApiClient {
+    // TODO: try lifecycle on the client
 
-    override suspend fun loadPicture(
+    override suspend fun loadFrame(
         device: Device
     ): Bitmap? = suspendCancellableCoroutine { continuation ->
         val call: Call<ResponseBody> = schema.fetchPicture(
             NetworkDevice.fromDevice(device).getMainEndpointUrl()
         )
+
         call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+            override fun onResponse(
+                call: Call<ResponseBody>,
+                response: Response<ResponseBody>
+            ) {
                 if (
-                    response.isSuccessful && response.body() != null && response.headers()
-                        .get("Content-Type") == "image/bmp"
+                    response.isSuccessful && response.headers().get("Content-Type") == "image/bmp"
                 ) {
-                    try {
-                        continuation.resume(
-                            BitmapFactory.decodeStream(
-                                response.body()!!.byteStream()
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            continuation.resume(
+                                BitmapFactory.decodeStream(response.body()!!.byteStream())
                             )
-                        )
-                        return
-                    } catch (_: Exception) {
+                        } catch (err: Exception) {
+                            continuation.resume(null)
+                        }
                     }
+                } else {
+                    continuation.resume(null)
                 }
-                continuation.resume(null)
             }
 
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+            override fun onFailure(
+                call: Call<ResponseBody>, t: Throwable
+            ) {
                 continuation.resume(null)
             }
         })
     }
-
 }

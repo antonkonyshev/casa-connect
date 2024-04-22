@@ -31,12 +31,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.antonkonyshev.casaconnect.domain.entity.Device
 import com.github.antonkonyshev.casaconnect.presentation.common.UiState
+import com.github.antonkonyshev.casaconnect.presentation.common.collectAsEffect
+import com.github.antonkonyshev.casaconnect.presentation.common.getActivity
 import com.github.antonkonyshev.casaconnect.presentation.devicepreference.DevicePreferenceScreen
 import com.github.antonkonyshev.casaconnect.presentation.navigation.LocalWindowWidthSizeClass
 import java.net.Inet4Address
@@ -61,6 +64,11 @@ fun DevicesScreen(viewModel: DevicesViewModel = viewModel(), discover: Boolean =
         devices, selectedDevice, uiState, viewModel::selectDevice, viewModel::discoverDevices,
         viewModel::deselectDevice
     )
+
+    LocalContext.current.getActivity()?.eventBus?.collectAsEffect {
+        if (it.id == "DiscoverDevices")
+            viewModel.discoverDevices()
+    }
 }
 
 @OptIn(ExperimentalMaterialApi::class)

@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuOpen
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Sync
+import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -33,38 +34,61 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.github.antonkonyshev.casaconnect.R
 import com.github.antonkonyshev.casaconnect.presentation.common.BackgroundImage
-import com.github.antonkonyshev.casaconnect.presentation.device.DevicesViewModel
-import com.github.antonkonyshev.casaconnect.presentation.meteo.MeteoViewModel
+import com.github.antonkonyshev.casaconnect.presentation.common.getActivity
 
 @Composable
-fun AppTopBarActions(currentScreen: AppNavRouting?) {
-    if (currentScreen?.route == AppNavRouting.route_meteo) {
-        val viewModel: MeteoViewModel = viewModel()
-        IconButton(onClick = viewModel::observeMeasurement) {
-            Icon(
-                imageVector = Icons.Default.Sync,
-                contentDescription = stringResource(id = R.string.refresh)
-            )
-        }
-    } else if (currentScreen?.route == AppNavRouting.route_devices) {
-        val viewModel: DevicesViewModel = viewModel()
-        IconButton(onClick = viewModel::discoverDevices) {
-            Icon(
-                imageVector = Icons.Default.Sync,
-                contentDescription = stringResource(id = R.string.refresh)
-            )
+fun TopBarActions(currentScreen: AppNavRouting?) {
+    val currentActivity = LocalContext.current.getActivity() ?: return
 
+    when (currentScreen?.route) {
+        AppNavRouting.route_meteo -> {
+            IconButton(onClick = { currentActivity.emitUiEvent(
+                "ObserveMeasurement",
+                "${AppNavRouting.route_devices}?discover=true"
+            ) }) {
+                Icon(
+                    imageVector = Icons.Default.Sync,
+                    contentDescription = stringResource(id = R.string.refresh)
+                )
+            }
         }
+
+        AppNavRouting.route_door -> {
+            IconButton(onClick = { currentActivity.emitUiEvent(
+                "LoadCameraFrame",
+                "${AppNavRouting.route_devices}?discover=true"
+            ) }) {
+                Icon(
+                    imageVector = Icons.Outlined.CameraAlt,
+                    contentDescription = stringResource(R.string.refresh)
+                )
+            }
+        }
+
+        AppNavRouting.route_devices -> {
+            IconButton(onClick = { currentActivity.emitUiEvent(
+                "DiscoverDevices",
+                "${AppNavRouting.route_devices}?discover=true"
+            ) }) {
+                Icon(
+                    imageVector = Icons.Default.Sync,
+                    contentDescription = stringResource(id = R.string.refresh)
+                )
+            }
+        }
+
+        else -> {}
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -88,7 +112,7 @@ fun TopNavigationBar(navController: NavHostController, onDrawerClicked: () -> Un
                 )
             }
         }, actions = {
-            AppTopBarActions(currentScreen)
+            TopBarActions(currentScreen)
         }, colors = TopAppBarColors(
             Color.Transparent,
             Color.Transparent,

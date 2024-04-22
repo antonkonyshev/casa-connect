@@ -66,7 +66,7 @@ android {
 
 dependencies {
     val google_accompanist_version = "0.30.1"
-    val kt_coil_version = "2.4.0"
+    val kt_coil_version = "2.6.0"
     val material_icons_version = "1.6.6"
     val room_version = "2.6.1"
     val lifecycle_version = "2.7.0"

@@ -49,6 +49,7 @@ import com.github.antonkonyshev.casaconnect.R
 import com.github.antonkonyshev.casaconnect.presentation.common.BackgroundImage
 import com.github.antonkonyshev.casaconnect.presentation.common.DevicePosture
 import com.github.antonkonyshev.casaconnect.presentation.common.NavigationType
+import com.github.antonkonyshev.casaconnect.presentation.common.collectAsEffect
 import com.github.antonkonyshev.casaconnect.presentation.common.getActivity
 import com.github.antonkonyshev.casaconnect.presentation.device.DevicesScreen
 import com.github.antonkonyshev.casaconnect.presentation.door.DoorScreen
@@ -108,9 +109,7 @@ fun AppNavHost(
             MeteoScreen()
         }
         composable(AppNavRouting.route_door) {
-            DoorScreen(navigateToDevicesDiscovering = {
-                navController.navigate("${AppNavRouting.route_devices}?discover=true")
-            })
+            DoorScreen()
         }
         composable(
             "${AppNavRouting.route_devices}?discover={discover}",
@@ -124,6 +123,11 @@ fun AppNavHost(
         composable(AppNavRouting.route_settings) {
             SettingsScreen()
         }
+    }
+
+    LocalContext.current.getActivity()?.eventBus?.collectAsEffect {
+        if (it.id == "NavigateTo")
+            navController.navigate(it.extra)
     }
 }
 

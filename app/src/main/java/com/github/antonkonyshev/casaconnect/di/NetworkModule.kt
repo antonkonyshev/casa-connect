@@ -8,6 +8,9 @@ import dagger.Provides
 import com.github.antonkonyshev.casaconnect.data.network.DeviceModelSchema
 import com.github.antonkonyshev.casaconnect.data.network.DevicePreferenceSchema
 import com.github.antonkonyshev.casaconnect.data.network.MeteoServiceSchema
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import okhttp3.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
@@ -52,7 +55,18 @@ class NetworkModule {
     @Provides
     fun provideCameraApiSchema(): CameraApiSchema {
         return Retrofit.Builder()
-            .baseUrl("http://localhost")
+            .client(
+                OkHttpClient.Builder().cache(null)
+                    .addNetworkInterceptor(object : Interceptor {
+                        override fun intercept(chain: Interceptor.Chain): Response {
+                            return chain.proceed(
+                                chain.request().newBuilder()
+                                    .addHeader("Connection", "close").build()
+                            )
+                        }
+                    })
+                    .build()
+            ).baseUrl("http://localhost")
             .build().create(CameraApiSchema::class.java)
     }
 }

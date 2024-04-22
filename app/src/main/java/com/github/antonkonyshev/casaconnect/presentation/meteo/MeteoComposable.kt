@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,6 +44,8 @@ import com.github.antonkonyshev.casaconnect.R
 import com.github.antonkonyshev.casaconnect.domain.entity.Device
 import com.github.antonkonyshev.casaconnect.domain.entity.Measurement
 import com.github.antonkonyshev.casaconnect.presentation.common.UiState
+import com.github.antonkonyshev.casaconnect.presentation.common.collectAsEffect
+import com.github.antonkonyshev.casaconnect.presentation.common.getActivity
 import com.github.antonkonyshev.casaconnect.presentation.device.DeviceAvailabilityIcon
 import com.github.antonkonyshev.casaconnect.ui.theme.CasaConnectTheme
 
@@ -59,6 +62,11 @@ fun MeteoScreen(viewModel: MeteoViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     MeteoScreenContent(devices, measurements, histories, uiState, viewModel::observeMeasurement)
+
+    LocalContext.current.getActivity()?.eventBus?.collectAsEffect {
+        if (it.id == "ObserveMeasurement")
+            viewModel.observeMeasurement()
+    }
 }
 
 @OptIn(ExperimentalMaterialApi::class)

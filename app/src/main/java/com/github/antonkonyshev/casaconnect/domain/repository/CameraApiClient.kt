@@ -4,5 +4,5 @@ import android.graphics.Bitmap
 import com.github.antonkonyshev.casaconnect.domain.entity.Device
 
 interface CameraApiClient {
-    suspend fun loadPicture(device: Device): Bitmap?
+    suspend fun loadFrame(device: Device): Bitmap?
 }
