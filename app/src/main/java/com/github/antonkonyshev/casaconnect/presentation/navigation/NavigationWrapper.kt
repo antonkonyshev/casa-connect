@@ -49,6 +49,7 @@ import com.github.antonkonyshev.casaconnect.R
 import com.github.antonkonyshev.casaconnect.presentation.common.BackgroundImage
 import com.github.antonkonyshev.casaconnect.presentation.common.DevicePosture
 import com.github.antonkonyshev.casaconnect.presentation.common.NavigationType
+import com.github.antonkonyshev.casaconnect.presentation.common.UiEvent
 import com.github.antonkonyshev.casaconnect.presentation.common.collectAsEffect
 import com.github.antonkonyshev.casaconnect.presentation.common.getActivity
 import com.github.antonkonyshev.casaconnect.presentation.device.DevicesScreen
@@ -75,6 +76,18 @@ sealed class AppNavRouting(
         const val route_devices = "devices"
         const val route_settings = "settings"
         const val route_door = "door"
+
+        fun navigationUiEvent(route: String): UiEvent {
+            return UiEvent("NavigateTo", route)
+        }
+
+        fun devicePreferenceNavigationUiEvent(deviceId: String): UiEvent {
+            return UiEvent("NavigateTo", "${route_devices}?deviceId=${deviceId}")
+        }
+
+        fun discoverDevicesNavigationUiEvent(): UiEvent {
+            return UiEvent("NavigateTo", "${route_devices}?deviceId=discover")
+        }
     }
 
     private object Meteo : AppNavRouting(

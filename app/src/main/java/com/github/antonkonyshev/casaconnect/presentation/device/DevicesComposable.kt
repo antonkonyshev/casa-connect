@@ -64,9 +64,11 @@ fun DevicesScreen(viewModel: DevicesViewModel = viewModel(), deviceId: String = 
             }
 
             else -> {
-                try {
-                    viewModel.editDeviceById(deviceId)
-                } catch(_: Exception) {}
+                LaunchedEffect(Unit) {
+                    try {
+                        viewModel.editDeviceById(deviceId)
+                    } catch (_: Exception) {}
+                }
             }
         }
     }
@@ -176,9 +178,7 @@ fun DeviceEditIcon(device: Device) {
     val currentActivity = LocalContext.current.getActivity()
     IconButton(
         onClick = {
-            currentActivity?.emitUiEvent(
-                "NavigateTo", "${AppNavRouting.route_devices}?deviceId=${device.id}"
-            )
+            currentActivity?.emitUiEvent(AppNavRouting.devicePreferenceNavigationUiEvent(device.id))
         }
     ) {
         Icon(

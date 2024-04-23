@@ -34,6 +34,12 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
+    fun emitUiEvent(uiEvent: UiEvent) {
+        lifecycleScope.launch {
+            _eventBus.emit(uiEvent)
+        }
+    }
+
     fun devicePostureFlow(): StateFlow<DevicePosture> {
         return WindowInfoTracker
             .getOrCreate(this)

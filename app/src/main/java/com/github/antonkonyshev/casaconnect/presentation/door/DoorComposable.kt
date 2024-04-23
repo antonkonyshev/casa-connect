@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -89,7 +90,7 @@ fun DoorScreenContent(
                     CameraFrame(
                         frame.collectAsStateWithLifecycle().value,
                         isPlaying.collectAsStateWithLifecycle().value,
-                        togglePlaying
+                        device, togglePlaying = togglePlaying
                     )
 
                 } else {
@@ -108,8 +109,7 @@ fun DoorScreenContent(
                         Button(
                             onClick = {
                                 currentActivity?.emitUiEvent(
-                                    "NavigateTo",
-                                    "${AppNavRouting.route_devices}?discover=true"
+                                    AppNavRouting.discoverDevicesNavigationUiEvent()
                                 )
                             },
                             modifier = Modifier.padding(top = 8.dp)
@@ -133,10 +133,12 @@ fun DoorScreenContent(
 
 @Composable
 private fun CameraFrame(
-    frame: Bitmap,
-    isPlaying: Boolean,
-    togglePlaying: () -> Unit = {}
+    frame: Bitmap, isPlaying: Boolean, device: Device, togglePlaying: () -> Unit = {}
 ) {
+    val btnModifier = Modifier
+        .padding(8.dp)
+        .border(BorderStroke(2.dp, Color.White), CircleShape)
+
     Box(
         modifier = Modifier
             .aspectRatio(4f / 3f)
@@ -149,28 +151,33 @@ private fun CameraFrame(
             modifier = Modifier.fillMaxSize()
         )
 
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
+        val currentActivity = LocalContext.current.getActivity()
+        IconButton(onClick = {
+            currentActivity?.emitUiEvent(AppNavRouting.devicePreferenceNavigationUiEvent(device.id))
+        }, modifier = btnModifier
+            .size(35.dp)
+            .align(Alignment.TopEnd)) {
+            Icon(
+                imageVector = Icons.Outlined.Edit,
+                contentDescription = stringResource(R.string.device_preferences),
+                tint = Color.White,
+                modifier = Modifier.size(20.dp)
+            )
+        }
+
+        IconButton(
+            onClick = togglePlaying,
+            modifier = btnModifier.size(70.dp).align(Alignment.BottomEnd)
         ) {
-            IconButton(
-                onClick = togglePlaying,
-                modifier = Modifier
-                    .padding(8.dp)
-                    .size(70.dp)
-                    .border(BorderStroke(2.dp, Color.White), CircleShape)
-            ) {
-                AnimatedContent(targetState = isPlaying, label = "Play button", transitionSpec = {
-                    fadeIn() togetherWith fadeOut()
-                }) {
-                    Icon(
-                        imageVector = if (it) Icons.Default.Pause else Icons.Default.PlayArrow,
-                        contentDescription = "Play",
-                        tint = Color.White,
-                        modifier = Modifier.size(50.dp)
-                    )
-                }
+            AnimatedContent(targetState = isPlaying, label = "Play button", transitionSpec = {
+                fadeIn() togetherWith fadeOut()
+            }) {
+                Icon(
+                    imageVector = if (it) Icons.Default.Pause else Icons.Default.PlayArrow,
+                    contentDescription = "Play",
+                    tint = Color.White,
+                    modifier = Modifier.size(50.dp)
+                )
             }
         }
     }
