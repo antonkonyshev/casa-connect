@@ -108,18 +108,20 @@ fun AppNavHost(
         composable(AppNavRouting.route_meteo) {
             MeteoScreen()
         }
+
         composable(AppNavRouting.route_door) {
             DoorScreen()
         }
+
         composable(
-            "${AppNavRouting.route_devices}?discover={discover}",
-            arguments = listOf(navArgument("discover") { defaultValue = "false" })
+            "${AppNavRouting.route_devices}?deviceId={deviceId}",
+            arguments = listOf(navArgument("deviceId") { defaultValue = "" })
         ) { navBackStackEntry ->
             DevicesScreen(
-                discover = (navBackStackEntry
-                    .arguments?.getString("discover") ?: "false") == "true"
+                deviceId = (navBackStackEntry.arguments?.getString("deviceId") ?: "")
             )
         }
+
         composable(AppNavRouting.route_settings) {
             SettingsScreen()
         }

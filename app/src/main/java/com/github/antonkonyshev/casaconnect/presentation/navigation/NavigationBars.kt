@@ -45,15 +45,19 @@ import com.github.antonkonyshev.casaconnect.presentation.common.BackgroundImage
 import com.github.antonkonyshev.casaconnect.presentation.common.getActivity
 
 @Composable
-fun TopBarActions(currentScreen: AppNavRouting?) {
+fun TopBarActions(
+    currentScreen: AppNavRouting?, modifier: Modifier = Modifier.padding(12.dp, 0.dp)
+) {
     val currentActivity = LocalContext.current.getActivity() ?: return
 
     when (currentScreen?.route) {
         AppNavRouting.route_meteo -> {
-            IconButton(onClick = { currentActivity.emitUiEvent(
-                "ObserveMeasurement",
-                "${AppNavRouting.route_devices}?discover=true"
-            ) }) {
+            IconButton(onClick = {
+                currentActivity.emitUiEvent(
+                    "ObserveMeasurement",
+                    "${AppNavRouting.route_devices}?discover=true"
+                )
+            }, modifier = modifier) {
                 Icon(
                     imageVector = Icons.Default.Sync,
                     contentDescription = stringResource(id = R.string.refresh)
@@ -62,10 +66,12 @@ fun TopBarActions(currentScreen: AppNavRouting?) {
         }
 
         AppNavRouting.route_door -> {
-            IconButton(onClick = { currentActivity.emitUiEvent(
-                "LoadCameraFrame",
-                "${AppNavRouting.route_devices}?discover=true"
-            ) }) {
+            IconButton(onClick = {
+                currentActivity.emitUiEvent(
+                    "LoadCameraFrame",
+                    "${AppNavRouting.route_devices}?discover=true"
+                )
+            }, modifier = modifier) {
                 Icon(
                     imageVector = Icons.Outlined.CameraAlt,
                     contentDescription = stringResource(R.string.refresh)
@@ -74,10 +80,12 @@ fun TopBarActions(currentScreen: AppNavRouting?) {
         }
 
         AppNavRouting.route_devices -> {
-            IconButton(onClick = { currentActivity.emitUiEvent(
-                "DiscoverDevices",
-                "${AppNavRouting.route_devices}?discover=true"
-            ) }) {
+            IconButton(onClick = {
+                currentActivity.emitUiEvent(
+                    "DiscoverDevices",
+                    "${AppNavRouting.route_devices}?discover=true"
+                )
+            }, modifier = modifier) {
                 Icon(
                     imageVector = Icons.Default.Sync,
                     contentDescription = stringResource(id = R.string.refresh)

@@ -6,7 +6,7 @@ import com.github.antonkonyshev.casaconnect.domain.repository.DeviceRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GetDevicesByServiceUseCase @Inject constructor(
+class GetDevicesByAttributeUseCase @Inject constructor(
     private val repository: DeviceRepository
 ) {
 
@@ -24,5 +24,9 @@ class GetDevicesByServiceUseCase @Inject constructor(
 
     fun getDoorDevicesList(): List<Device> {
         return repository.byDeviceType(DeviceType.DoorDeviceType)
+    }
+
+    fun getById(id: String): Device? {
+        return repository.byId(id)
     }
 }

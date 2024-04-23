@@ -47,11 +47,12 @@ import com.github.antonkonyshev.casaconnect.presentation.common.UiState
 import com.github.antonkonyshev.casaconnect.presentation.common.collectAsEffect
 import com.github.antonkonyshev.casaconnect.presentation.common.getActivity
 import com.github.antonkonyshev.casaconnect.presentation.device.DeviceAvailabilityIcon
+import com.github.antonkonyshev.casaconnect.presentation.device.DeviceEditIcon
 import com.github.antonkonyshev.casaconnect.ui.theme.CasaConnectTheme
 
 @Composable
 fun MeteoScreen(viewModel: MeteoViewModel = viewModel()) {
-    val devices by viewModel.getDevicesByServiceUseCase.getMeteoDevicesFlow()
+    val devices by viewModel.getDevicesByAttributeUseCase.getMeteoDevicesFlow()
         .collectAsStateWithLifecycle(initialValue = emptyList())
     val measurements = viewModel.measurements.mapValues {
         it.value.measurementFlow.collectAsStateWithLifecycle()
@@ -94,6 +95,8 @@ fun MeteoScreenContent(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        DeviceAvailabilityIcon(device)
+
                         Text(
                             text = device.name,
                             style = MaterialTheme.typography.bodyLarge,
@@ -102,7 +105,8 @@ fun MeteoScreenContent(
                                 .padding(12.dp, 10.dp, 12.dp, 10.dp)
                                 .weight(1f)
                         )
-                        DeviceAvailabilityIcon(device)
+
+                        DeviceEditIcon(device)
                     }
                 }, supportingContent = {
                     if (uiState.loading) {
@@ -132,9 +136,9 @@ fun MeteoScreenContent(
                                         sensorValue = measurements[device.id]!!.value.temperature,
                                         units = stringResource(R.string.c),
                                         modifier = Modifier.padding(
+                                            12.dp,
                                             20.dp,
-                                            20.dp,
-                                            20.dp,
+                                            12.dp,
                                             0.dp
                                         )
                                     )
@@ -145,7 +149,7 @@ fun MeteoScreenContent(
                                     measurements[device.id] is State<Measurement> &&
                                     (histories[device.id]?.value?.size ?: 0) > 2
                                 ) {
-                                    Row(Modifier.height(120.dp)) {
+                                    Row(Modifier.height(120.dp).padding(end = 8.dp)) {
                                         MeasurementHistoryChart(
                                             histories[device.id]!!.value.map {
                                                 it.temperature ?: 0f
@@ -163,12 +167,7 @@ fun MeteoScreenContent(
                                         icon = Icons.Outlined.Masks,
                                         sensorValue = measurements[device.id]!!.value.pollution,
                                         units = stringResource(R.string.mg_m3),
-                                        modifier = Modifier.padding(
-                                            20.dp,
-                                            40.dp,
-                                            20.dp,
-                                            0.dp
-                                        )
+                                        modifier = Modifier.padding(12.dp, 30.dp, 12.dp, 0.dp)
                                     )
                                 }
 
@@ -197,12 +196,7 @@ fun MeteoScreenContent(
                                         icon = Icons.Outlined.TireRepair,
                                         sensorValue = measurements[device.id]!!.value.pressure,
                                         units = stringResource(R.string.mmhg),
-                                        modifier = Modifier.padding(
-                                            20.dp,
-                                            40.dp,
-                                            20.dp,
-                                            20.dp
-                                        )
+                                        modifier = Modifier.padding(12.dp, 30.dp, 12.dp, 0.dp)
                                     )
                                 }
 
@@ -212,7 +206,7 @@ fun MeteoScreenContent(
                                         icon = Icons.Outlined.Landscape,
                                         sensorValue = measurements[device.id]!!.value.altitude,
                                         units = stringResource(R.string.m),
-                                        modifier = Modifier.padding(20.dp)
+                                        modifier = Modifier.padding(12.dp, 30.dp, 12.dp, 20.dp)
                                     )
                                 }
                             }

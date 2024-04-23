@@ -13,10 +13,12 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Sensors
 import androidx.compose.material.icons.filled.SensorsOff
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -32,37 +34,51 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.antonkonyshev.casaconnect.R
 import com.github.antonkonyshev.casaconnect.domain.entity.Device
 import com.github.antonkonyshev.casaconnect.presentation.common.UiState
 import com.github.antonkonyshev.casaconnect.presentation.common.collectAsEffect
 import com.github.antonkonyshev.casaconnect.presentation.common.getActivity
 import com.github.antonkonyshev.casaconnect.presentation.devicepreference.DevicePreferenceScreen
+import com.github.antonkonyshev.casaconnect.presentation.navigation.AppNavRouting
 import com.github.antonkonyshev.casaconnect.presentation.navigation.LocalWindowWidthSizeClass
 import java.net.Inet4Address
 
 @Composable
-fun DevicesScreen(viewModel: DevicesViewModel = viewModel(), discover: Boolean = false) {
-    if (discover) {
-        var discovered by rememberSaveable { mutableStateOf(false) }
-        LaunchedEffect("discovering") {
-            if (!discovered) {
-                viewModel.discoverDevices()
-                discovered = true
+fun DevicesScreen(viewModel: DevicesViewModel = viewModel(), deviceId: String = "") {
+    if (deviceId.isNotBlank()) {
+        when (deviceId) {
+            "discover" -> {
+                var discovered by rememberSaveable { mutableStateOf(false) }
+                LaunchedEffect("discovering") {
+                    if (!discovered) {
+                        viewModel.discoverDevices()
+                        discovered = true
+                    }
+                }
+            }
+
+            else -> {
+                try {
+                    viewModel.editDeviceById(deviceId)
+                } catch(_: Exception) {}
             }
         }
     }
-    val devices by viewModel.getDevicesByServiceUseCase.getAllDevicesFlow()
+
+    val devices by viewModel.getDevicesByAttributeUseCase.getAllDevicesFlow()
         .collectAsStateWithLifecycle(initialValue = emptyList())
     val selectedDevice by viewModel.selectedDevice.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     DevicesScreenContent(
-        devices, selectedDevice, uiState, viewModel::selectDevice, viewModel::discoverDevices,
-        viewModel::deselectDevice
+        devices, selectedDevice, uiState, viewModel::editDevice, viewModel::discoverDevices,
+        viewModel::cleanEditableDevice
     )
 
     LocalContext.current.getActivity()?.eventBus?.collectAsEffect {
@@ -156,18 +172,41 @@ fun DevicesScreenContent(
 }
 
 @Composable
-fun DeviceAvailabilityIcon(device: Device) {
+fun DeviceEditIcon(device: Device) {
+    val currentActivity = LocalContext.current.getActivity()
+    IconButton(
+        onClick = {
+            currentActivity?.emitUiEvent(
+                "NavigateTo", "${AppNavRouting.route_devices}?deviceId=${device.id}"
+            )
+        }
+    ) {
+        Icon(
+            imageVector = Icons.Outlined.Edit,
+            contentDescription = stringResource(id = R.string.device_preferences),
+            tint = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+    }
+}
+
+@Composable
+fun DeviceAvailabilityIcon(
+    device: Device,
+    modifier: Modifier = Modifier.padding(12.dp, 10.dp, 12.dp, 10.dp)
+) {
     if (device.available) {
         Icon(
             imageVector = Icons.Default.Sensors,
             contentDescription = "Online",
             tint = MaterialTheme.colorScheme.primary,
+            modifier = modifier
         )
     } else {
         Icon(
             imageVector = Icons.Default.SensorsOff,
             contentDescription = "Offline",
             tint = MaterialTheme.colorScheme.secondary,
+            modifier = modifier
         )
     }
 }

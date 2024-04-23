@@ -51,8 +51,7 @@ class DeviceRepositoryImpl @Inject constructor(
     override fun byId(id: String): Device? {
         try {
             return deviceDao.byId(id).toDevice()
-        } catch (_: Exception) {
-        }
+        } catch (_: Exception) {}
         return null
     }
 }

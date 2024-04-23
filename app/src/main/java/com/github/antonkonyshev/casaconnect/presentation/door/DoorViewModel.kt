@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import androidx.lifecycle.viewModelScope
 import com.github.antonkonyshev.casaconnect.CasaConnectApplication
 import com.github.antonkonyshev.casaconnect.domain.entity.Device
-import com.github.antonkonyshev.casaconnect.domain.usecase.GetDevicesByServiceUseCase
+import com.github.antonkonyshev.casaconnect.domain.usecase.GetDevicesByAttributeUseCase
 import com.github.antonkonyshev.casaconnect.domain.usecase.LoadCameraFrameUseCase
 import com.github.antonkonyshev.casaconnect.domain.usecase.UpdateDeviceAvailabilityUseCase
 import com.github.antonkonyshev.casaconnect.presentation.common.BaseViewModel
@@ -27,7 +27,7 @@ class DoorViewModel : BaseViewModel() {
     val frame = _frame.asStateFlow()
 
     @Inject
-    lateinit var getDevicesByServiceUseCase: GetDevicesByServiceUseCase
+    lateinit var getDevicesByAttributeUseCase: GetDevicesByAttributeUseCase
 
     @Inject
     lateinit var updateDeviceAvailabilityUseCase: UpdateDeviceAvailabilityUseCase
@@ -45,7 +45,7 @@ class DoorViewModel : BaseViewModel() {
             return
         onLoading(true)
         viewModelScope.launch(Dispatchers.IO) {
-            getDevicesByServiceUseCase.getDoorDevicesList().forEach { door ->
+            getDevicesByAttributeUseCase.getDoorDevicesList().forEach { door ->
                 if (door.ip == null)
                     return@forEach
                 val device = updateDeviceAvailabilityUseCase.checkDeviceAvailability(door)

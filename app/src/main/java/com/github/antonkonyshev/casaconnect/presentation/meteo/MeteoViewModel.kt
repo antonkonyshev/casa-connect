@@ -5,7 +5,7 @@ import androidx.preference.PreferenceManager
 import com.github.antonkonyshev.casaconnect.CasaConnectApplication
 import com.github.antonkonyshev.casaconnect.domain.entity.Device
 import com.github.antonkonyshev.casaconnect.domain.entity.Measurement
-import com.github.antonkonyshev.casaconnect.domain.usecase.GetDevicesByServiceUseCase
+import com.github.antonkonyshev.casaconnect.domain.usecase.GetDevicesByAttributeUseCase
 import com.github.antonkonyshev.casaconnect.domain.usecase.GetMeasurementFromMeteoSensorUseCase
 import com.github.antonkonyshev.casaconnect.domain.usecase.UpdateDeviceAvailabilityUseCase
 import com.github.antonkonyshev.casaconnect.presentation.common.BaseViewModel
@@ -34,7 +34,7 @@ class MeteoViewModel : BaseViewModel() {
     var measurementHistoryUpdatePeriod: Long = 600000L
 
     @Inject
-    lateinit var getDevicesByServiceUseCase: GetDevicesByServiceUseCase
+    lateinit var getDevicesByAttributeUseCase: GetDevicesByAttributeUseCase
 
     @Inject
     lateinit var updateDeviceAvailabilityUseCase: UpdateDeviceAvailabilityUseCase
@@ -55,7 +55,7 @@ class MeteoViewModel : BaseViewModel() {
             return
         _uiState.update { it.copy(loading = !silent, scanning = true) }
         viewModelScope.launch(Dispatchers.IO) {
-            getDevicesByServiceUseCase.getMeteoDevicesList().forEach { device ->
+            getDevicesByAttributeUseCase.getMeteoDevicesList().forEach { device ->
                 if (!measurements.containsKey(device.id))
                     measurements[device.id] = DeviceMeasurement(device.id)
                 if (device.ip == null)

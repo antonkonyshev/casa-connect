@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.github.antonkonyshev.casaconnect.CasaConnectApplication
 import com.github.antonkonyshev.casaconnect.domain.entity.Device
 import com.github.antonkonyshev.casaconnect.domain.usecase.DiscoverDevicesInLocalNetworkUseCase
-import com.github.antonkonyshev.casaconnect.domain.usecase.GetDevicesByServiceUseCase
+import com.github.antonkonyshev.casaconnect.domain.usecase.GetDevicesByAttributeUseCase
 import com.github.antonkonyshev.casaconnect.presentation.common.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +15,7 @@ import javax.inject.Inject
 class DevicesViewModel : BaseViewModel() {
 
     @Inject
-    lateinit var getDevicesByServiceUseCase: GetDevicesByServiceUseCase
+    lateinit var getDevicesByAttributeUseCase: GetDevicesByAttributeUseCase
 
     @Inject
     lateinit var discoverDevicesInLocalNetworkUseCase: DiscoverDevicesInLocalNetworkUseCase
@@ -35,11 +35,15 @@ class DevicesViewModel : BaseViewModel() {
         }
     }
 
-    fun selectDevice(device: Device) {
+    fun editDevice(device: Device) {
         _selectedDevice.value = device
     }
 
-    fun deselectDevice() {
+    fun editDeviceById(deviceId: String) {
+        getDevicesByAttributeUseCase.getById(deviceId)?.let { editDevice(it) }
+    }
+
+    fun cleanEditableDevice() {
         _selectedDevice.value = null
     }
 }
