@@ -24,13 +24,6 @@ class MeteoApiClientImpl @Inject constructor(
 
     override suspend fun getMeasurement(device: Device): Measurement? {
         var measurement: Measurement? = null
-        // TODO: Remove the icmp request
-//        if (!device.available) {
-//            if (device.ip!!.isReachable(1000)) {
-//                device.available = true
-//            }
-//        }
-//        if (device.available) {
         try {
             measurement = service.getMeasurement(
                 NetworkDevice.fromDevice(device).getMainEndpointUrl()
@@ -38,7 +31,6 @@ class MeteoApiClientImpl @Inject constructor(
         } catch (err: Exception) {
             device.available = false
         }
-//        }
         return measurement
     }
 

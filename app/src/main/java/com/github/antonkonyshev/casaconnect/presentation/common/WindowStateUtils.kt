@@ -43,6 +43,8 @@ enum class NavigationType {
 
 @Composable
 fun rememberBackgroundPainter(backgroundResource: Int): Painter {
+    // TODO: Continue with the kt-coil replacement
+//    return painterResource(id = backgroundResource)
     return rememberAsyncImagePainter(
         model = ImageRequest.Builder(LocalContext.current)
             .decoderFactory(SvgDecoder.Factory())
