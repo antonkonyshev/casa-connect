@@ -109,6 +109,8 @@ fun MeteoScreenContent(
                         DeviceEditIcon(device)
                     }
                 }, supportingContent = {
+                    // TODO: Move loading to upper level
+                    // TODO: Move device indicators representation to a separate composable
                     if (uiState.loading) {
                         Column {
                             Row(
@@ -135,12 +137,7 @@ fun MeteoScreenContent(
                                         icon = Icons.Outlined.Thermostat,
                                         sensorValue = measurements[device.id]!!.value.temperature,
                                         units = stringResource(R.string.c),
-                                        modifier = Modifier.padding(
-                                            12.dp,
-                                            20.dp,
-                                            12.dp,
-                                            0.dp
-                                        )
+                                        modifier = Modifier.padding(12.dp, 20.dp, 12.dp, 0.dp)
                                     )
                                 }
 
