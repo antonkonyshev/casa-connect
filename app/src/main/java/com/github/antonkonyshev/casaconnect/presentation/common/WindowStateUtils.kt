@@ -59,7 +59,6 @@ private val backgroundResources = listOf(
     R.raw.praire,
 ).shuffled()
 
-// TODO: Use android SDK instead
 @Composable
 fun BackgroundImage(index: Int = 0) {
     Image(

@@ -21,8 +21,6 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.PermanentDrawerSheet
 import androidx.compose.material3.PermanentNavigationDrawer
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
@@ -32,7 +30,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -151,9 +148,6 @@ fun AppScreen(
     navController: NavHostController,
     onDrawerClicked: () -> Unit
 ) {
-    // TODO: Use snackbar
-    val snackbarScope = rememberCoroutineScope()
-    val snackbarHostState = remember { SnackbarHostState() }
     Scaffold(
         topBar = {
             TopNavigationBar(navController, onDrawerClicked)
@@ -162,10 +156,8 @@ fun AppScreen(
             if (LocalNavigationType.current == NavigationType.BOTTOM_NAVIGATION) BottomNavigationBar(
                 navController
             )
-        },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        }
     ) { contentPaddings ->
-        // TODO: Check nested layouts, exclude unnecessary
         Row(
             modifier = Modifier
                 .fillMaxSize()

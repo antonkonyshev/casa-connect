@@ -54,7 +54,6 @@ fun DevicePreferenceScreen(
         deselectDevice()
     }
 
-    // TODO: Use snackbar to show results of the operation
     DevicePreferenceScreenContent(
         viewModel.preference.collectAsStateWithLifecycle().value,
         viewModel.uiState.collectAsStateWithLifecycle().value

@@ -32,7 +32,6 @@ interface CameraApiSchema {
 class CameraApiClientImpl @Inject constructor(
     private val schema: CameraApiSchema
 ) : CameraApiClient {
-    // TODO: try lifecycle on the client
 
     override suspend fun loadFrame(
         device: Device

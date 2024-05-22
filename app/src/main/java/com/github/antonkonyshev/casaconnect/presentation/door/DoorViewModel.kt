@@ -59,13 +59,6 @@ class DoorViewModel : BaseViewModel() {
         }
     }
 
-    // TODO: Add unit tests
-    // TODO: Add motion detection or audio channel
-    // TODO: Add presence detection and notifications
-    // TODO: Add WorkManager task to check available devices for notifications
-    // TODO: Fix preferences editing for the door sensors
-    // TODO: Motion detection log and notifications
-    // TODO: Removing of devices on the devices screen
     fun loadCameraFrame() {
         if (device.value is Device) {
             viewModelScope.launch(Dispatchers.IO) {

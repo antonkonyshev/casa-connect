@@ -57,4 +57,5 @@
     <string name="door_sensors_not_found">Устройства не обнаружены</string>
     <string name="camera_picture">Изображение с камеры</string>
     <string name="discover_devices">Искать устройства</string>
+    <string name="journal">Журнал</string>
 </resources>

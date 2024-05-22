@@ -13,7 +13,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -152,11 +151,13 @@ private fun CameraFrame(
         )
 
         val currentActivity = LocalContext.current.getActivity()
-        IconButton(onClick = {
-            currentActivity?.emitUiEvent(AppNavRouting.devicePreferenceNavigationUiEvent(device.id))
-        }, modifier = btnModifier
-            .size(35.dp)
-            .align(Alignment.TopEnd)) {
+        IconButton(
+            onClick = {
+                currentActivity?.emitUiEvent(AppNavRouting.devicePreferenceNavigationUiEvent(device.id))
+            }, modifier = btnModifier
+                .size(35.dp)
+                .align(Alignment.TopEnd)
+        ) {
             Icon(
                 imageVector = Icons.Outlined.Edit,
                 contentDescription = stringResource(R.string.device_preferences),
@@ -167,7 +168,9 @@ private fun CameraFrame(
 
         IconButton(
             onClick = togglePlaying,
-            modifier = btnModifier.size(70.dp).align(Alignment.BottomEnd)
+            modifier = btnModifier
+                .size(70.dp)
+                .align(Alignment.BottomEnd)
         ) {
             AnimatedContent(targetState = isPlaying, label = "Play button", transitionSpec = {
                 fadeIn() togetherWith fadeOut()

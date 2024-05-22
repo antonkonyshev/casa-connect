@@ -109,8 +109,6 @@ fun MeteoScreenContent(
                         DeviceEditIcon(device)
                     }
                 }, supportingContent = {
-                    // TODO: Move loading to upper level
-                    // TODO: Move device indicators representation to a separate composable
                     if (uiState.loading) {
                         Column {
                             Row(
@@ -146,7 +144,10 @@ fun MeteoScreenContent(
                                     measurements[device.id] is State<Measurement> &&
                                     (histories[device.id]?.value?.size ?: 0) > 2
                                 ) {
-                                    Row(Modifier.height(120.dp).padding(end = 8.dp)) {
+                                    Row(
+                                        Modifier
+                                            .height(120.dp)
+                                            .padding(end = 8.dp)) {
                                         MeasurementHistoryChart(
                                             histories[device.id]!!.value.map {
                                                 it.temperature ?: 0f

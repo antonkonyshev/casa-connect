@@ -57,4 +57,5 @@
     <string name="door_sensors_not_found">Door sensors not found</string>
     <string name="camera_picture">Camera picture</string>
     <string name="discover_devices">Discover devices</string>
+    <string name="journal">Journal</string>
 </resources>
